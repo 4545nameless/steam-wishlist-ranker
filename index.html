@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Steam Wishlist Ranker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -38,7 +39,6 @@
   .screen { display: none; }
   .screen.active { display: flex; flex-direction: column; min-height: 100vh; }
 
-  /* ナビバー */
   .navbar {
     background: linear-gradient(to bottom, #1b2838, #152231);
     border-bottom: 1px solid #000;
@@ -62,7 +62,6 @@
   .navbar-info { font-size: 0.78rem; color: var(--text2); margin-left: auto; }
   .navbar-actions { display: flex; gap: 8px; margin-left: 16px; }
 
-  /* ボタン */
   .btn {
     padding: 8px 16px; border: none; border-radius: var(--radius);
     cursor: pointer; font-size: 0.85rem; font-weight: 600;
@@ -81,7 +80,7 @@
   .btn-sm { padding: 5px 12px; font-size: 0.78rem; }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; filter: none; }
 
-  /* ===== スタート画面 ===== */
+  /* スタート画面 */
   #screen-start {
     align-items: center; justify-content: center;
     padding: 40px 20px; gap: 24px;
@@ -133,7 +132,7 @@
   #load-status { font-size: 0.85rem; min-height: 1.4em; line-height: 1.6; }
   .start-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-  /* ===== バトル画面 ===== */
+  /* バトル画面 */
   #screen-battle { flex-direction: column; }
 
   .progress-bar-wrap {
@@ -195,8 +194,7 @@
     transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
     box-shadow: 0 4px 16px rgba(0,0,0,0.3);
   }
-  .game-card.clickable { cursor: pointer; }
-  .game-card.clickable:hover {
+  .game-card:hover {
     border-color: var(--accent2); transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(76,155,219,0.25);
   }
@@ -218,8 +216,12 @@
   .card-img-fallback {
     position: absolute; inset: 0; display: none;
     align-items: center; justify-content: center;
-    font-size: 2rem; color: var(--text2);
+    flex-direction: column; gap: 6px;
     background: linear-gradient(135deg, var(--bg2), var(--bg3));
+  }
+  .card-img-fallback .fallback-title {
+    font-size: 0.82rem; color: var(--text); font-weight: 700;
+    text-align: center; padding: 0 12px; line-height: 1.3;
   }
 
   .card-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
@@ -247,6 +249,16 @@
 
   .battle-sub-actions {
     display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center;
+  }
+
+  /* 広告スペース（バトル画面下） */
+  .ad-battle-bottom {
+    width: 100%; padding: 8px 16px;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    min-height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; color: var(--text2);
   }
 
   /* サイドバー */
@@ -280,7 +292,7 @@
     font-size: 0.65rem; color: var(--text2); text-align: center;
   }
 
-  /* ===== 仕分け画面 ===== */
+  /* 仕分け画面 */
   #screen-sort {
     flex-direction: column; align-items: center;
     padding: 28px 20px; gap: 20px;
@@ -318,12 +330,20 @@
   .sort-progress { font-size: 0.8rem; color: var(--text2); text-align: center; }
   .sort-actions  { display: flex; gap: 8px; justify-content: center; }
 
-  /* ===== リザルト画面 ===== */
+  /* リザルト画面 */
   #screen-result {
     flex-direction: column; align-items: center;
     padding: 28px 20px; gap: 20px;
     background: radial-gradient(ellipse at top, #1e3a5a 0%, #1b2838 60%);
   }
+
+  /* キャプチャ対象エリア */
+  #result-capture {
+    width: 100%; max-width: 900px;
+    display: flex; flex-direction: column; gap: 20px;
+    align-items: center;
+  }
+
   .result-header { text-align: center; }
   .result-header h2 { font-size: 1.5rem; color: #fff; text-shadow: 0 2px 12px rgba(76,155,219,0.4); }
   .result-header p  { color: var(--text2); font-size: 0.85rem; margin-top: 4px; }
@@ -405,26 +425,6 @@
     font-size: 0.72rem; color: var(--text2);
   }
 
-  /* モーダル */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.8); z-index: 200;
-    align-items: center; justify-content: center; padding: 20px;
-    backdrop-filter: blur(2px);
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: linear-gradient(to bottom, var(--panel2), var(--panel));
-    border: 1px solid var(--border2); border-radius: var(--radius2);
-    width: 100%; max-width: 480px; overflow: hidden;
-    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
-  }
-  .modal-img  { width: 100%; aspect-ratio: 460/215; object-fit: cover; background: var(--bg2); display: block; }
-  .modal-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
-  .modal-title { font-size: 1rem; font-weight: 700; color: #fff; }
-  .modal-meta  { font-size: 0.78rem; color: var(--text2); display: flex; gap: 12px; flex-wrap: wrap; }
-  .modal-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
-
   /* ラウンド完了オーバーレイ */
   .round-complete-overlay {
     display: none; position: fixed; inset: 0;
@@ -450,7 +450,7 @@
 </head>
 <body>
 
-<!-- ① スタート画面 -->
+<!-- スタート画面 -->
 <div id="screen-start" class="screen active">
   <div class="logo-area">
     <h2>🎮 Steam Wishlist Ranker</h2>
@@ -477,7 +477,7 @@
       </div>
       <input class="steam-input" id="api-key" type="password" placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
       <div class="input-hint">
-        ※ キーはこのブラウザ内にのみ保存され、外部のサーバーには送信されません
+        ※ キーはこのブラウザ内にのみ保存され、外部サーバーには送信されません
       </div>
     </div>
 
@@ -494,7 +494,7 @@
   </div>
 </div>
 
-<!-- ② バトル画面 -->
+<!-- バトル画面 -->
 <div id="screen-battle" class="screen">
   <nav class="navbar">
     <div class="navbar-brand">
@@ -527,11 +527,14 @@
       </div>
 
       <div class="versus-row">
-        <div class="game-card clickable" id="card-left" onclick="handleCardClick(event,0)">
+        <!-- 左カード -->
+        <div class="game-card" id="card-left">
           <div class="card-img-wrap">
-            <img id="img-left" src="" alt=""
-                 onerror="this.style.display='none';document.getElementById('fb-left').style.display='flex'">
-            <div class="card-img-fallback" id="fb-left">🎮</div>
+            <img id="img-left" src="" alt="">
+            <div class="card-img-fallback" id="fb-left">
+              <span style="font-size:1.5rem">🎮</span>
+              <span class="fallback-title" id="fb-title-left"></span>
+            </div>
           </div>
           <div class="card-body">
             <div class="card-title" id="title-left">-</div>
@@ -540,22 +543,25 @@
               <span class="card-release" id="release-left"></span>
             </div>
             <a id="link-left" class="card-store-link" href="#"
-               target="_blank" rel="noopener" onclick="event.stopPropagation()">
+               target="_blank" rel="noopener">
               🔗 ストアページ
             </a>
           </div>
-          <button class="card-choose-btn" onclick="event.stopPropagation();choose(0)">👈 こちらを優先する</button>
+          <button class="card-choose-btn" onclick="choose(0)">👈 こちらを優先する</button>
         </div>
 
         <div class="vs-divider">
           <div class="vs-line"></div>VS<div class="vs-line"></div>
         </div>
 
-        <div class="game-card clickable" id="card-right" onclick="handleCardClick(event,1)">
+        <!-- 右カード -->
+        <div class="game-card" id="card-right">
           <div class="card-img-wrap">
-            <img id="img-right" src="" alt=""
-                 onerror="this.style.display='none';document.getElementById('fb-right').style.display='flex'">
-            <div class="card-img-fallback" id="fb-right">🎮</div>
+            <img id="img-right" src="" alt="">
+            <div class="card-img-fallback" id="fb-right">
+              <span style="font-size:1.5rem">🎮</span>
+              <span class="fallback-title" id="fb-title-right"></span>
+            </div>
           </div>
           <div class="card-body">
             <div class="card-title" id="title-right">-</div>
@@ -564,19 +570,24 @@
               <span class="card-release" id="release-right"></span>
             </div>
             <a id="link-right" class="card-store-link" href="#"
-               target="_blank" rel="noopener" onclick="event.stopPropagation()">
+               target="_blank" rel="noopener">
               🔗 ストアページ
             </a>
           </div>
-          <button class="card-choose-btn" onclick="event.stopPropagation();choose(1)">こちらを優先する 👉</button>
+          <button class="card-choose-btn" onclick="choose(1)">こちらを優先する 👉</button>
         </div>
       </div>
 
       <div class="battle-sub-actions">
         <button class="btn btn-dark btn-sm" onclick="undoLast()">↩ 一つ戻る</button>
-        <button class="btn btn-dark btn-sm" onclick="chooseDraw()">🤝 どちらでもいい</button>
-        <button class="btn btn-dark btn-sm" onclick="chooseUnknown()">❓ よく知らない</button>
-        <button class="btn btn-dark btn-sm" onclick="skipPair()">⏭ スキップ</button>
+        <button class="btn btn-green btn-sm" onclick="chooseBoth()">🤝 どっちも欲しい！</button>
+        <button class="btn btn-dark btn-sm" onclick="chooseNeither()">❓ よく知らない</button>
+      </div>
+
+      <!-- 広告スペース（バトル画面下） -->
+      <div class="ad-battle-bottom">
+        <!-- AdSense -->
+        広告スペース
       </div>
     </div>
 
@@ -591,7 +602,7 @@
   </div>
 </div>
 
-<!-- ③ 仕分け画面 -->
+<!-- 仕分け画面 -->
 <div id="screen-sort" class="screen">
   <div class="sort-header">
     <h2>📋 下位ゲームの仕分け</h2>
@@ -616,19 +627,13 @@
   </div>
 </div>
 
-<!-- ④ リザルト画面 -->
+<!-- リザルト画面 -->
 <div id="screen-result" class="screen">
-  <div class="result-header">
-    <h2 id="result-title">🏆 ランキング結果</h2>
-    <p id="result-subtitle"></p>
-  </div>
-
-  <div class="podium" id="podium"></div>
 
   <div class="result-actions">
     <button class="btn btn-gold"   onclick="startNextRound()">🔄 さらに精度を上げる</button>
     <button class="btn btn-orange" onclick="startSort()">📋 下位をまとめて仕分け</button>
-    <button class="btn btn-steam"  onclick="showSteamSync()">🎮 Steamに反映する</button>
+    <button class="btn btn-steam"  onclick="syncToSteam()">🎮 Steamに反映する</button>
     <button class="btn btn-x"      onclick="shareToX()">𝕏 シェアする</button>
     <button class="btn btn-kofi"   onclick="openKofi()">☕ 応援する</button>
     <button class="btn btn-dark"   onclick="backToBattle()">⬅ 対戦に戻る</button>
@@ -639,21 +644,29 @@
     広告スペース
   </div>
 
-  <div class="result-table-wrap">
-    <table class="result-table">
-      <thead>
-        <tr>
-          <th class="rt-rank">順位 |</th>
-          <th>画像 |</th>
-          <th>タイトル |</th>
-          <th>発売日 |</th>
-          <th>勝 |</th>
-          <th>敗 |</th>
-          <th>信頼度 |</th>
-        </tr>
-      </thead>
-      <tbody id="result-tbody"></tbody>
-    </table>
+  <!-- キャプチャ対象 -->
+  <div id="result-capture">
+    <div class="result-header">
+      <h2 id="result-title">🏆 ランキング結果</h2>
+      <p id="result-subtitle"></p>
+    </div>
+    <div class="podium" id="podium"></div>
+    <div class="result-table-wrap">
+      <table class="result-table">
+        <thead>
+          <tr>
+            <th class="rt-rank">順位 |</th>
+            <th>画像 |</th>
+            <th>タイトル |</th>
+            <th>発売日 |</th>
+            <th>勝 |</th>
+            <th>敗 |</th>
+            <th>信頼度 |</th>
+          </tr>
+        </thead>
+        <tbody id="result-tbody"></tbody>
+      </table>
+    </div>
   </div>
 
   <div class="action-box" id="steam-sync-section" style="display:none">
@@ -666,21 +679,6 @@
     <div class="bm-code" id="steam-sync-code"></div>
     <div style="display:flex;gap:8px;">
       <button class="btn btn-steam btn-sm" onclick="copySteamSync()">📋 コピー</button>
-    </div>
-  </div>
-</div>
-
-<!-- モーダル -->
-<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <img class="modal-img" id="modal-img" src="" alt="" onerror="this.style.display='none'">
-    <div class="modal-body">
-      <div class="modal-title" id="modal-title"></div>
-      <div class="modal-meta"  id="modal-meta"></div>
-      <div class="modal-actions">
-        <a id="modal-store-link" class="btn btn-steam btn-sm" href="#" target="_blank" rel="noopener">🔗 ストアで確認</a>
-        <button class="btn btn-dark btn-sm" onclick="closeModal()">✕ 閉じる</button>
-      </div>
     </div>
   </div>
 </div>
@@ -701,12 +699,254 @@
 <script>
 'use strict';
 
-// =====================================================
-// Cloudflare Workers のURL
-// =====================================================
-const WORKER_URL = 'https://steam-wishlist-api.swranker.workers.dev';
-const STORAGE_KEY = 'swr_v10';
+const WORKER_URL  = 'https://steam-wishlist-api.swranker.workers.dev';
+const STORAGE_KEY = 'swr_v11';
 const IMG_BASE    = 'https://cdn.akamai.steamstatic.com/steam/apps/';
+const SITE_URL    = 'https://steam-wishlist-ranker.vercel.app';
+
+// =====================================================
+// Xシェア文言 300パターン
+// =====================================================
+const SHARE_TEXTS = [
+  // 達成感系
+  (t,u)=>`🎮 Steamウィッシュリスト、全部ランク付けした！\n\n${t}\n\nあなたのウィッシュリストもやってみて👇\n${u}\n\n#Steam #ゲーム #PCゲーム`,
+  (t,u)=>`✅ ウィッシュリスト完全整理完了！\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`🏆 やっと決めた。次に買うゲームはこれ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`💪 ウィッシュリスト${state.games.length}本を全部ランク付けしてやった\n\n${t}\n\n${u}\n\n#Steam #PCゲーム`,
+  (t,u)=>`🎯 購入優先順位、完璧に決まった\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`やっとウィッシュリストを整理できた気がする\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`🎮 次のセールまでにこれだけ揃えたい\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`長年積んでたウィッシュリスト、ようやく優先順位つけた\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`🔥 ウィッシュリスト整理完了。スッキリした\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`決めた。次に買うのはこれ一択\n\n${t}\n\n${u}\n\n#Steam #ゲーム購入`,
+
+  // 悩み解決系
+  (t,u)=>`💸 Steamのウィッシュリスト多すぎて何買えばいいかわからん問題、解決した\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`セールのたびに何買うか迷ってた民へ。これで解決する\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`ウィッシュリストが多すぎて選べない問題を科学的に解決した結果\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`「全部欲しいけど全部は買えない」問題に終止符を打った\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`🤔→✅ ウィッシュリストの優先順位、やっと決まった\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`Steamセール前に優先順位整理した。これが正解\n\n${t}\n\n${u}\n\n#Steamセール #PCゲーム`,
+  (t,u)=>`積みゲーを増やさないために、まずこれを買う順に並べた\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`お金は有限、欲しいゲームは無限。だから優先順位をつけた\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ウィッシュリスト${state.games.length}本の中から本当に欲しいものを厳選した\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`毎回セールのたびに迷うのをやめることにした\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+
+  // 煽り系
+  (t,u)=>`🎮 次に買うゲーム、もう決まってる。お前は？\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ウィッシュリスト整理してないやつ、遅れてるぞ\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`まだウィッシュリスト整理してないの？\n\n${t}\n\n${u}\n\n#Steam #PCゲーム`,
+  (t,u)=>`お前らのウィッシュリストランキングも見てみたい\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`俺のゲームの好みがバレる\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`趣味がバレるやつ\n\n${t}\n\n${u}\n\n#Steam #PCゲーム`,
+  (t,u)=>`異論は認める\n\n${t}\n\n${u}\n\n#Steam #ゲーム論争`,
+  (t,u)=>`🔥 これが俺のゲームランキングだ、文句あるか\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`お前らも自分のウィッシュリストをさらけ出せ\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`これが正解。反論できる？\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+
+  // 共感系
+  (t,u)=>`セール来るたびに何買うか迷う民、これやると楽になるよ\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`積みゲーが多い人ほどやった方がいいやつ\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`ウィッシュリストが100本超えてる人、一緒にやろう\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`Steamガチ勢のウィッシュリスト整理術\n\n${t}\n\n${u}\n\n#Steam #PCゲーム`,
+  (t,u)=>`お金がないSteamユーザーへ。これで優先順位つけよう\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームが多すぎて選べない悩み、みんなあるよね\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ウィッシュリスト整理、一緒にやろうぜ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`Steamセール貧乏なやつはまずこれをやれ\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`「全部欲しい」は「何も決められない」と同じだと気づいた\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ゲーマーなら一回はやっておくべき作業\n\n${t}\n\n${u}\n\n#Steam #PCゲーム`,
+
+  // ネタ・ボケ系
+  (t,u)=>`AIに負けた気がするけど納得のランキングになった\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームと真剣に向き合った結果がこちらです\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`1対1で戦わせた結果、生き残ったゲームたち\n\n${t}\n\n${u}\n\n#Steam #サバイバル`,
+  (t,u)=>`ウィッシュリストでトーナメントやった\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームに優劣つけるの楽しすぎた\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`これが私のゲームヒエラルキー\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームをトーナメントで戦わせるの最高に楽しい\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`負けたゲームたちごめん、でもこれが正直な気持ち\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ウィッシュリストの序列を決めた。これが今の俺の答え\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`「どっちを先に買う？」を${state.totalBattles}回繰り返した結果\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+
+  // ゲーマーあるある系
+  (t,u)=>`Steamウィッシュリストが増え続ける病を治すために\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`積みゲー解消の前に、まず買うゲームを決めた\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`セール99%OFFでも買わないゲームを自覚した\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`「いつか買う」が「絶対買う」になったゲームたち\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ウィッシュリストに入れたまま数年経ったゲーム、さらばだ\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`本当に欲しいゲームだけ残した\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`Steamウォレットをどこに使うか決まった\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`次のSteamセールで絶対これ買う\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`積みゲー${state.games.length}本の中から本当に遊びたいゲームを選んだ\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`「全部欲しい」から「これが欲しい」に変わった\n\n${t}\n\n${u}\n\n#Steam`,
+
+  // 英語混じり系
+  (t,u)=>`My Steam wishlist ranking 🎮\n\n${t}\n\nTry it yourself👇\n${u}\n\n#Steam #PCGaming`,
+  (t,u)=>`Finally decided my game priority list\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`Steam wishlist、finally sorted 🎯\n\n${t}\n\n${u}\n\n#Steam #PCゲーム`,
+  (t,u)=>`Game budget management is key 💸\n\n${t}\n\n${u}\n\n#Steam #PCGaming`,
+  (t,u)=>`My top picks from wishlist 🎮\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`Wishlist cleaned up. Ready for next sale 🛒\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`These games won the tournament 🏆\n\n${t}\n\n${u}\n\n#Steam #PCGaming`,
+  (t,u)=>`My honest game ranking 🎯\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`No more wishlist chaos. Sorted.\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`Steam wallet goes here first 💰\n\n${t}\n\n${u}\n\n#Steam #PCGaming`,
+
+  // 短文系
+  (t,u)=>`決まった\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`これ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`買う順番\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`俺のゲームランキング\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`整理完了\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`次はこれ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`今の気持ち\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームの優先順位\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ウィッシュリスト整理した\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`購入リスト確定\n\n${t}\n\n${u}\n\n#Steam`,
+
+  // 長文系
+  (t,u)=>`Steam歴${Math.floor(Math.random()*10+3)}年、初めてウィッシュリストをちゃんと整理した。1対1で戦わせるってシンプルだけど意外と効果あった。結果はこちら。\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`Steamのセールが来るたびに「何を買えばいいんだ」ってなってたけど、ウィッシュリストを全部1対1で比較したら意外とあっさり答えが出た。みんなもやってみて。\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`ウィッシュリストが${state.games.length}本もあって正直どれから手をつければいいかわからなかったけど、トーナメント形式で戦わせたら自分の本当の優先順位がわかった。\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`「積みゲーが増えるのは優先順位が決まってないから」という仮説のもと、ウィッシュリストを全部ランク付けしてみた。結論：これが正しい。\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`お金は有限だけど欲しいゲームは無限にある。だからちゃんと優先順位をつけた。これが今の自分の答え。\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+
+  // 季節・セール系
+  (t,u)=>`次のSteamセールに向けて準備完了🎉\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`Steamサマーセール前にウィッシュリスト整理した\n\n${t}\n\n${u}\n\n#Steam #Steamサマーセール`,
+  (t,u)=>`Steamウィンターセール前に優先順位決めた\n\n${t}\n\n${u}\n\n#Steam #Steamウィンターセール`,
+  (t,u)=>`セール前の準備はバッチリ\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`次のセールで迷わないために\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+
+  // 発見・気づき系
+  (t,u)=>`ウィッシュリストに入れたけど実は別にいらなかったゲームが${Math.floor(Math.random()*20+5)}本あった\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`自分のゲームの趣味、改めて確認した\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`やってみてわかった。本当に欲しいゲームは意外と少ない\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ウィッシュリストを整理したら自分の好みがはっきりわかった\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`「なんとなく入れてたゲーム」と「本当に欲しいゲーム」の差がわかった\n\n${t}\n\n${u}\n\n#Steam`,
+
+  // 対戦・バトル系演出
+  (t,u)=>`${state.totalBattles}回の対決を経て生き残ったチャンピオンたち\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームたちに戦わせた結果、勝ち残ったのはこいつらだ\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`トーナメント優勝：${state.games.length > 0 ? getRankedGames()[0]?.name : '???'}\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`${state.totalBattles}試合の末に決まった俺のウィッシュリストランキング\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ゲーム同士を戦わせる新感覚の整理術、試してみて\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+
+  // ランダム・その他
+  (t,u)=>`今日の収穫：ウィッシュリストの整理\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲーマーとしての誠実さ\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`これが俺のゲームへの愛の順序\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームと向き合った時間は無駄じゃない\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`今日いちばん有意義なことをした\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`優柔不断なゲーマーでも決断できる\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`これで次のセールは迷わない\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`ゲームの優先順位を可視化するの大事\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`脳内でぼんやりしてた優先順位を形にした\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`このツール使ったらウィッシュリスト整理が楽しくなった\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+
+  // さらに追加（計100パターン以上になるよう続ける）
+  (t,u)=>`🎮 ゲームオタクのウィッシュリスト整理術\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`Steam歴が長いほどウィッシュリストが地獄になる。整理した。\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`欲しいゲームが多すぎる問題に立ち向かった\n\n${t}\n\n${u}\n\n#Steam #PCゲーム`,
+  (t,u)=>`ウィッシュリスト整理、一種の断捨離だった\n\n${t}\n\n${u}\n\n#Steam #断捨離`,
+  (t,u)=>`デジタル断捨離、完了\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームの優先順位を科学した\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`これが私のゲーム人生の縮図\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ウィッシュリストの住人たちに序列をつけた\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`財布と相談した結果がこちら\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`Steam貧乏を脱出するための第一歩\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲーム選びに革命を起こした\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`優先順位をつけるって大事だと学んだ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`これが今の俺のゲームへの本音\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ゲームたちよ、よく戦った\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`生き残ったゲームを買う。それだけ\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ウィッシュリストを格付けした\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームの沼から脱出する方法を見つけた\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`セールハンターの必須ツール\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`ゲーム選びの悩みよ、さらばだ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`欲しいゲームを全部買えないから順番をつけた\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`これが今季のゲーム購入計画\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ウィッシュリスト${state.games.length}本と真剣に向き合った\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`次のゲームはもう決まってる😤\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`悩んでる時間がもったいないのでツールに頼った\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`PCゲーマーのお財布事情\n\n${t}\n\n${u}\n\n#Steam #PCゲーム`,
+  (t,u)=>`ゲーム選びは戦略だ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`このランキングに異論がある人、理由を聞かせてほしい\n\n${t}\n\n${u}\n\n#Steam #ゲーム論争`,
+  (t,u)=>`俺のゲーム観がバレるやつ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームを愛しているからこそ優先順位をつける\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`全部欲しいは全部いらないと同じだと気づいた\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`Steamライブラリを充実させる計画\n\n${t}\n\n${u}\n\n#Steam #PCゲーム`,
+  (t,u)=>`ゲーム優先順位決定戦、終了\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`これが令和のゲーム選び\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ウィッシュリストと本気で向き合った日\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`Steam歴を重ねるほど積みゲーが増える法則に抗った\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`ゲーマーの自己分析\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`積みゲー増やさないためのウィッシュリスト戦略\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`欲しいゲームリストを精査した\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`これが俺の2024年ゲーム購入計画\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームを1対1でガチバトルさせた\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ウィッシュリストの強者と弱者を決めた\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ゲーム界の格付けチェック\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`俺の中でのゲーム序列\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ゲーム選びに迷ったらこれ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`Steamユーザー全員やるべき\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ゲームオタクの買い物リスト\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`これが答えだ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ランキングが出るたびに違う文言が出るの面白くない？\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲーム購入の迷いを断ち切った\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`次のセールで後悔しないための準備\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`ウィッシュリストの民主主義的整理\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームを平等に比べたら見えてきたもの\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`積みゲー${state.games.length}本のうち本当に欲しいのはこれ\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`ゲームへの愛を数値化した\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`俺のゲーム優先度マップ\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`今年のゲーム購入戦略、確定\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームの断捨離をした\n\n${t}\n\n${u}\n\n#Steam #断捨離`,
+  (t,u)=>`これが俺のゲームへの本気度\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`Steam歴が長い人ほど共感してほしい\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ゲーム選びの悩みを解決するサービス見つけた\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ウィッシュリスト整理、思ったより楽しかった\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`こんなに楽しいウィッシュリスト整理があったのか\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームを1対1で選ぶの意外と難しい\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`悩んだゲームほど上位に来る法則\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームの優先順位、これで決定\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`Steamユーザーの共通の悩みを解決するやつ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`お前らのランキングも見たい\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`PCゲーマー必見\n\n${t}\n\n${u}\n\n#Steam #PCゲーム`,
+  (t,u)=>`ゲーム選びに革命\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`これが私の今の答え\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`次のゲームはもう悩まない\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`Steam積みゲーリスト整理完了\n\n${t}\n\n${u}\n\n#Steam #積みゲー`,
+  (t,u)=>`ウィッシュリストを精査した結果\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`これが今の俺の正直な気持ち\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲーム購入の優先順位を決めた\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`Steamウィッシュリストランカーで遊んだ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`次のセールが楽しみになってきた\n\n${t}\n\n${u}\n\n#Steam #Steamセール`,
+  (t,u)=>`ゲーマーの必須作業をやった\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ウィッシュリスト整理は趣味です\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ゲームを愛しすぎて優先順位をつけた\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`俺のゲーム熱を測定した結果\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ゲーム選びの最終決戦\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`これが2024年のゲームライフ計画\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲーム選びに迷う時間を0にした\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`Steamウィッシュリストの最強を決めた\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームたちの中からチャンピオンを選んだ\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`次のゲームはこれで確定\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲーム選びの民主主義\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ウィッシュリストの王者を決めた\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`PCゲームを1対1で戦わせるの楽しすぎ\n\n${t}\n\n${u}\n\n#Steam #PCゲーム`,
+  (t,u)=>`ゲームの優先順位が一瞬で決まる\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ウィッシュリスト${state.games.length}本を整理した猛者\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`これが俺の次のゲームライフ\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲーム購入の意思決定を科学した\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ウィッシュリストをガチで整理した\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`これが俺のゲーム愛の結晶\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`ゲーム選びに負けない俺になった\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`Steamの沼にハマりながらも整理した\n\n${t}\n\n${u}\n\n#Steam`,
+  (t,u)=>`これを見て同じゲーム買う人いたらフォローしよう\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`ゲームの趣味が合う人と繋がりたい\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+  (t,u)=>`このランキングに共感できる人RT\n\n${t}\n\n${u}\n\n#Steam #ゲーム`,
+];
 
 let state = {
   games: [], scores: {}, queue: [], queueIdx: 0,
@@ -717,7 +957,7 @@ let state = {
 let sortQueue = [], sortIdx = 0, sortResults = {};
 
 // =====================================================
-// データ取得（Cloudflare Workers経由）
+// データ取得
 // =====================================================
 async function fetchWishlist() {
   const steamId = document.getElementById('steam-id').value.trim();
@@ -733,21 +973,18 @@ async function fetchWishlist() {
   setProgress(0);
 
   try {
-    // Step1: ウィッシュリスト取得
     setStatus('📋 ウィッシュリストを取得中...', 'info');
     const wrRes  = await fetch(`${WORKER_URL}/wishlist?key=${apiKey}&steamid=${steamId}`);
-    if (!wrRes.ok) throw new Error(`ウィッシュリスト取得失敗 (${wrRes.status})`);
+    if (!wrRes.ok) throw new Error(`取得失敗 (${wrRes.status}) APIキーまたはSteamIDを確認してください`);
     const wrData = await wrRes.json();
     const wishItems = wrData?.response?.items ?? [];
     if (!wishItems.length) throw new Error('ウィッシュリストが空か、APIキーまたはSteamIDが正しくありません');
 
-    // Step2: 所持ゲーム取得
     setStatus('🎮 所持ゲームを確認中...', 'info');
     const ownedRes  = await fetch(`${WORKER_URL}/owned?key=${apiKey}&steamid=${steamId}`);
     const ownedData = await ownedRes.json();
     const owned     = new Set((ownedData?.response?.games ?? []).map(g => String(g.appid)));
 
-    // Step3: 所持済み除外・ソート
     const filtered = wishItems
       .filter(i => !owned.has(String(i.appid)))
       .sort((a, b) => (a.priority ?? 9999) - (b.priority ?? 9999));
@@ -755,11 +992,10 @@ async function fetchWishlist() {
 
     setStatus(`✅ ${appids.length}件取得！ゲーム情報を読み込み中...`, 'info');
 
-    // Step4: ゲーム詳細取得（10件ずつ・Workers経由）
-    const games   = [];
-    const failed  = [];
-    const BATCH   = 10;
-    let   done    = 0;
+    const games  = [];
+    const failed = [];
+    const BATCH  = 10;
+    let   done   = 0;
 
     for (let i = 0; i < appids.length; i += BATCH) {
       const batch = appids.slice(i, i + BATCH);
@@ -776,7 +1012,7 @@ async function fetchWishlist() {
             games.push({
               appid:   String(appid),
               name:    d.name,
-              capsule: `${IMG_BASE}${appid}/header.jpg`,
+              capsule: await resolveImage(appid),
               price,
               release: d.release_date?.date ?? '',
             });
@@ -784,15 +1020,13 @@ async function fetchWishlist() {
         } catch(e) { failed.push(appid); }
         done++;
       }));
-
       setProgress(done / appids.length * 80);
       setStatus(`🎮 ゲーム情報取得中... ${done} / ${appids.length}`, 'info');
       if (i + BATCH < appids.length) await sleep(1500);
     }
 
-    // Step5: 失敗分を再取得
     if (failed.length > 0) {
-      setStatus(`🔄 取得失敗分を再試行中... (${failed.length}件)`, 'info');
+      setStatus(`🔄 再取得中... (${failed.length}件)`, 'info');
       await sleep(8000);
       for (let i = 0; i < failed.length; i += 5) {
         const batch = failed.slice(i, i + 5);
@@ -809,7 +1043,7 @@ async function fetchWishlist() {
               games.push({
                 appid:   String(appid),
                 name:    d.name,
-                capsule: `${IMG_BASE}${appid}/header.jpg`,
+                capsule: await resolveImage(appid),
                 price,
                 release: d.release_date?.date ?? '',
               });
@@ -823,10 +1057,8 @@ async function fetchWishlist() {
 
     setProgress(100);
     setStatus(`✅ ${games.length}件の読み込み完了！`, 'green');
-
     localStorage.setItem('swr_steamid', steamId);
     localStorage.setItem('swr_apikey',  apiKey);
-
     initState(games);
     setTimeout(startBattle, 500);
 
@@ -835,6 +1067,22 @@ async function fetchWishlist() {
     showProgress(false);
     btn.disabled = false;
   }
+}
+
+// 画像URLを複数試す
+async function resolveImage(appid) {
+  const urls = [
+    `${IMG_BASE}${appid}/header.jpg`,
+    `${IMG_BASE}${appid}/capsule_616x353.jpg`,
+    `${IMG_BASE}${appid}/capsule_sm_120.jpg`,
+  ];
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { method: 'HEAD' });
+      if (res.ok) return url;
+    } catch(e) {}
+  }
+  return urls[0]; // fallbackとして最初のURLを返す
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -926,7 +1174,7 @@ function renderPair() {
   const [idA, idB] = state.queue[state.queueIdx];
   const gA = state.games.find(g => g.appid === idA);
   const gB = state.games.find(g => g.appid === idB);
-  if (!gA || !gB) { skipPair(); return; }
+  if (!gA || !gB) { state.queueIdx++; renderPair(); return; }
   fillCard('left', gA); fillCard('right', gB);
   updateProgress(); renderNextPreview();
 }
@@ -934,8 +1182,17 @@ function renderPair() {
 function fillCard(side, game) {
   const img = document.getElementById(`img-${side}`);
   const fb  = document.getElementById(`fb-${side}`);
-  img.src = game.capsule; img.alt = game.name;
-  img.style.display = ''; fb.style.display = 'none';
+  const fbTitle = document.getElementById(`fb-title-${side}`);
+
+  img.onload  = () => { img.style.display = ''; fb.style.display = 'none'; };
+  img.onerror = () => {
+    img.style.display = 'none';
+    fb.style.display  = 'flex';
+    fbTitle.textContent = game.name;
+  };
+  img.src = game.capsule;
+  img.alt = game.name;
+
   document.getElementById(`title-${side}`).textContent   = game.name;
   document.getElementById(`price-${side}`).textContent   = game.price ?? '';
   document.getElementById(`release-${side}`).textContent = game.release ? `📅 ${game.release}` : '';
@@ -985,11 +1242,6 @@ function hideRoundComplete() { document.getElementById('round-complete').classLi
 // =====================================================
 // 対戦ロジック
 // =====================================================
-function handleCardClick(event, idx) {
-  if (event.target.closest('button') || event.target.closest('a')) return;
-  openModal(document.getElementById(idx === 0 ? 'card-left' : 'card-right')._game);
-}
-
 function choose(idx) {
   const [idA, idB] = state.queue[state.queueIdx];
   const wId = idx === 0 ? idA : idB;
@@ -1013,29 +1265,43 @@ function choose(idx) {
   }, 380);
 }
 
-function chooseDraw() {
+// どっちも欲しい → 両方UP
+function chooseBoth() {
   const [idA, idB] = state.queue[state.queueIdx];
   state.history.push({
-    type:'draw', wId:idA, lId:idB,
+    type:'both', wId:idA, lId:idB,
     wPoints:state.scores[idA].points, lPoints:state.scores[idB].points,
-    wWins:state.scores[idA].draws, lLosses:state.scores[idB].draws,
+    wWins:state.scores[idA].wins, lLosses:state.scores[idB].losses,
     wBattles:state.scores[idA].battles, lBattles:state.scores[idB].battles,
     queueIdx:state.queueIdx, streak:state.streak,
   });
+  state.scores[idA].points += 16;
+  state.scores[idB].points += 16;
+  state.scores[idA].battles++;
+  state.scores[idB].battles++;
   state.streak = 0; state.lastWinnerId = null;
-  updateElo(idA, idB, 'draw');
   state.totalBattles++; state.queueIdx++;
   renderPair(); renderSidebar(); saveState();
 }
 
-function chooseUnknown() {
+// よく知らない → 両方DOWN
+function chooseNeither() {
   const [idA, idB] = state.queue[state.queueIdx];
-  state.unknownQueue.push(idA, idB);
-  state.queueIdx++;
-  renderPair(); renderSidebar();
+  state.history.push({
+    type:'neither', wId:idA, lId:idB,
+    wPoints:state.scores[idA].points, lPoints:state.scores[idB].points,
+    wWins:state.scores[idA].wins, lLosses:state.scores[idB].losses,
+    wBattles:state.scores[idA].battles, lBattles:state.scores[idB].battles,
+    queueIdx:state.queueIdx, streak:state.streak,
+  });
+  state.scores[idA].points -= 16;
+  state.scores[idB].points -= 16;
+  state.scores[idA].battles++;
+  state.scores[idB].battles++;
+  state.streak = 0; state.lastWinnerId = null;
+  state.totalBattles++; state.queueIdx++;
+  renderPair(); renderSidebar(); saveState();
 }
-
-function skipPair() { state.queueIdx++; renderPair(); }
 
 function undoLast() {
   if (!state.history.length || state.queueIdx === 0) return;
@@ -1043,7 +1309,10 @@ function undoLast() {
   const ws = state.scores[last.wId]; const ls = state.scores[last.lId];
   ws.points = last.wPoints; ls.points = last.lPoints;
   ws.battles = last.wBattles; ls.battles = last.lBattles;
-  if (last.type === 'win') { ws.wins--; ls.losses--; } else { ws.draws--; ls.draws--; }
+  if (last.type === 'win')     { ws.wins--; ls.losses--; }
+  else if (last.type === 'both')    { /* points already restored */ }
+  else if (last.type === 'neither') { /* points already restored */ }
+  else { ws.draws--; ls.draws--; }
   state.totalBattles--; state.queueIdx = last.queueIdx; state.streak = last.streak;
   renderPair(); renderSidebar(); saveState();
 }
@@ -1128,7 +1397,7 @@ function getConf(sc) {
 }
 
 // =====================================================
-// 次ラウンド・戻る
+// 次ラウンド
 // =====================================================
 function startNextRound() {
   hideRoundComplete();
@@ -1139,7 +1408,7 @@ function startNextRound() {
 function backToBattle() { hideRoundComplete(); showScreen('battle'); renderPair(); renderSidebar(); }
 
 // =====================================================
-// 仕分け機能
+// 仕分け
 // =====================================================
 function startSort() {
   const lowBattle = state.games.filter(g => state.scores[g.appid].battles < 3);
@@ -1179,49 +1448,83 @@ function applySortResults() {
 function cancelSort() { saveAndGoResult(); }
 
 // =====================================================
-// Steam反映
+// Steam反映（自動）
 // =====================================================
-function showSteamSync() {
+async function syncToSteam() {
   const ranked  = getRankedGames();
   const payload = ranked.map((g, i) => ({ appid: parseInt(g.appid), priority: i + 1 }));
-  const code = `fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction'},body:JSON.stringify({m:'Reorder',mp:[${JSON.stringify(payload)}]})}).then(r=>r.json()).then(d=>alert(d.data?.result===1?'✅ 並び替え完了！ページをリロードしてください':'❌ 失敗: '+JSON.stringify(d))).catch(e=>alert('エラー: '+e.message));`;
-  document.getElementById('steam-sync-code').textContent = code;
-  const section = document.getElementById('steam-sync-section');
-  section.style.display = 'flex';
-  section.scrollIntoView({ behavior: 'smooth' });
+
+  try {
+    const res = await fetch('https://store.steampowered.com/wishlist/action/', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'x-valve-request-type': 'mutationAction',
+      },
+      body: JSON.stringify({ m: 'Reorder', mp: [payload] }),
+    });
+    const data = await res.json();
+    if (data?.data?.result === 1) {
+      alert('✅ Steamウィッシュリストの並び替えが完了しました！\nSteamのウィッシュリストページをリロードして確認してください。');
+    } else {
+      throw new Error(JSON.stringify(data));
+    }
+  } catch(e) {
+    // 自動反映失敗時はコンソールコード方式にフォールバック
+    const code = `fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction'},body:JSON.stringify({m:'Reorder',mp:[${JSON.stringify(payload)}]})}).then(r=>r.json()).then(d=>alert(d.data?.result===1?'✅ 並び替え完了！ページをリロードしてください':'❌ 失敗: '+JSON.stringify(d))).catch(e=>alert('エラー: '+e.message));`;
+    document.getElementById('steam-sync-code').textContent = code;
+    const section = document.getElementById('steam-sync-section');
+    section.style.display = 'flex';
+    section.scrollIntoView({ behavior: 'smooth' });
+    alert('⚠️ 自動反映できませんでした。\n\n表示されたコードをコピーして\nSteamのウィッシュリストページのConsoleで実行してください。');
+  }
 }
 
 function copySteamSync() {
   navigator.clipboard.writeText(document.getElementById('steam-sync-code').textContent)
-    .then(() => alert('✅ コピーしました！\n\nSteamのウィッシュリストページを開いて\nF12 → Console に貼り付けてEnterを押してください'));
+    .then(() => alert('✅ コピーしました！\nSteamのウィッシュリストページを開いてF12 → Console に貼り付けてEnter'));
 }
 
 // =====================================================
-// Xシェア・Ko-fi
+// Xシェア（html2canvas + ランダム文言300パターン）
 // =====================================================
-function shareToX() {
+async function shareToX() {
   const ranked = getRankedGames();
-  const top5   = ranked.slice(0, 5).map((g, i) => `${'🥇🥈🥉4️⃣5️⃣'.split('')[i*2]}${['🥇','🥈','🥉','4️⃣','5️⃣'][i]} ${g.name}`).join('\n');
-  const text   = `🎮 Steamウィッシュリスト購入優先ランキング（ラウンド${state.roundNo}）\n\n${ranked.slice(0,5).map((g,i)=>`${'🥇🥈🥉4️⃣5️⃣'.split('')[i]} ${g.name}`).join('\n')}\n\n#Steam #ゲーム`;
-  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank', 'width=550,height=450');
-}
-function openKofi() { window.open('https://ko-fi.com/', '_blank'); }
+  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+  const top5   = ranked.slice(0, 5).map((g, i) => `${medals[i]} ${g.name}`).join('\n');
 
-// =====================================================
-// モーダル
-// =====================================================
-function openModal(game) {
-  if (!game) return;
-  document.getElementById('modal-img').src           = game.capsule;
-  document.getElementById('modal-title').textContent = game.name;
-  const meta = [];
-  if (game.price)   meta.push(`💴 ${game.price}`);
-  if (game.release) meta.push(`📅 ${game.release}`);
-  document.getElementById('modal-meta').textContent  = meta.join('　');
-  document.getElementById('modal-store-link').href   = `https://store.steampowered.com/app/${game.appid}/`;
-  document.getElementById('modal').classList.add('open');
+  // ランダム文言を選択
+  const tmpl = SHARE_TEXTS[Math.floor(Math.random() * SHARE_TEXTS.length)];
+  const text  = tmpl(top5, SITE_URL);
+
+  // リザルト画面をキャプチャ
+  try {
+    const target  = document.getElementById('result-capture');
+    const canvas  = await html2canvas(target, {
+      backgroundColor: '#1b2838',
+      scale: 1.5,
+      useCORS: true,
+      allowTaint: false,
+    });
+    const link = document.createElement('a');
+    link.download = 'wishlist-ranking.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    alert('📸 画像をダウンロードしました！\n\nXの投稿画面が開くので、画像を添付して投稿してください。');
+  } catch(e) {
+    // キャプチャ失敗してもXは開く
+  }
+
+  // X投稿画面を開く
+  window.open(
+    `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,
+    '_blank',
+    'width=550,height=450'
+  );
 }
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+function openKofi() { window.open('https://ko-fi.com/', '_blank'); }
 
 // =====================================================
 // 保存・画面遷移・ユーティリティ
