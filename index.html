@@ -4,7 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Steam Wishlist Ranker</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<meta name="description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。積みゲー整理や購入順の迷いに。">
+<link rel="canonical" href="https://steam-wishlist-ranker.vercel.app">
+<meta property="og:type"        content="website">
+<meta property="og:site_name"   content="Steam Wishlist Ranker">
+<meta property="og:title"       content="Steam Wishlist Ranker - ウィッシュリストを1対1でランク付け">
+<meta property="og:description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。">
+<meta property="og:url"         content="https://steam-wishlist-ranker.vercel.app">
+<meta name="twitter:card"        content="summary">
+<meta name="twitter:title"       content="Steam Wishlist Ranker">
+<meta name="twitter:description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。">
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864" crossorigin="anonymous"></script>
+<!-- html2canvas -->
+<script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -30,6 +43,7 @@
   .screen { display:none; }
   .screen.active { display:flex; flex-direction:column; min-height:100vh; }
 
+  /* ナビ */
   .navbar { background:linear-gradient(to bottom,#1b2838,#152231); border-bottom:1px solid #000; padding:0 16px; display:flex; align-items:center; height:52px; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,.4); }
   .navbar-brand { display:flex; align-items:center; gap:10px; padding-right:16px; border-right:1px solid var(--border); margin-right:16px; }
   .navbar-brand .steam-icon { width:26px; height:26px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:900; color:var(--bg); }
@@ -37,6 +51,7 @@
   .navbar-info { font-size:.78rem; color:var(--text2); margin-left:auto; }
   .navbar-actions { display:flex; gap:8px; margin-left:16px; }
 
+  /* ボタン */
   .btn { padding:8px 16px; border:none; border-radius:var(--radius); cursor:pointer; font-size:.85rem; font-weight:600; font-family:inherit; transition:filter .15s,transform .1s; white-space:nowrap; }
   .btn:hover  { filter:brightness(1.15); transform:translateY(-1px); }
   .btn:active { transform:translateY(0); filter:brightness(.95); }
@@ -50,6 +65,7 @@
   .btn-sm { padding:5px 12px; font-size:.78rem; }
   .btn:disabled { opacity:.4; cursor:not-allowed; transform:none; filter:none; }
 
+  /* スタート画面 */
   #screen-start { align-items:center; justify-content:center; padding:40px 20px; gap:24px; background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%); }
   .logo-area { text-align:center; }
   .logo-area h2 { font-size:2rem; color:#fff; margin-bottom:8px; text-shadow:0 2px 12px rgba(76,155,219,.5); }
@@ -69,7 +85,11 @@
   .progress-mini-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:2px; transition:width .3s; width:0%; }
   #load-status { font-size:.85rem; min-height:1.4em; line-height:1.6; }
   .start-actions { display:flex; gap:8px; flex-wrap:wrap; }
+  .footer-links { font-size:.75rem; color:var(--text2); text-align:center; }
+  .footer-links a { color:var(--text2); text-decoration:none; }
+  .footer-links a:hover { color:var(--accent2); }
 
+  /* バトル画面 */
   #screen-battle { flex-direction:column; }
   .progress-bar-wrap { background:linear-gradient(to bottom,#1e2d3d,#192638); border-bottom:1px solid #000; padding:8px 20px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
   .round-badge { background:rgba(76,155,219,.15); border:1px solid var(--accent); border-radius:3px; padding:3px 10px; font-size:.72rem; color:var(--accent2); font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
@@ -112,6 +132,7 @@
   .battle-sub-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:center; }
   .ad-battle-bottom { width:100%; padding:8px 16px; background:var(--panel); border-top:1px solid var(--border); min-height:60px; display:flex; align-items:center; justify-content:center; font-size:.7rem; color:var(--text2); }
 
+  /* サイドバー */
   .ranking-sidebar { width:210px; background:var(--panel); border-left:1px solid #000; display:flex; flex-direction:column; overflow:hidden; }
   .sidebar-header { padding:8px 12px; border-bottom:1px solid var(--border); font-size:.72rem; color:var(--accent2); font-weight:700; text-transform:uppercase; letter-spacing:.08em; flex-shrink:0; background:var(--panel2); }
   .ranking-list { flex:1; overflow-y:auto; padding:4px 0; }
@@ -126,6 +147,7 @@
   .rank-score { font-size:.65rem; color:var(--text2); flex-shrink:0; }
   .ad-space { padding:8px 10px; border-top:1px solid var(--border); min-height:120px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:rgba(0,0,0,.1); font-size:.65rem; color:var(--text2); text-align:center; }
 
+  /* 仕分け画面 */
   #screen-sort { flex-direction:column; align-items:center; padding:28px 20px; gap:20px; background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%); }
   .sort-header { text-align:center; }
   .sort-header h2 { font-size:1.4rem; color:#fff; }
@@ -146,6 +168,7 @@
   .sort-progress { font-size:.8rem; color:var(--text2); text-align:center; }
   .sort-actions  { display:flex; gap:8px; justify-content:center; }
 
+  /* リザルト画面 */
   #screen-result { flex-direction:column; align-items:center; padding:28px 20px; gap:20px; background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%); }
   #result-capture { width:100%; max-width:900px; display:flex; flex-direction:column; gap:20px; align-items:center; background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%); padding:20px 0; }
   .result-header { text-align:center; }
@@ -186,12 +209,9 @@
   .conf-mid  { background:rgba(246,201,14,.15); color:#c8a800; border:1px solid rgba(246,201,14,.3); }
   .conf-low  { background:rgba(201,64,64,.15);  color:#c94040; border:1px solid rgba(201,64,64,.3); }
 
-  .action-box { width:100%; max-width:900px; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius2); padding:16px 20px; display:flex; flex-direction:column; gap:10px; }
-  .action-box h3 { color:var(--accent2); font-size:.85rem; text-transform:uppercase; letter-spacing:.06em; }
-  .action-box p  { color:var(--text2); font-size:.8rem; line-height:1.7; }
-  .bm-code { background:rgba(0,0,0,.3); border:1px solid var(--border); border-radius:var(--radius); padding:8px 12px; font-size:.68rem; color:var(--accent2); word-break:break-all; line-height:1.5; max-height:60px; overflow:hidden; font-family:monospace; }
   .ad-space-result { width:100%; max-width:900px; min-height:90px; background:rgba(0,0,0,.2); border:1px dashed var(--border); border-radius:var(--radius2); display:flex; align-items:center; justify-content:center; font-size:.72rem; color:var(--text2); }
 
+  /* ラウンド完了 */
   .round-complete-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:150; align-items:center; justify-content:center; flex-direction:column; gap:20px; backdrop-filter:blur(4px); }
   .round-complete-overlay.show { display:flex; }
   .round-complete-content { text-align:center; }
@@ -233,7 +253,10 @@
         （ドメイン名: <strong>localhost</strong>）
       </div>
       <input class="steam-input" id="api-key" type="password" placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
-      <div class="input-hint">※ キーはこのブラウザ内にのみ保存され、外部サーバーには送信されません</div>
+      <div class="input-hint">
+        ※ キーはこのブラウザ内にのみ保存されます。ウィッシュリスト取得時のみ、Steam APIへの中継サーバー（Cloudflare Workers）を経由して送信されます。
+        <a href="privacy.html" target="_blank" rel="noopener" style="color:var(--accent2)">プライバシーポリシー</a>
+      </div>
     </div>
     <div id="load-progress" class="progress-mini">
       <div class="progress-mini-fill" id="load-progress-fill"></div>
@@ -244,6 +267,9 @@
       <button class="btn btn-dark"  onclick="loadSaved()">💾 前回の続きから</button>
       <button class="btn btn-dark"  onclick="loadDemo()">🎲 デモで試す</button>
     </div>
+  </div>
+  <div class="footer-links">
+    <a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>
   </div>
 </div>
 
@@ -318,12 +344,12 @@
         <button class="btn btn-green btn-sm" onclick="chooseBoth()">🤝 どっちも欲しい！</button>
         <button class="btn btn-dark  btn-sm" onclick="chooseNeither()">❓ よく知らない</button>
       </div>
-      <div class="ad-battle-bottom"><!-- AdSense -->広告スペース</div>
+      <div class="ad-battle-bottom"><!-- AdSense --></div>
     </div>
     <div class="ranking-sidebar">
       <div class="sidebar-header">現在のランキング</div>
       <div class="ranking-list" id="sidebar-ranking"></div>
-      <div class="ad-space"><!-- AdSense -->広告スペース</div>
+      <div class="ad-space"><!-- AdSense --></div>
     </div>
   </div>
 </div>
@@ -364,7 +390,7 @@
     <button class="btn btn-kofi"   onclick="openKofi()">☕ 応援する</button>
     <button class="btn btn-dark"   onclick="backToBattle()">⬅ 対戦に戻る</button>
   </div>
-  <div class="ad-space-result"><!-- AdSense -->広告スペース</div>
+  <div class="ad-space-result"><!-- AdSense --></div>
   <div id="result-capture">
     <div class="result-header">
       <h2 id="result-title">🏆 ランキング結果</h2>
@@ -407,25 +433,19 @@
 'use strict';
 
 const WORKER_URL  = 'https://steam-wishlist-api.swranker.workers.dev';
-const STORAGE_KEY = 'swr_v13';
+const STORAGE_KEY = 'swr_v14';
 const IMG_BASE    = 'https://cdn.akamai.steamstatic.com/steam/apps/';
 const SITE_URL    = 'https://steam-wishlist-ranker.vercel.app';
+const KOFI_URL    = 'https://ko-fi.com/'; // TODO: 正しいURLに差し替え
 const TAG         = '#SteamWishlistRanker';
 
 // =====================================================
 // シェア文言 400パターン（精度別各100）
 // =====================================================
-
-// 共通フォーマット関数
-// t=top5テキスト, u=URL, n=件数, b=対戦数, tag=ハッシュタグ
-const mkLow  = (intro, outro='') => (t,u,n,b) =>
-  `${intro}\n\n${t}\n\n${n}件のウィッシュリスト、まだランク付け中！\n\n${u}\n\n${TAG}${outro}`;
-const mkMid  = (intro, outro='') => (t,u,n,b) =>
-  `${intro}\n\n${t}\n\n${n}件・${b}回の対決で出した中間結果\n\n${u}\n\n${TAG}${outro}`;
-const mkHigh = (intro, outro='') => (t,u,n,b) =>
-  `${intro}\n\n${t}\n\n${n}件・${b}回の対決でかなり固まってきた\n\n${u}\n\n${TAG}${outro}`;
-const mkPfct = (intro, outro='') => (t,u,n,b) =>
-  `${intro}\n\n${t}\n\n${n}件・${b}回の対決で決定した完全版ランキング\n\n${u}\n\n${TAG}${outro}`;
+const mkLow  = (intro, outro='') => (t,u,n,b) => `${intro}\n\n${t}\n\n${n}件のウィッシュリスト、まだランク付け中！\n\n${u}\n\n${TAG}${outro}`;
+const mkMid  = (intro, outro='') => (t,u,n,b) => `${intro}\n\n${t}\n\n${n}件・${b}回の対決で出した中間結果\n\n${u}\n\n${TAG}${outro}`;
+const mkHigh = (intro, outro='') => (t,u,n,b) => `${intro}\n\n${t}\n\n${n}件・${b}回の対決でかなり固まってきた\n\n${u}\n\n${TAG}${outro}`;
+const mkPfct = (intro, outro='') => (t,u,n,b) => `${intro}\n\n${t}\n\n${n}件・${b}回の対決で決定した完全版ランキング\n\n${u}\n\n${TAG}${outro}`;
 
 const SHARE_LOW = [
   mkLow('🎮 とりあえず今の段階のウィッシュリストランキング'),
@@ -832,6 +852,9 @@ const SHARE_PFCT = [
   mkPfct('🏆 完全版完成！これが答えだ', ' #Steam #ゲーム'),
 ];
 
+// =====================================================
+// 状態
+// =====================================================
 let state = {
   games:[], scores:{}, queue:[], queueIdx:0,
   roundNo:1, totalBattles:0, history:[],
@@ -854,14 +877,14 @@ async function fetchWishlist() {
 
   try {
     setStatus('📋 ウィッシュリストを取得中...','info');
-    const wrRes = await fetch(`${WORKER_URL}/wishlist?key=${apiKey}&steamid=${steamId}`);
+    const wrRes = await fetch(`${WORKER_URL}/wishlist?key=${encodeURIComponent(apiKey)}&steamid=${encodeURIComponent(steamId)}`);
     if (!wrRes.ok) throw new Error(`取得失敗 (${wrRes.status})`);
     const wrData    = await wrRes.json();
     const wishItems = wrData?.response?.items ?? [];
     if (!wishItems.length) throw new Error('ウィッシュリストが空か、APIキーまたはSteamIDが正しくありません');
 
     setStatus('🎮 所持ゲームを確認中...','info');
-    const ownedRes  = await fetch(`${WORKER_URL}/owned?key=${apiKey}&steamid=${steamId}`);
+    const ownedRes  = await fetch(`${WORKER_URL}/owned?key=${encodeURIComponent(apiKey)}&steamid=${encodeURIComponent(steamId)}`);
     const ownedData = await ownedRes.json();
     const owned     = new Set((ownedData?.response?.games??[]).map(g=>String(g.appid)));
 
@@ -876,7 +899,7 @@ async function fetchWishlist() {
       const batch=appids.slice(i,i+BATCH);
       await Promise.allSettled(batch.map(async appid=>{
         try {
-          const res=await fetch(`${WORKER_URL}/appdetails?appid=${appid}`);
+          const res=await fetch(`${WORKER_URL}/appdetails?appid=${encodeURIComponent(appid)}`);
           const data=await res.json();
           const info=data?.[appid];
           if (info?.success&&info.data?.name) {
@@ -884,7 +907,13 @@ async function fetchWishlist() {
             let price='無料';
             if (!d.is_free&&d.price_overview) price=d.price_overview.final_formatted;
             else if (!d.is_free) price='価格不明';
-            games.push({appid:String(appid),name:d.name,capsule:d.header_image||`${IMG_BASE}${appid}/header.jpg`,price,release:d.release_date?.date??''});
+            games.push({
+              appid:   String(appid),
+              name:    d.name,
+              capsule: d.header_image || `${IMG_BASE}${appid}/header.jpg`,
+              price,
+              release: d.release_date?.date ?? '',
+            });
           } else { failed.push(appid); }
         } catch(e) { failed.push(appid); }
         done++;
@@ -901,7 +930,7 @@ async function fetchWishlist() {
         const batch=failed.slice(i,i+5);
         await Promise.allSettled(batch.map(async appid=>{
           try {
-            const res=await fetch(`${WORKER_URL}/appdetails?appid=${appid}`);
+            const res=await fetch(`${WORKER_URL}/appdetails?appid=${encodeURIComponent(appid)}`);
             const data=await res.json();
             const info=data?.[appid];
             if (info?.success&&info.data?.name) {
@@ -909,7 +938,13 @@ async function fetchWishlist() {
               let price='無料';
               if (!d.is_free&&d.price_overview) price=d.price_overview.final_formatted;
               else if (!d.is_free) price='価格不明';
-              games.push({appid:String(appid),name:d.name,capsule:d.header_image||`${IMG_BASE}${appid}/header.jpg`,price,release:d.release_date?.date??''});
+              games.push({
+                appid:   String(appid),
+                name:    d.name,
+                capsule: d.header_image || `${IMG_BASE}${appid}/header.jpg`,
+                price,
+                release: d.release_date?.date ?? '',
+              });
             }
           } catch(e) {}
         }));
@@ -920,10 +955,10 @@ async function fetchWishlist() {
 
     setProgress(100);
     setStatus(`✅ ${games.length}件の読み込み完了！`,'green');
-    localStorage.setItem('swr_steamid',steamId);
-    localStorage.setItem('swr_apikey',apiKey);
+    localStorage.setItem('swr_steamid', steamId);
+    localStorage.setItem('swr_apikey',  apiKey);
     initState(games);
-    setTimeout(startBattle,500);
+    setTimeout(startBattle, 500);
 
   } catch(e) {
     setStatus('❌ '+e.message,'red');
@@ -951,7 +986,7 @@ function loadDemo() {
     {appid:'230410', name:'Warframe',                 price:'無料',  release:'2013年3月25日'},
     {appid:'1517290',name:'Battlefield 2042',         price:'¥8,778',release:'2021年11月19日'},
     {appid:'271590', name:'Grand Theft Auto V',       price:'¥3,090',release:'2015年4月14日'},
-  ].map(g=>({...g,capsule:`${IMG_BASE}${g.appid}/header.jpg`}));
+  ].map(g=>({...g, capsule:`${IMG_BASE}${g.appid}/header.jpg`}));
   initState(demos);
   setStatus(`✅ デモデータ ${demos.length}件`,'green');
   setTimeout(startBattle,400);
@@ -964,393 +999,4 @@ function loadSaved() {
     state=JSON.parse(saved);
     const sid=localStorage.getItem('swr_steamid');
     const key=localStorage.getItem('swr_apikey');
-    if (sid) document.getElementById('steam-id').value=sid;
-    if (key) document.getElementById('api-key').value=key;
-    setStatus(`✅ ${state.games.length}件・ラウンド${state.roundNo}から再開`,'green');
-    setTimeout(startBattle,400);
-  } catch(e) { setStatus('❌ 保存データの読み込みに失敗しました','red'); }
-}
-
-// =====================================================
-// UI
-// =====================================================
-function setStatus(msg,type='info') {
-  const el=document.getElementById('load-status');
-  el.textContent=msg;
-  el.style.color=type==='red'?'var(--red)':type==='green'?'var(--green)':'var(--text2)';
-}
-function showProgress(show) { document.getElementById('load-progress').classList.toggle('show',show); }
-function setProgress(pct)   { document.getElementById('load-progress-fill').style.width=pct+'%'; }
-
-// =====================================================
-// 状態・キュー
-// =====================================================
-function initState(games) {
-  state={games,scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],streak:0,lastWinnerId:null};
-  games.forEach(g=>{ state.scores[g.appid]={wins:0,losses:0,draws:0,points:1500,battles:0,sorted:false}; });
-  state.queue=buildQueue();
-}
-
-function buildQueue() {
-  const ordered=state.roundNo===1
-    ?[...state.games].sort(()=>Math.random()-.5)
-    :getRankedGames();
-  const q=[];
-  for (let i=0;i+1<ordered.length;i+=2) q.push([ordered[i].appid,ordered[i+1].appid]);
-  if (state.unknownQueue.length>=2) {
-    const uq=[...state.unknownQueue].sort(()=>Math.random()-.5);
-    state.unknownQueue=[];
-    for (let i=0;i+1<uq.length;i+=2) q.push([uq[i],uq[i+1]]);
-  }
-  return q;
-}
-
-function getRankedGames() {
-  return [...state.games].sort((a,b)=>state.scores[b.appid].points-state.scores[a.appid].points);
-}
-
-// =====================================================
-// バトル画面
-// =====================================================
-function startBattle() { saveState(); showScreen('battle'); renderPair(); renderSidebar(); }
-
-function renderPair() {
-  if (state.queueIdx>=state.queue.length) { showRoundComplete(); return; }
-  const [idA,idB]=state.queue[state.queueIdx];
-  const gA=state.games.find(g=>g.appid===idA);
-  const gB=state.games.find(g=>g.appid===idB);
-  if (!gA||!gB) { state.queueIdx++; renderPair(); return; }
-  fillCard('left',gA); fillCard('right',gB);
-  updateProgress(); renderNextPreview();
-}
-
-function fillCard(side,game) {
-  const img=document.getElementById(`img-${side}`);
-  const fb=document.getElementById(`fb-${side}`);
-  const fbTitle=document.getElementById(`fb-title-${side}`);
-  img.style.display='none'; fb.style.display='none';
-  const tmp=new Image();
-  tmp.onload=()=>{ img.src=tmp.src; img.style.display=''; fb.style.display='none'; };
-  tmp.onerror=()=>{ img.style.display='none'; fb.style.display='flex'; fbTitle.textContent=game.name; };
-  tmp.src=game.capsule;
-  document.getElementById(`title-${side}`).textContent   = game.name;
-  document.getElementById(`price-${side}`).textContent   = game.price??'';
-  document.getElementById(`release-${side}`).textContent = game.release?`📅 ${game.release}`:'';
-  document.getElementById(`link-${side}`).href=`https://store.steampowered.com/app/${game.appid}/`;
-  document.getElementById(`card-${side}`)._game=game;
-}
-
-function renderNextPreview() {
-  const nextIdx=state.queueIdx+1;
-  if (nextIdx>=state.queue.length) { document.getElementById('next-preview').style.display='none'; return; }
-  const [idA]=state.queue[nextIdx];
-  const g=state.games.find(g=>g.appid===idA);
-  if (!g) { document.getElementById('next-preview').style.display='none'; return; }
-  document.getElementById('next-preview').style.display='flex';
-  document.getElementById('next-thumb').src=g.capsule;
-  document.getElementById('next-title').textContent=g.name;
-}
-
-function updateProgress() {
-  const total=state.queue.length,done=state.queueIdx;
-  const pct=total?Math.round(done/total*100):0;
-  document.getElementById('progress-label').textContent=`${done} / ${total} 対戦`;
-  document.getElementById('progress-fill').style.width=pct+'%';
-  document.getElementById('round-badge').textContent=`Round ${state.roundNo}`;
-  document.getElementById('accuracy-label').textContent=`精度: ${accuracyLabel()}`;
-  document.getElementById('header-info').textContent=`${state.games.length}件 | 総対戦数 ${state.totalBattles}回`;
-  const badge=document.getElementById('streak-badge');
-  if (state.streak>=3) { badge.textContent=`🔥 ${state.streak}連勝中`; badge.classList.add('show'); }
-  else badge.classList.remove('show');
-}
-
-function accuracyLabel() {
-  const r=state.roundNo;
-  if (r<=1) return '低（初回）'; if (r<=2) return '中';
-  if (r<=3) return '高'; return '非常に高い';
-}
-
-function accuracyLevel() {
-  const r=state.roundNo;
-  if (r<=1) return 'low'; if (r<=2) return 'mid';
-  if (r<=3) return 'high'; return 'perfect';
-}
-
-function showRoundComplete() {
-  saveState();
-  document.getElementById('round-complete-title').textContent=`🏆 Round ${state.roundNo} 完了！`;
-  document.getElementById('round-complete-sub').textContent=`総対戦数: ${state.totalBattles}回 | ${state.games.length}件`;
-  document.getElementById('round-complete').classList.add('show');
-}
-function hideRoundComplete() { document.getElementById('round-complete').classList.remove('show'); }
-
-// =====================================================
-// 対戦ロジック
-// =====================================================
-function choose(idx) {
-  const [idA,idB]=state.queue[state.queueIdx];
-  const wId=idx===0?idA:idB,lId=idx===0?idB:idA;
-  const wCard=document.getElementById(idx===0?'card-left':'card-right');
-  state.history.push({type:'win',wId,lId,wPoints:state.scores[wId].points,lPoints:state.scores[lId].points,wWins:state.scores[wId].wins,lLosses:state.scores[lId].losses,wBattles:state.scores[wId].battles,lBattles:state.scores[lId].battles,queueIdx:state.queueIdx,streak:state.streak});
-  state.streak=(state.lastWinnerId===wId)?state.streak+1:1;
-  state.lastWinnerId=wId;
-  wCard.classList.add('winner');
-  updateElo(wId,lId,'win');
-  state.totalBattles++; state.queueIdx++;
-  setTimeout(()=>{ wCard.classList.remove('winner'); renderPair(); renderSidebar(); saveState(); },380);
-}
-
-function chooseBoth() {
-  const [idA,idB]=state.queue[state.queueIdx];
-  state.history.push({type:'both',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
-  state.scores[idA].points+=16; state.scores[idA].battles++;
-  state.scores[idB].points+=16; state.scores[idB].battles++;
-  state.streak=0; state.lastWinnerId=null;
-  state.totalBattles++; state.queueIdx++;
-  renderPair(); renderSidebar(); saveState();
-}
-
-function chooseNeither() {
-  const [idA,idB]=state.queue[state.queueIdx];
-  state.history.push({type:'neither',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
-  state.scores[idA].points-=16; state.scores[idA].battles++;
-  state.scores[idB].points-=16; state.scores[idB].battles++;
-  state.streak=0; state.lastWinnerId=null;
-  state.totalBattles++; state.queueIdx++;
-  renderPair(); renderSidebar(); saveState();
-}
-
-function undoLast() {
-  if (!state.history.length||state.queueIdx===0) return;
-  const last=state.history.pop();
-  const ws=state.scores[last.wId],ls=state.scores[last.lId];
-  ws.points=last.wPoints; ls.points=last.lPoints;
-  ws.battles=last.wBattles; ls.battles=last.lBattles;
-  if (last.type==='win') { ws.wins--; ls.losses--; }
-  state.totalBattles--; state.queueIdx=last.queueIdx; state.streak=last.streak;
-  renderPair(); renderSidebar(); saveState();
-}
-
-function updateElo(wId,lId,result) {
-  const K=32,ws=state.scores[wId],ls=state.scores[lId];
-  if (!ws||!ls) return;
-  const expW=1/(1+Math.pow(10,(ls.points-ws.points)/400));
-  if (result==='win') { ws.points+=K*(1-expW); ws.wins++; ls.points+=K*(0-(1-expW)); ls.losses++; }
-  else { ws.points+=K*(.5-expW); ws.draws++; ls.points+=K*(.5-(1-expW)); ls.draws++; }
-  ws.battles++; ls.battles++;
-}
-
-// =====================================================
-// サイドバー
-// =====================================================
-function renderSidebar() {
-  document.getElementById('sidebar-ranking').innerHTML=
-    getRankedGames().slice(0,30).map((g,i)=>`
-      <div class="rank-item">
-        <span class="rank-no ${i<3?'top3':''}">${i+1}</span>
-        <img class="rank-thumb" src="${g.capsule}" alt="" onerror="this.style.opacity=0.2">
-        <span class="rank-name">${esc(g.name)}</span>
-        <span class="rank-score">${Math.round(state.scores[g.appid].points)}</span>
-      </div>
-    `).join('');
-}
-
-// =====================================================
-// リザルト
-// =====================================================
-function saveAndGoResult() {
-  hideRoundComplete(); saveState(); showScreen('result');
-  const ranked=getRankedGames();
-  document.getElementById('result-title').textContent    =`🏆 ランキング結果（ラウンド ${state.roundNo} 完了）`;
-  document.getElementById('result-subtitle').textContent =`総対戦数: ${state.totalBattles}回 | 精度: ${accuracyLabel()} | ${state.games.length}件`;
-  renderPodium(ranked); renderResultTable(ranked);
-}
-
-function renderPodium(ranked) {
-  const medals=['🥇','🥈','🥉'];
-  document.getElementById('podium').innerHTML=ranked.slice(0,3).map((g,i)=>`
-    <div class="podium-item p${i+1}">
-      <img class="podium-img" src="${g.capsule}" alt="" onerror="this.style.opacity=0.3">
-      <div class="podium-body"><div class="podium-rank">${medals[i]}</div><div class="podium-name">${esc(g.name)}</div></div>
-      <div class="podium-base"></div>
-    </div>
-  `).join('');
-}
-
-function renderResultTable(ranked) {
-  document.getElementById('result-tbody').innerHTML=ranked.map((g,i)=>{
-    const sc=state.scores[g.appid],conf=getConf(sc);
-    const rank=i===0?'<span class="medal">🥇</span>':i===1?'<span class="medal">🥈</span>':i===2?'<span class="medal">🥉</span>':i+1;
-    return `
-      <tr>
-        <td class="rt-rank">${rank}</td>
-        <td><img class="rt-thumb" src="${g.capsule}" alt="" onerror="this.style.opacity=0.2"></td>
-        <td class="rt-title">
-          <a href="https://store.steampowered.com/app/${g.appid}/" target="_blank" rel="noopener">${esc(g.name)}</a>
-          <div class="rt-sub">${g.price??''}</div>
-        </td>
-        <td style="font-size:.72rem;color:var(--text2);white-space:nowrap">${g.release??''}</td>
-        <td class="rt-wins">${sc.wins}</td>
-        <td class="rt-losses">${sc.losses}</td>
-        <td><span class="rt-conf ${conf.cls}">${conf.label}</span></td>
-      </tr>`;
-  }).join('');
-}
-
-function getConf(sc) {
-  if (sc.battles>=6) return {cls:'conf-high',label:'高'};
-  if (sc.battles>=3) return {cls:'conf-mid', label:'中'};
-  return                   {cls:'conf-low', label:'低（対戦少）'};
-}
-
-// =====================================================
-// 次ラウンド
-// =====================================================
-function startNextRound() {
-  hideRoundComplete();
-  state.roundNo++; state.queue=buildQueue(); state.queueIdx=0;
-  state.history=[]; state.streak=0; state.lastWinnerId=null;
-  startBattle();
-}
-function backToBattle() { hideRoundComplete(); showScreen('battle'); renderPair(); renderSidebar(); }
-
-// =====================================================
-// 仕分け（途中保存対応）
-// =====================================================
-function startSort() {
-  const low=state.games.filter(g=>state.scores[g.appid].battles<3&&!state.scores[g.appid].sorted);
-  if (!low.length) { alert('仕分けが必要なゲームはありません！'); return; }
-  sortQueue=low.sort(()=>Math.random()-.5); sortIdx=0; sortResults={};
-  document.getElementById('sort-subtitle').textContent=`対戦数が少ない ${sortQueue.length}件 をまとめて仕分けします`;
-  showScreen('sort'); renderSortCard();
-}
-
-function renderSortCard() {
-  if (sortIdx>=sortQueue.length) { applySortResults(); return; }
-  const g=sortQueue[sortIdx];
-  const img=document.getElementById('sort-img');
-  img.src=g.capsule; img.alt=g.name; img.style.opacity='1';
-  document.getElementById('sort-title').textContent=g.name;
-  const meta=[]; if(g.price)meta.push(g.price); if(g.release)meta.push(`📅 ${g.release}`);
-  document.getElementById('sort-meta').textContent=meta.join('　');
-  document.getElementById('sort-progress').textContent=`${sortIdx+1} / ${sortQueue.length}`;
-}
-
-function sortGame(cat) {
-  if (sortIdx>=sortQueue.length) return;
-  sortResults[sortQueue[sortIdx].appid]=cat;
-  sortIdx++; renderSortCard();
-}
-
-function applySortResults() {
-  const pts={must:1800,want:1600,sale:1400,skip:1200};
-  for (const [appid,cat] of Object.entries(sortResults)) {
-    if (state.scores[appid]) {
-      state.scores[appid].points=pts[cat];
-      state.scores[appid].sorted=true;
-    }
-  }
-  saveState();
-  alert(`✅ ${Object.keys(sortResults).length}件の仕分けが完了しました！`);
-  saveAndGoResult();
-}
-
-function saveAndContinueLater() {
-  const pts={must:1800,want:1600,sale:1400,skip:1200};
-  for (const [appid,cat] of Object.entries(sortResults)) {
-    if (state.scores[appid]) {
-      state.scores[appid].points=pts[cat];
-      state.scores[appid].sorted=true;
-    }
-  }
-  saveState();
-  alert(`💾 ${Object.keys(sortResults).length}件を保存しました。\n続きは「下位をまとめて仕分け」から再開できます。`);
-  saveAndGoResult();
-}
-
-function cancelSort() { saveAndGoResult(); }
-
-// =====================================================
-// Steam反映（コンソールコード生成）
-// =====================================================
-async function syncToSteam() {
-  const ranked  = getRankedGames();
-  const payload = ranked.map((g,i)=>({appid:parseInt(g.appid),priority:i+1}));
-  const code    = `fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction'},body:JSON.stringify({m:'Reorder',mp:[${JSON.stringify(payload)}]})}).then(r=>r.json()).then(d=>alert(d.data?.result===1?'✅ 並び替え完了！ページをリロードしてください':'❌ 失敗: '+JSON.stringify(d))).catch(e=>alert('エラー: '+e.message));`;
-
-  // クリップボードにコピー
-  await navigator.clipboard.writeText(code);
-
-  // 自分のウィッシュリストページを開く
-  const steamId = localStorage.getItem('swr_steamid');
-  const wishUrl = steamId
-    ? `https://store.steampowered.com/wishlist/profiles/${steamId}/`
-    : 'https://store.steampowered.com/';
-  window.open(wishUrl,'_blank');
-
-  alert('✅ コードをクリップボードにコピーしました！\n\n開いたSteamページで\nF12 → Console → Ctrl+V → Enter\nで並び替えが完了します。');
-}
-
-// =====================================================
-// Xシェア（精度別400パターン + クリップボードコピー）
-// =====================================================
-async function shareToX() {
-  const ranked = getRankedGames();
-  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
-  const top5   = ranked.slice(0,5).map((g,i)=>`${medals[i]} ${g.name}`).join('\n');
-  const n      = state.games.length;
-  const b      = state.totalBattles;
-
-  // 精度レベルに応じてパターンを選択
-  const level = accuracyLevel();
-  const pool  = level==='low'?SHARE_LOW:level==='mid'?SHARE_MID:level==='high'?SHARE_HIGH:SHARE_PFCT;
-  const tmpl  = pool[Math.floor(Math.random()*pool.length)];
-  const text  = tmpl(top5, SITE_URL, n, b);
-
-  // キャプチャしてクリップボードに保存
-  try {
-    const target=document.getElementById('result-capture');
-    const canvas=await html2canvas(target,{backgroundColor:'#1b2838',scale:1.5,useCORS:true,allowTaint:false});
-    await new Promise((resolve,reject)=>{
-      canvas.toBlob(async blob=>{
-        try { await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]); resolve(); }
-        catch(e) { reject(e); }
-      },'image/png');
-    });
-    alert('📸 画像をクリップボードにコピーしました！\n\nXの投稿画面が開くので、Ctrl+V で画像を貼り付けて投稿してください。');
-  } catch(e) {
-    try {
-      const target=document.getElementById('result-capture');
-      const canvas=await html2canvas(target,{backgroundColor:'#1b2838',scale:1.5});
-      const a=document.createElement('a');
-      a.download='wishlist-ranking.png'; a.href=canvas.toDataURL('image/png'); a.click();
-      alert('📸 画像をダウンロードしました。\nXの投稿画面で画像を添付して投稿してください。');
-    } catch(e2) {}
-  }
-
-  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,'_blank','width=550,height=450');
-}
-
-function openKofi() { window.open('https://ko-fi.com/','_blank'); }
-
-// =====================================================
-// 保存・画面遷移・ユーティリティ
-// =====================================================
-function saveState() { localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); }
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(`screen-${name}`).classList.add('active');
-  window.scrollTo(0,0);
-}
-function backToStart() { saveState(); showScreen('start'); }
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-window.addEventListener('DOMContentLoaded',()=>{
-  const sid=localStorage.getItem('swr_steamid');
-  const key=localStorage.getItem('swr_apikey');
-  if (sid) document.getElementById('steam-id').value=sid;
-  if (key) document.getElementById('api-key').value=key;
-});
-</script>
-</body>
-</html>
+    if (sid)
