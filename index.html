@@ -941,8 +941,11 @@ function applyLang() {
   setText('txt-rc-result', l.rcResult);
   setText('txt-rc-next', l.rcNext);
   setText('txt-rc-back', l.rcBack);
-  var storeLinks = ['txt-store-l','txt-store-r'];
-  storeLinks.forEach(function(id){ setText(id, l.storeLink); });
+var storeLinks = ['link-left','link-right'];
+storeLinks.forEach(function(id){ 
+  var el=document.getElementById(id);
+  if(el) el.textContent=l.storeLink;
+});
   setText('txt-choose-l', l.chooseL);
   setText('txt-choose-r', l.chooseR);
   // html lang属性
@@ -1148,7 +1151,6 @@ function fillCard(side,game){
   document.getElementById('price-'+side).textContent=game.price||'';
   document.getElementById('release-'+side).textContent=game.release?'📅 '+game.release:'';
   document.getElementById('link-'+side).href='https://store.steampowered.com/app/'+game.appid+'/';
-  document.getElementById('txt-store-'+side.charAt(0)).textContent=t('storeLink');
   document.getElementById('card-'+side)._game=game;
 }
 
