@@ -836,11 +836,16 @@ function syncToSteam(){
   var ranked=getRankedGames();
   var payload=ranked.map(function(g,i){return {appid:parseInt(g.appid),priority:i+1};});
   var code="fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction'},body:JSON.stringify({m:'Reorder',mp:["+JSON.stringify(payload)+"]})}).then(function(r){return r.json();}).then(function(d){alert(d.data&&d.data.result===1?'✅ 並び替え完了！ページをリロードしてください':'❌ 失敗: '+JSON.stringify(d));}).catch(function(e){alert('エラー: '+e.message);});";
+
+  // 先にコピー
   navigator.clipboard.writeText(code).then(function(){
+    alert('✅ コードをクリップボードにコピーしました！\n\nOKを押すとSteamのウィッシュリストページが開きます。\nF12 → Console → Ctrl+V → Enter で並び替え完了です。');
+    // アラートを閉じてからページを開く
     var steamId=localStorage.getItem('swr_steamid');
     var wishUrl=steamId?'https://store.steampowered.com/wishlist/profiles/'+steamId+'/':'https://store.steampowered.com/';
     window.open(wishUrl,'_blank');
-    alert('✅ コードをクリップボードにコピーしました！\n\n開いたSteamページで\nF12 → Console → Ctrl+V → Enter\nで並び替えが完了します。');
+  }).catch(function(){
+    alert('❌ クリップボードへのコピーに失敗しました。');
   });
 }
 
@@ -854,13 +859,13 @@ function shareToX(){
   var tmpl=pool[Math.floor(Math.random()*pool.length)];
   var text=tmpl(top5,SITE_URL,n,b);
 
-  // 先にX投稿画面を開く（ポップアップブロック対策）
-  var xWin=window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text),'_blank','width=550,height=450');
-
-  // その後キャプチャ
   (async function(){
+    // ステータス表示
+    var btn=document.querySelector('.btn-x');
+    var orig=btn?btn.textContent:'';
+    if(btn){btn.textContent='⏳ 画像生成中...';btn.disabled=true;}
+
     try{
-      alert('📸 画像を生成中です。少々お待ちください...');
       var target=document.getElementById('result-capture');
       var canvas=await html2canvas(target,{backgroundColor:'#1b2838',scale:1.5,useCORS:true,allowTaint:false});
       await new Promise(function(resolve,reject){
@@ -871,10 +876,15 @@ function shareToX(){
           }catch(e){reject(e);}
         },'image/png');
       });
-      alert('✅ 画像をクリップボードにコピーしました！\nXの投稿画面で Ctrl+V で貼り付けてください。');
+      if(btn){btn.textContent=orig;btn.disabled=false;}
+      alert('✅ 画像をクリップボードにコピーしました！\nXの投稿画面が開きます。Ctrl+V で貼り付けて投稿してください。');
     }catch(e){
+      if(btn){btn.textContent=orig;btn.disabled=false;}
       alert('⚠️ 画像のコピーに失敗しました。\nスクリーンショットを手動で撮って添付してください。');
     }
+
+    // クリップボード処理後にX投稿画面を開く
+    window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text),'_blank','width=550,height=450');
   })();
 }
 
