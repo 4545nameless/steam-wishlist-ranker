@@ -354,6 +354,9 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
 
 <div id="screen-result" class="screen">
   <div class="result-actions">
+    <p style="font-size:.72rem;color:var(--text2);text-align:center;">
+  ※ ポップアップを許可するとXの投稿画面が開きます
+</p>
     <button class="btn btn-gold" onclick="startNextRound()">🔄 さらに精度を上げる</button>
     <button class="btn btn-orange" onclick="startSort()">📋 下位をまとめて仕分け</button>
     <button class="btn btn-steam" onclick="syncToSteam()">🎮 Steamに反映する</button>
@@ -877,7 +880,7 @@ function shareToX(){
         },'image/png');
       });
       if(btn){btn.textContent=orig;btn.disabled=false;}
-      alert('✅ 画像をクリップボードにコピーしました！\nXの投稿画面が開きます。Ctrl+V で貼り付けて投稿してください。');
+      alert('✅ 画像をクリップボードにコピーしました！\n\nXの投稿画面が開かない場合は\nアドレスバー右側のポップアップブロックを許可してください。\n\nその後 Ctrl+V で画像を貼り付けて投稿してください。');
     }catch(e){
       if(btn){btn.textContent=orig;btn.disabled=false;}
       alert('⚠️ 画像のコピーに失敗しました。\nスクリーンショットを手動で撮って添付してください。');
