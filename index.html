@@ -6,6 +6,7 @@
 <title>Steam Wishlist Ranker</title>
 <meta name="description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。積みゲー整理や購入順の迷いに。">
 <link rel="canonical" href="https://steam-wishlist-ranker.vercel.app">
+<meta name="google-site-verification" content="93eb8b39280edeaa">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steam Wishlist Ranker">
 <meta property="og:title" content="Steam Wishlist Ranker - ウィッシュリストを1対1でランク付け">
@@ -14,7 +15,6 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Steam Wishlist Ranker">
 <meta name="twitter:description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。">
-<meta name="google-site-verification" content="93eb8b39280edeaa">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
@@ -52,7 +52,11 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
 .btn-sm{padding:5px 12px;font-size:.78rem}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none}
 
-#screen-start{align-items:center;justify-content:center;padding:40px 20px;gap:24px;background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%)}
+/* 言語切替 */
+.lang-select{background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius);padding:6px 10px;font-size:.85rem;cursor:pointer;position:absolute;top:16px;right:16px;z-index:10}
+.lang-select:focus{outline:none;border-color:var(--accent2)}
+
+#screen-start{align-items:center;justify-content:center;padding:40px 20px;gap:24px;background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%);position:relative}
 .logo-area{text-align:center}
 .logo-area h2{font-size:2rem;color:#fff;margin-bottom:8px;text-shadow:0 2px 12px rgba(76,155,219,.5)}
 .logo-area p{color:var(--text2);font-size:.92rem}
@@ -205,36 +209,47 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
   .vs-divider{height:20px;width:auto;flex-direction:row}
   .vs-line{width:auto;height:1px;flex:1;background:linear-gradient(to right,transparent,var(--border2),transparent)}
   .start-card{padding:18px 16px}
+  .lang-select{top:8px;right:8px}
 }
 </style>
 </head>
 <body>
 
 <div id="screen-start" class="screen active">
+  <!-- 言語切替 -->
+  <select class="lang-select" id="lang-select" onchange="changeLang(this.value)">
+    <option value="ja">🇯🇵 日本語</option>
+    <option value="en">🇺🇸 English</option>
+    <option value="zh">🇨🇳 简体中文</option>
+    <option value="ru">🇷🇺 Русский</option>
+    <option value="pt">🇧🇷 Português</option>
+    <option value="de">🇩🇪 Deutsch</option>
+  </select>
+
   <div class="logo-area">
     <h2>🎮 Steam Wishlist Ranker</h2>
-    <p>ウィッシュリストのゲームを1対1で比較して、購入優先ランキングを作ろう</p>
+    <p id="txt-subtitle">ウィッシュリストのゲームを1対1で比較して、購入優先ランキングを作ろう</p>
   </div>
   <div class="start-card">
-    <h3>Steam情報を入力</h3>
+    <h3 id="txt-card-title">Steam情報を入力</h3>
     <div class="input-group">
-      <div class="input-label">SteamID64</div>
+      <div class="input-label" id="txt-label-id">SteamID64</div>
       <input class="steam-input" id="steam-id" type="text" placeholder="76561198XXXXXXXXX">
-      <div class="input-hint">
+      <div class="input-hint" id="txt-hint-id">
         ウィッシュリストのURLの数字部分をコピー<br>
         <span style="font-family:monospace;color:var(--text2)">store.steampowered.com/wishlist/profiles/</span><span class="hl">XXXXXXXXXXXXXXXX</span><span style="font-family:monospace;color:var(--text2)">/</span>
       </div>
     </div>
     <div class="input-group">
       <div class="input-label">
-        Steam Web API キー ―
-        <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener">こちらで無料取得</a>
-        （ドメイン名: <strong>localhost</strong>）
+        <span id="txt-label-key">Steam Web API キー</span> ―
+        <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener" id="txt-key-link">こちらで無料取得</a>
+        （<span id="txt-domain">ドメイン名</span>: <strong>localhost</strong>）
       </div>
       <input class="steam-input" id="api-key" type="password" placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
       <div class="input-hint">
-        ※ キーはこのブラウザ内にのみ保存されます。ウィッシュリスト取得時のみ、Steam APIへの中継サーバー（Cloudflare Workers）を経由して送信されます。
-        <a href="privacy.html" target="_blank" rel="noopener" style="color:var(--accent2)">プライバシーポリシー</a>
+        <span id="txt-hint-key">※ キーはこのブラウザ内にのみ保存されます。ウィッシュリスト取得時のみ、Steam APIへの中継サーバー（Cloudflare Workers）を経由して送信されます。</span>
+        <a href="privacy.html" target="_blank" rel="noopener" style="color:var(--accent2)" id="txt-privacy">プライバシーポリシー</a>
       </div>
     </div>
     <div id="load-progress" class="progress-mini">
@@ -242,13 +257,13 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
     </div>
     <div id="load-status" style="color:var(--text2)"></div>
     <div class="start-actions">
-      <button class="btn btn-steam" id="btn-fetch" onclick="fetchWishlist()">🚀 取得してスタート</button>
-      <button class="btn btn-dark" onclick="loadSaved()">💾 前回の続きから</button>
-      <button class="btn btn-dark" onclick="loadDemo()">🎲 デモで試す</button>
+      <button class="btn btn-steam" id="btn-fetch" onclick="fetchWishlist()" id="txt-btn-fetch">🚀 取得してスタート</button>
+      <button class="btn btn-dark" onclick="loadSaved()" id="txt-btn-saved">💾 前回の続きから</button>
+      <button class="btn btn-dark" onclick="loadDemo()" id="txt-btn-demo">🎲 デモで試す</button>
     </div>
   </div>
   <div class="footer-links">
-    <a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>
+    <a href="privacy.html" target="_blank" rel="noopener" id="txt-footer-privacy">プライバシーポリシー</a>
   </div>
 </div>
 
@@ -257,16 +272,16 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
     <div class="navbar-brand"><div class="si">S</div><span>Wishlist Ranker</span></div>
     <div class="navbar-info" id="header-info"></div>
     <div class="navbar-actions">
-      <button class="btn btn-dark btn-sm" onclick="saveAndGoResult()">📊 結果を見る</button>
-      <button class="btn btn-dark btn-sm" onclick="backToStart()">⬅ 戻る</button>
+      <button class="btn btn-dark btn-sm" onclick="saveAndGoResult()" id="txt-btn-result">📊 結果を見る</button>
+      <button class="btn btn-dark btn-sm" onclick="backToStart()" id="txt-btn-back">⬅ 戻る</button>
     </div>
   </nav>
   <div class="progress-bar-wrap">
     <span class="round-badge" id="round-badge">Round 1</span>
     <span class="progress-label" id="progress-label">0 / 0</span>
     <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-    <span class="accuracy-badge" id="accuracy-label">精度: 低（初回）</span>
-    <span class="streak-badge" id="streak-badge">🔥 連勝中</span>
+    <span class="accuracy-badge" id="accuracy-label"></span>
+    <span class="streak-badge" id="streak-badge"></span>
   </div>
   <div class="battle-main">
     <div class="battle-center">
@@ -277,50 +292,38 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
         <div class="game-card" id="card-left">
           <div class="card-img-wrap">
             <img id="img-left" src="" alt="">
-            <div class="card-img-fallback" id="fb-left">
-              <span style="font-size:1.5rem">🎮</span>
-              <span class="fallback-title" id="fb-title-left"></span>
-            </div>
+            <div class="card-img-fallback" id="fb-left"><span style="font-size:1.5rem">🎮</span><span class="fallback-title" id="fb-title-left"></span></div>
           </div>
           <div class="card-body">
             <div class="card-title" id="title-left">-</div>
-            <div class="card-meta">
-              <span class="card-price" id="price-left"></span>
-              <span class="card-release" id="release-left"></span>
-            </div>
-            <a id="link-left" class="card-store-link" href="#" target="_blank" rel="noopener">🔗 ストアページ</a>
+            <div class="card-meta"><span class="card-price" id="price-left"></span><span class="card-release" id="release-left"></span></div>
+            <a id="link-left" class="card-store-link" href="#" target="_blank" rel="noopener" id="txt-store-l">🔗 ストアページ</a>
           </div>
-          <button class="card-choose-btn" onclick="choose(0)">👈 こちらを優先する</button>
+          <button class="card-choose-btn" onclick="choose(0)" id="txt-choose-l">👈 こちらを優先する</button>
         </div>
         <div class="vs-divider"><div class="vs-line"></div>VS<div class="vs-line"></div></div>
         <div class="game-card" id="card-right">
           <div class="card-img-wrap">
             <img id="img-right" src="" alt="">
-            <div class="card-img-fallback" id="fb-right">
-              <span style="font-size:1.5rem">🎮</span>
-              <span class="fallback-title" id="fb-title-right"></span>
-            </div>
+            <div class="card-img-fallback" id="fb-right"><span style="font-size:1.5rem">🎮</span><span class="fallback-title" id="fb-title-right"></span></div>
           </div>
           <div class="card-body">
             <div class="card-title" id="title-right">-</div>
-            <div class="card-meta">
-              <span class="card-price" id="price-right"></span>
-              <span class="card-release" id="release-right"></span>
-            </div>
-            <a id="link-right" class="card-store-link" href="#" target="_blank" rel="noopener">🔗 ストアページ</a>
+            <div class="card-meta"><span class="card-price" id="price-right"></span><span class="card-release" id="release-right"></span></div>
+            <a id="link-right" class="card-store-link" href="#" target="_blank" rel="noopener" id="txt-store-r">🔗 ストアページ</a>
           </div>
-          <button class="card-choose-btn" onclick="choose(1)">こちらを優先する 👉</button>
+          <button class="card-choose-btn" onclick="choose(1)" id="txt-choose-r">こちらを優先する 👉</button>
         </div>
       </div>
       <div class="battle-sub-actions">
-        <button class="btn btn-dark btn-sm" onclick="undoLast()">↩ 一つ戻る</button>
-        <button class="btn btn-green btn-sm" onclick="chooseBoth()">🤝 どっちも欲しい！</button>
-        <button class="btn btn-dark btn-sm" onclick="chooseNeither()">❓ よく知らない</button>
+        <button class="btn btn-dark btn-sm" onclick="undoLast()" id="txt-btn-undo">↩ 一つ戻る</button>
+        <button class="btn btn-green btn-sm" onclick="chooseBoth()" id="txt-btn-both">🤝 どっちも欲しい！</button>
+        <button class="btn btn-dark btn-sm" onclick="chooseNeither()" id="txt-btn-neither">❓ よく知らない</button>
       </div>
       <div class="ad-battle-bottom"><!-- AdSense --></div>
     </div>
     <div class="ranking-sidebar">
-      <div class="sidebar-header">現在のランキング</div>
+      <div class="sidebar-header" id="txt-sidebar-header">現在のランキング</div>
       <div class="ranking-list" id="sidebar-ranking"></div>
       <div class="ad-space"><!-- AdSense --></div>
     </div>
@@ -329,7 +332,7 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
 
 <div id="screen-sort" class="screen">
   <div class="sort-header">
-    <h2>📋 下位ゲームの仕分け</h2>
+    <h2 id="txt-sort-title">📋 下位ゲームの仕分け</h2>
     <p id="sort-subtitle"></p>
   </div>
   <div class="sort-card">
@@ -340,28 +343,28 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
     </div>
   </div>
   <div class="sort-buttons">
-    <button class="sort-btn sort-btn-a" onclick="sortGame('must')">🎯 絶対買う<span class="sort-label">上位に配置</span></button>
-    <button class="sort-btn sort-btn-b" onclick="sortGame('want')">👍 いつか買いたい<span class="sort-label">中位に配置</span></button>
-    <button class="sort-btn sort-btn-c" onclick="sortGame('sale')">💰 セールなら<span class="sort-label">下位に配置</span></button>
-    <button class="sort-btn sort-btn-d" onclick="sortGame('skip')">❌ いらない<span class="sort-label">最下位に配置</span></button>
+    <button class="sort-btn sort-btn-a" onclick="sortGame('must')" id="txt-sort-must">🎯 絶対買う<span class="sort-label" id="txt-sort-must-sub">上位に配置</span></button>
+    <button class="sort-btn sort-btn-b" onclick="sortGame('want')" id="txt-sort-want">👍 いつか買いたい<span class="sort-label" id="txt-sort-want-sub">中位に配置</span></button>
+    <button class="sort-btn sort-btn-c" onclick="sortGame('sale')" id="txt-sort-sale">💰 セールなら<span class="sort-label" id="txt-sort-sale-sub">下位に配置</span></button>
+    <button class="sort-btn sort-btn-d" onclick="sortGame('skip')" id="txt-sort-skip">❌ いらない<span class="sort-label" id="txt-sort-skip-sub">最下位に配置</span></button>
   </div>
   <div class="sort-progress" id="sort-progress">0 / 0</div>
   <div class="sort-actions">
-    <button class="btn btn-steam btn-sm" onclick="saveAndContinueLater()">💾 今日はここまで</button>
-    <button class="btn btn-dark btn-sm" onclick="cancelSort()">キャンセル</button>
+    <button class="btn btn-steam btn-sm" onclick="saveAndContinueLater()" id="txt-btn-later">💾 今日はここまで</button>
+    <button class="btn btn-dark btn-sm" onclick="cancelSort()" id="txt-btn-cancel">キャンセル</button>
   </div>
 </div>
 
 <div id="screen-result" class="screen">
   <div class="result-actions">
-    <button class="btn btn-gold" onclick="startNextRound()">🔄 さらに精度を上げる</button>
-    <button class="btn btn-orange" onclick="startSort()">📋 下位をまとめて仕分け</button>
-    <button class="btn btn-steam" onclick="syncToSteam()">🎮 Steamに反映する</button>
-    <button class="btn btn-x" onclick="shareToX()">𝕏 シェアする</button>
-    <button class="btn btn-kofi" onclick="openKofi()">☕ 応援する</button>
-    <button class="btn btn-dark" onclick="backToBattle()">⬅ 対戦に戻る</button>
+    <button class="btn btn-gold" onclick="startNextRound()" id="txt-btn-nextround">🔄 さらに精度を上げる</button>
+    <button class="btn btn-orange" onclick="startSort()" id="txt-btn-sort">📋 下位をまとめて仕分け</button>
+    <button class="btn btn-steam" onclick="syncToSteam()" id="txt-btn-sync">🎮 Steamに反映する</button>
+    <button class="btn btn-x" onclick="shareToX()" id="txt-btn-share">𝕏 シェアする</button>
+    <button class="btn btn-kofi" onclick="openKofi()" id="txt-btn-kofi">☕ 応援する</button>
+    <button class="btn btn-dark" onclick="backToBattle()" id="txt-btn-tobattle">⬅ 対戦に戻る</button>
   </div>
- <p style="font-size:.72rem;color:var(--text2);text-align:center;">※ ポップアップを許可するとXの投稿画面が開きます</p>
+  <p style="font-size:.72rem;color:var(--text2);text-align:center;width:100%;" id="txt-popup-note">※ シェアする際はポップアップの許可が必要です</p>
   <div class="ad-space-result"><!-- AdSense --></div>
   <div id="result-capture">
     <div class="result-header">
@@ -373,13 +376,13 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
       <table class="result-table">
         <thead>
           <tr>
-            <th class="rt-rank">順位 |</th>
-            <th>画像 |</th>
-            <th>タイトル |</th>
-            <th>発売日 |</th>
-            <th>勝 |</th>
-            <th>敗 |</th>
-            <th>信頼度 |</th>
+            <th class="rt-rank" id="txt-th-rank">順位 |</th>
+            <th id="txt-th-img">画像 |</th>
+            <th id="txt-th-title">タイトル |</th>
+            <th id="txt-th-release">発売日 |</th>
+            <th id="txt-th-win">勝 |</th>
+            <th id="txt-th-lose">敗 |</th>
+            <th id="txt-th-conf">信頼度 |</th>
           </tr>
         </thead>
         <tbody id="result-tbody"></tbody>
@@ -394,26 +397,563 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
     <p id="round-complete-sub"></p>
   </div>
   <div class="round-complete-actions">
-    <button class="btn btn-gold" onclick="hideRoundComplete();saveAndGoResult()">📊 結果を見る</button>
-    <button class="btn btn-steam" onclick="hideRoundComplete();startNextRound()">🔄 次のラウンドへ</button>
-    <button class="btn btn-dark" onclick="hideRoundComplete();backToBattle()">⬅ 対戦に戻る</button>
+    <button class="btn btn-gold" onclick="hideRoundComplete();saveAndGoResult()" id="txt-rc-result">📊 結果を見る</button>
+    <button class="btn btn-steam" onclick="hideRoundComplete();startNextRound()" id="txt-rc-next">🔄 次のラウンドへ</button>
+    <button class="btn btn-dark" onclick="hideRoundComplete();backToBattle()" id="txt-rc-back">⬅ 対戦に戻る</button>
   </div>
 </div>
 
 <script>
 'use strict';
 
-const WORKER_URL  = 'https://steam-wishlist-api.swranker.workers.dev';
-const STORAGE_KEY = 'swr_v14';
-const IMG_BASE    = 'https://cdn.akamai.steamstatic.com/steam/apps/';
-const SITE_URL    = 'https://steam-wishlist-ranker.vercel.app';
-const KOFI_URL    = 'https://ko-fi.com/4545nameless';
-const TAG         = '#SteamWishlistRanker';
+var WORKER_URL  = 'https://steam-wishlist-api.swranker.workers.dev';
+var STORAGE_KEY = 'swr_v14';
+var IMG_BASE    = 'https://cdn.akamai.steamstatic.com/steam/apps/';
+var SITE_URL    = 'https://steam-wishlist-ranker.vercel.app';
+var KOFI_URL    = 'https://ko-fi.com/4545nameless';
+var TAG         = '#SteamWishlistRanker';
 
-const mkLow  = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+'件のウィッシュリスト、まだランク付け中！\n\n'+u+'\n\n'+TAG+b; }; };
-const mkMid  = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+'件・'+v+'回の対決で出した中間結果\n\n'+u+'\n\n'+TAG+b; }; };
-const mkHigh = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+'件・'+v+'回の対決でかなり固まってきた\n\n'+u+'\n\n'+TAG+b; }; };
-const mkPfct = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+'件・'+v+'回の対決で決定した完全版ランキング\n\n'+u+'\n\n'+TAG+b; }; };
+// ========== 多言語対応 ==========
+var LANGS = {
+  ja: {
+    subtitle: 'ウィッシュリストのゲームを1対1で比較して、購入優先ランキングを作ろう',
+    cardTitle: 'Steam情報を入力',
+    labelId: 'SteamID64',
+    hintId: 'ウィッシュリストのURLの数字部分をコピー',
+    labelKey: 'Steam Web API キー',
+    keyLink: 'こちらで無料取得',
+    domain: 'ドメイン名',
+    hintKey: '※ キーはこのブラウザ内にのみ保存されます。ウィッシュリスト取得時のみ、Steam APIへの中継サーバー（Cloudflare Workers）を経由して送信されます。',
+    privacy: 'プライバシーポリシー',
+    btnFetch: '🚀 取得してスタート',
+    btnSaved: '💾 前回の続きから',
+    btnDemo: '🎲 デモで試す',
+    btnResult: '📊 結果を見る',
+    btnBack: '⬅ 戻る',
+    btnUndo: '↩ 一つ戻る',
+    btnBoth: '🤝 どっちも欲しい！',
+    btnNeither: '❓ よく知らない',
+    sidebarHeader: '現在のランキング',
+    sortTitle: '📋 下位ゲームの仕分け',
+    sortMust: '🎯 絶対買う', sortMustSub: '上位に配置',
+    sortWant: '👍 いつか買いたい', sortWantSub: '中位に配置',
+    sortSale: '💰 セールなら', sortSaleSub: '下位に配置',
+    sortSkip: '❌ いらない', sortSkipSub: '最下位に配置',
+    btnLater: '💾 今日はここまで',
+    btnCancel: 'キャンセル',
+    btnNextRound: '🔄 さらに精度を上げる',
+    btnSortLow: '📋 下位をまとめて仕分け',
+    btnSync: '🎮 Steamに反映する',
+    btnShare: '𝕏 シェアする',
+    btnKofi: '☕ 応援する',
+    btnToBattle: '⬅ 対戦に戻る',
+    popupNote: '※ シェアする際はポップアップの許可が必要です',
+    thRank: '順位 |', thImg: '画像 |', thTitle: 'タイトル |', thRelease: '発売日 |', thWin: '勝 |', thLose: '敗 |', thConf: '信頼度 |',
+    rcResult: '📊 結果を見る', rcNext: '🔄 次のラウンドへ', rcBack: '⬅ 対戦に戻る',
+    storeLink: '🔗 ストアページ',
+    chooseL: '👈 こちらを優先する', chooseR: 'こちらを優先する 👉',
+    accuracyLow: '低（初回）', accuracyMid: '中', accuracyHigh: '高', accuracyPerfect: '非常に高い',
+    accuracy: '精度: ',
+    streak: '連勝中',
+    battles: '対戦',
+    total: '総対戦数',
+    games: '件',
+    confHigh: '高', confMid: '中', confLow: '低（対戦少）',
+    resultTitle: '🏆 ランキング結果（ラウンド {r} 完了）',
+    resultSub: '総対戦数: {b}回 | 精度: {a} | {n}件',
+    roundComplete: '🏆 Round {r} 完了！',
+    roundCompleteSub: '総対戦数: {b}回 | {n}件',
+    fetchStart: '📋 ウィッシュリストを取得中...',
+    fetchOwned: '🎮 所持ゲームを確認中...',
+    fetchGot: '✅ {n}件取得！ゲーム情報を読み込み中...',
+    fetchProgress: '🎮 ゲーム情報取得中... {d} / {n}',
+    fetchRetry: '🔄 再取得中... ({n}件)',
+    fetchDone: '✅ {n}件の読み込み完了！',
+    fetchErrId: 'SteamID64を入力してください',
+    fetchErrIdNum: 'SteamID64は数字のみです',
+    fetchErrKey: 'APIキーを入力してください',
+    fetchErrEmpty: 'ウィッシュリストが空か、APIキーまたはSteamIDが正しくありません',
+    fetchErrFail: '取得失敗 ',
+    savedNone: '保存データが見つかりません',
+    savedResume: '✅ {n}件・ラウンド{r}から再開',
+    savedFail: '❌ 保存データの読み込みに失敗しました',
+    demoLoaded: '✅ デモデータ {n}件',
+    sortSubtitle: '対戦数が少ない {n}件 をまとめて仕分けします',
+    sortNone: '仕分けが必要なゲームはありません！',
+    sortDone: '✅ {n}件の仕分けが完了しました！',
+    sortSaved: '💾 {n}件を保存しました。\n続きは「下位をまとめて仕分け」から再開できます。',
+    syncCopied: '✅ コードをクリップボードにコピーしました！\n\nOKを押すとSteamのウィッシュリストページが開きます。\nF12 → Console → Ctrl+V → Enter で並び替え完了です。',
+    syncFail: '❌ クリップボードへのコピーに失敗しました。',
+    shareCapture: '📸 画像をクリップボードにコピーしました！\nXの投稿画面が開きます。Ctrl+V で貼り付けて投稿してください。',
+    shareCaptureFail: '⚠️ 画像のコピーに失敗しました。\nスクリーンショットを手動で撮って添付してください。',
+    shareGenerating: '⏳ 画像生成中...',
+    free: '無料',
+    unknown: '価格不明',
+  },
+  en: {
+    subtitle: 'Compare your wishlist games 1-on-1 and create your purchase priority ranking',
+    cardTitle: 'Enter Steam Info',
+    labelId: 'SteamID64',
+    hintId: 'Copy the number from your wishlist URL',
+    labelKey: 'Steam Web API Key',
+    keyLink: 'Get it free here',
+    domain: 'Domain name',
+    hintKey: '※ Your key is stored only in your browser. It is sent via Cloudflare Workers to the Steam API only when fetching your wishlist.',
+    privacy: 'Privacy Policy',
+    btnFetch: '🚀 Fetch & Start',
+    btnSaved: '💾 Continue from last time',
+    btnDemo: '🎲 Try Demo',
+    btnResult: '📊 View Results',
+    btnBack: '⬅ Back',
+    btnUndo: '↩ Undo',
+    btnBoth: '🤝 Want both!',
+    btnNeither: '❓ Not sure',
+    sidebarHeader: 'Current Ranking',
+    sortTitle: '📋 Sort Lower Games',
+    sortMust: '🎯 Must buy', sortMustSub: 'Place at top',
+    sortWant: '👍 Want someday', sortWantSub: 'Place in middle',
+    sortSale: '💰 On sale only', sortSaleSub: 'Place lower',
+    sortSkip: '❌ Not interested', sortSkipSub: 'Place at bottom',
+    btnLater: '💾 Stop for today',
+    btnCancel: 'Cancel',
+    btnNextRound: '🔄 Improve accuracy',
+    btnSortLow: '📋 Sort lower games',
+    btnSync: '🎮 Apply to Steam',
+    btnShare: '𝕏 Share',
+    btnKofi: '☕ Support',
+    btnToBattle: '⬅ Back to battle',
+    popupNote: '※ Please allow popups to open the X post screen',
+    thRank: 'Rank |', thImg: 'Image |', thTitle: 'Title |', thRelease: 'Release |', thWin: 'W |', thLose: 'L |', thConf: 'Confidence |',
+    rcResult: '📊 View Results', rcNext: '🔄 Next Round', rcBack: '⬅ Back to battle',
+    storeLink: '🔗 Store Page',
+    chooseL: '👈 Prioritize this', chooseR: 'Prioritize this 👉',
+    accuracyLow: 'Low (1st round)', accuracyMid: 'Medium', accuracyHigh: 'High', accuracyPerfect: 'Very High',
+    accuracy: 'Accuracy: ',
+    streak: 'win streak',
+    battles: 'battles',
+    total: 'Total battles',
+    games: 'games',
+    confHigh: 'High', confMid: 'Medium', confLow: 'Low (few battles)',
+    resultTitle: '🏆 Ranking Results (Round {r} Complete)',
+    resultSub: 'Total battles: {b} | Accuracy: {a} | {n} games',
+    roundComplete: '🏆 Round {r} Complete!',
+    roundCompleteSub: 'Total battles: {b} | {n} games',
+    fetchStart: '📋 Fetching wishlist...',
+    fetchOwned: '🎮 Checking owned games...',
+    fetchGot: '✅ Got {n} games! Loading info...',
+    fetchProgress: '🎮 Loading game info... {d} / {n}',
+    fetchRetry: '🔄 Retrying... ({n} games)',
+    fetchDone: '✅ Loaded {n} games!',
+    fetchErrId: 'Please enter your SteamID64',
+    fetchErrIdNum: 'SteamID64 must be numbers only',
+    fetchErrKey: 'Please enter your API key',
+    fetchErrEmpty: 'Wishlist is empty or API key/SteamID is incorrect',
+    fetchErrFail: 'Fetch failed ',
+    savedNone: 'No saved data found',
+    savedResume: '✅ Resuming {n} games, Round {r}',
+    savedFail: '❌ Failed to load saved data',
+    demoLoaded: '✅ Demo data: {n} games',
+    sortSubtitle: 'Sorting {n} games with few battles',
+    sortNone: 'No games need sorting!',
+    sortDone: '✅ Sorted {n} games!',
+    sortSaved: '💾 Saved {n} games.\nResume from "Sort lower games".',
+    syncCopied: '✅ Code copied to clipboard!\n\nClick OK to open your Steam wishlist.\nF12 → Console → Ctrl+V → Enter to apply.',
+    syncFail: '❌ Failed to copy to clipboard.',
+    shareCapture: '📸 Image copied to clipboard!\nX post window will open. Paste with Ctrl+V.',
+    shareCaptureFail: '⚠️ Failed to copy image.\nPlease take a screenshot manually.',
+    shareGenerating: '⏳ Generating image...',
+    free: 'Free',
+    unknown: 'Price unknown',
+  },
+  zh: {
+    subtitle: '1对1比较愿望单游戏，创建购买优先级排名',
+    cardTitle: '输入Steam信息',
+    labelId: 'SteamID64',
+    hintId: '复制愿望单URL中的数字部分',
+    labelKey: 'Steam Web API密钥',
+    keyLink: '免费获取',
+    domain: '域名',
+    hintKey: '※ 密钥仅存储在您的浏览器中。仅在获取愿望单时通过Cloudflare Workers发送到Steam API。',
+    privacy: '隐私政策',
+    btnFetch: '🚀 获取并开始',
+    btnSaved: '💾 从上次继续',
+    btnDemo: '🎲 试用演示',
+    btnResult: '📊 查看结果',
+    btnBack: '⬅ 返回',
+    btnUndo: '↩ 撤销',
+    btnBoth: '🤝 都想要！',
+    btnNeither: '❓ 不确定',
+    sidebarHeader: '当前排名',
+    sortTitle: '📋 整理低分游戏',
+    sortMust: '🎯 必买', sortMustSub: '放在顶部',
+    sortWant: '👍 以后买', sortWantSub: '放在中间',
+    sortSale: '💰 打折再买', sortSaleSub: '放在下面',
+    sortSkip: '❌ 不感兴趣', sortSkipSub: '放在最底部',
+    btnLater: '💾 今天到此为止',
+    btnCancel: '取消',
+    btnNextRound: '🔄 提高精确度',
+    btnSortLow: '📋 整理低分游戏',
+    btnSync: '🎮 同步到Steam',
+    btnShare: '𝕏 分享',
+    btnKofi: '☕ 支持',
+    btnToBattle: '⬅ 返回对战',
+    popupNote: '※ 请允许弹窗以打开X发帖界面',
+    thRank: '排名 |', thImg: '图片 |', thTitle: '标题 |', thRelease: '发布日期 |', thWin: '胜 |', thLose: '负 |', thConf: '可信度 |',
+    rcResult: '📊 查看结果', rcNext: '🔄 下一轮', rcBack: '⬅ 返回对战',
+    storeLink: '🔗 商店页面',
+    chooseL: '👈 优先选这个', chooseR: '优先选这个 👉',
+    accuracyLow: '低（第1轮）', accuracyMid: '中', accuracyHigh: '高', accuracyPerfect: '非常高',
+    accuracy: '精确度: ',
+    streak: '连胜',
+    battles: '场对战',
+    total: '总对战数',
+    games: '个',
+    confHigh: '高', confMid: '中', confLow: '低（对战少）',
+    resultTitle: '🏆 排名结果（第{r}轮完成）',
+    resultSub: '总对战数: {b}场 | 精确度: {a} | {n}个游戏',
+    roundComplete: '🏆 第{r}轮完成！',
+    roundCompleteSub: '总对战数: {b}场 | {n}个游戏',
+    fetchStart: '📋 正在获取愿望单...',
+    fetchOwned: '🎮 正在检查已拥有游戏...',
+    fetchGot: '✅ 获取{n}个游戏！正在加载信息...',
+    fetchProgress: '🎮 正在加载游戏信息... {d} / {n}',
+    fetchRetry: '🔄 重试中... ({n}个游戏)',
+    fetchDone: '✅ 加载{n}个游戏完成！',
+    fetchErrId: '请输入SteamID64',
+    fetchErrIdNum: 'SteamID64只能是数字',
+    fetchErrKey: '请输入API密钥',
+    fetchErrEmpty: '愿望单为空或API密钥/SteamID不正确',
+    fetchErrFail: '获取失败 ',
+    savedNone: '未找到保存的数据',
+    savedResume: '✅ 恢复{n}个游戏，第{r}轮',
+    savedFail: '❌ 加载保存数据失败',
+    demoLoaded: '✅ 演示数据：{n}个游戏',
+    sortSubtitle: '整理{n}个对战较少的游戏',
+    sortNone: '没有需要整理的游戏！',
+    sortDone: '✅ 整理{n}个游戏完成！',
+    sortSaved: '💾 已保存{n}个游戏。\n可从"整理低分游戏"继续。',
+    syncCopied: '✅ 代码已复制到剪贴板！\n\n点击确定打开Steam愿望单页面。\nF12 → Console → Ctrl+V → Enter 完成排序。',
+    syncFail: '❌ 复制到剪贴板失败。',
+    shareCapture: '📸 图片已复制到剪贴板！\nX发帖窗口将打开。用Ctrl+V粘贴。',
+    shareCaptureFail: '⚠️ 图片复制失败。\n请手动截图。',
+    shareGenerating: '⏳ 正在生成图片...',
+    free: '免费',
+    unknown: '价格未知',
+  },
+  ru: {
+    subtitle: 'Сравнивайте игры из списка желаемого 1 на 1 и создавайте рейтинг приоритета покупок',
+    cardTitle: 'Введите данные Steam',
+    labelId: 'SteamID64',
+    hintId: 'Скопируйте число из URL вашего списка желаемого',
+    labelKey: 'Ключ Steam Web API',
+    keyLink: 'Получить бесплатно',
+    domain: 'Домен',
+    hintKey: '※ Ключ хранится только в вашем браузере. Он отправляется через Cloudflare Workers в Steam API только при загрузке списка желаемого.',
+    privacy: 'Политика конфиденциальности',
+    btnFetch: '🚀 Загрузить и начать',
+    btnSaved: '💾 Продолжить с прошлого раза',
+    btnDemo: '🎲 Демо',
+    btnResult: '📊 Результаты',
+    btnBack: '⬅ Назад',
+    btnUndo: '↩ Отменить',
+    btnBoth: '🤝 Хочу оба!',
+    btnNeither: '❓ Не знаю',
+    sidebarHeader: 'Текущий рейтинг',
+    sortTitle: '📋 Сортировка игр',
+    sortMust: '🎯 Куплю точно', sortMustSub: 'В начало',
+    sortWant: '👍 Куплю когда-нибудь', sortWantSub: 'В середину',
+    sortSale: '💰 Только на скидке', sortSaleSub: 'Ниже',
+    sortSkip: '❌ Не интересно', sortSkipSub: 'В конец',
+    btnLater: '💾 На сегодня хватит',
+    btnCancel: 'Отмена',
+    btnNextRound: '🔄 Повысить точность',
+    btnSortLow: '📋 Сортировать игры',
+    btnSync: '🎮 Применить к Steam',
+    btnShare: '𝕏 Поделиться',
+    btnKofi: '☕ Поддержать',
+    btnToBattle: '⬅ Назад к сравнению',
+    popupNote: '※ Разрешите всплывающие окна для открытия окна публикации X',
+    thRank: 'Ранг |', thImg: 'Фото |', thTitle: 'Название |', thRelease: 'Выпуск |', thWin: 'П |', thLose: 'П |', thConf: 'Уверен. |',
+    rcResult: '📊 Результаты', rcNext: '🔄 Следующий раунд', rcBack: '⬅ Назад',
+    storeLink: '🔗 Страница магазина',
+    chooseL: '👈 Приоритет этому', chooseR: 'Приоритет этому 👉',
+    accuracyLow: 'Низкая (1-й раунд)', accuracyMid: 'Средняя', accuracyHigh: 'Высокая', accuracyPerfect: 'Очень высокая',
+    accuracy: 'Точность: ',
+    streak: 'побед подряд',
+    battles: 'сравнений',
+    total: 'Всего сравнений',
+    games: 'игр',
+    confHigh: 'Высокая', confMid: 'Средняя', confLow: 'Низкая (мало сравнений)',
+    resultTitle: '🏆 Результаты рейтинга (Раунд {r} завершён)',
+    resultSub: 'Сравнений: {b} | Точность: {a} | {n} игр',
+    roundComplete: '🏆 Раунд {r} завершён!',
+    roundCompleteSub: 'Сравнений: {b} | {n} игр',
+    fetchStart: '📋 Загрузка списка желаемого...',
+    fetchOwned: '🎮 Проверка купленных игр...',
+    fetchGot: '✅ Получено {n} игр! Загрузка информации...',
+    fetchProgress: '🎮 Загрузка информации... {d} / {n}',
+    fetchRetry: '🔄 Повторная попытка... ({n} игр)',
+    fetchDone: '✅ Загружено {n} игр!',
+    fetchErrId: 'Введите SteamID64',
+    fetchErrIdNum: 'SteamID64 должен состоять только из цифр',
+    fetchErrKey: 'Введите ключ API',
+    fetchErrEmpty: 'Список желаемого пуст или ключ API/SteamID неверен',
+    fetchErrFail: 'Ошибка загрузки ',
+    savedNone: 'Сохранённые данные не найдены',
+    savedResume: '✅ Продолжение: {n} игр, раунд {r}',
+    savedFail: '❌ Не удалось загрузить сохранённые данные',
+    demoLoaded: '✅ Демо-данные: {n} игр',
+    sortSubtitle: 'Сортировка {n} игр с малым числом сравнений',
+    sortNone: 'Нет игр для сортировки!',
+    sortDone: '✅ Отсортировано {n} игр!',
+    sortSaved: '💾 Сохранено {n} игр.\nПродолжите из "Сортировать игры".',
+    syncCopied: '✅ Код скопирован в буфер!\n\nНажмите OK, чтобы открыть список желаемого Steam.\nF12 → Console → Ctrl+V → Enter.',
+    syncFail: '❌ Не удалось скопировать в буфер.',
+    shareCapture: '📸 Изображение скопировано в буфер!\nОткроется окно публикации X. Вставьте через Ctrl+V.',
+    shareCaptureFail: '⚠️ Не удалось скопировать изображение.\nСделайте скриншот вручную.',
+    shareGenerating: '⏳ Генерация изображения...',
+    free: 'Бесплатно',
+    unknown: 'Цена неизвестна',
+  },
+  pt: {
+    subtitle: 'Compare jogos da lista de desejos 1 a 1 e crie seu ranking de prioridade de compras',
+    cardTitle: 'Insira suas informações Steam',
+    labelId: 'SteamID64',
+    hintId: 'Copie o número da URL da sua lista de desejos',
+    labelKey: 'Chave Steam Web API',
+    keyLink: 'Obter gratuitamente',
+    domain: 'Nome de domínio',
+    hintKey: '※ Sua chave é armazenada apenas no seu navegador. É enviada via Cloudflare Workers para a Steam API apenas ao buscar sua lista de desejos.',
+    privacy: 'Política de Privacidade',
+    btnFetch: '🚀 Buscar e Começar',
+    btnSaved: '💾 Continuar da última vez',
+    btnDemo: '🎲 Experimentar Demo',
+    btnResult: '📊 Ver Resultados',
+    btnBack: '⬅ Voltar',
+    btnUndo: '↩ Desfazer',
+    btnBoth: '🤝 Quero os dois!',
+    btnNeither: '❓ Não conheço',
+    sidebarHeader: 'Ranking Atual',
+    sortTitle: '📋 Classificar Jogos Inferiores',
+    sortMust: '🎯 Compra certa', sortMustSub: 'Colocar no topo',
+    sortWant: '👍 Quero um dia', sortWantSub: 'Colocar no meio',
+    sortSale: '💰 Só na promoção', sortSaleSub: 'Colocar mais abaixo',
+    sortSkip: '❌ Não me interessa', sortSkipSub: 'Colocar no final',
+    btnLater: '💾 Por hoje é suficiente',
+    btnCancel: 'Cancelar',
+    btnNextRound: '🔄 Melhorar precisão',
+    btnSortLow: '📋 Classificar jogos inferiores',
+    btnSync: '🎮 Aplicar ao Steam',
+    btnShare: '𝕏 Compartilhar',
+    btnKofi: '☕ Apoiar',
+    btnToBattle: '⬅ Voltar à batalha',
+    popupNote: '※ Permita pop-ups para abrir a janela de postagem do X',
+    thRank: 'Rank |', thImg: 'Imagem |', thTitle: 'Título |', thRelease: 'Lançamento |', thWin: 'V |', thLose: 'D |', thConf: 'Confiança |',
+    rcResult: '📊 Ver Resultados', rcNext: '🔄 Próxima Rodada', rcBack: '⬅ Voltar',
+    storeLink: '🔗 Página da Loja',
+    chooseL: '👈 Priorizar este', chooseR: 'Priorizar este 👉',
+    accuracyLow: 'Baixa (1ª rodada)', accuracyMid: 'Média', accuracyHigh: 'Alta', accuracyPerfect: 'Muito Alta',
+    accuracy: 'Precisão: ',
+    streak: 'vitórias seguidas',
+    battles: 'batalhas',
+    total: 'Total de batalhas',
+    games: 'jogos',
+    confHigh: 'Alta', confMid: 'Média', confLow: 'Baixa (poucas batalhas)',
+    resultTitle: '🏆 Resultado do Ranking (Rodada {r} Completa)',
+    resultSub: 'Total de batalhas: {b} | Precisão: {a} | {n} jogos',
+    roundComplete: '🏆 Rodada {r} Completa!',
+    roundCompleteSub: 'Total de batalhas: {b} | {n} jogos',
+    fetchStart: '📋 Buscando lista de desejos...',
+    fetchOwned: '🎮 Verificando jogos possuídos...',
+    fetchGot: '✅ {n} jogos encontrados! Carregando informações...',
+    fetchProgress: '🎮 Carregando informações... {d} / {n}',
+    fetchRetry: '🔄 Tentando novamente... ({n} jogos)',
+    fetchDone: '✅ {n} jogos carregados!',
+    fetchErrId: 'Por favor insira seu SteamID64',
+    fetchErrIdNum: 'SteamID64 deve conter apenas números',
+    fetchErrKey: 'Por favor insira sua chave API',
+    fetchErrEmpty: 'Lista de desejos vazia ou chave API/SteamID incorretos',
+    fetchErrFail: 'Falha ao buscar ',
+    savedNone: 'Nenhum dado salvo encontrado',
+    savedResume: '✅ Retomando {n} jogos, Rodada {r}',
+    savedFail: '❌ Falha ao carregar dados salvos',
+    demoLoaded: '✅ Dados de demo: {n} jogos',
+    sortSubtitle: 'Classificando {n} jogos com poucas batalhas',
+    sortNone: 'Nenhum jogo precisa de classificação!',
+    sortDone: '✅ {n} jogos classificados!',
+    sortSaved: '💾 {n} jogos salvos.\nRetome em "Classificar jogos inferiores".',
+    syncCopied: '✅ Código copiado!\n\nClique OK para abrir sua lista de desejos Steam.\nF12 → Console → Ctrl+V → Enter.',
+    syncFail: '❌ Falha ao copiar para área de transferência.',
+    shareCapture: '📸 Imagem copiada!\nA janela do X será aberta. Cole com Ctrl+V.',
+    shareCaptureFail: '⚠️ Falha ao copiar imagem.\nTire um screenshot manualmente.',
+    shareGenerating: '⏳ Gerando imagem...',
+    free: 'Gratuito',
+    unknown: 'Preço desconhecido',
+  },
+  de: {
+    subtitle: 'Vergleiche Spiele aus deiner Wunschliste 1-gegen-1 und erstelle eine Kaufpriorisierungs-Rangliste',
+    cardTitle: 'Steam-Daten eingeben',
+    labelId: 'SteamID64',
+    hintId: 'Kopiere die Zahl aus der URL deiner Wunschliste',
+    labelKey: 'Steam Web API-Schlüssel',
+    keyLink: 'Kostenlos erhalten',
+    domain: 'Domainname',
+    hintKey: '※ Dein Schlüssel wird nur in deinem Browser gespeichert. Er wird nur beim Abrufen der Wunschliste über Cloudflare Workers an die Steam API gesendet.',
+    privacy: 'Datenschutzrichtlinie',
+    btnFetch: '🚀 Laden & Starten',
+    btnSaved: '💾 Vom letzten Mal fortfahren',
+    btnDemo: '🎲 Demo ausprobieren',
+    btnResult: '📊 Ergebnisse anzeigen',
+    btnBack: '⬅ Zurück',
+    btnUndo: '↩ Rückgängig',
+    btnBoth: '🤝 Beide haben wollen!',
+    btnNeither: '❓ Kenne ich nicht',
+    sidebarHeader: 'Aktuelle Rangliste',
+    sortTitle: '📋 Spiele einstufen',
+    sortMust: '🎯 Muss ich kaufen', sortMustSub: 'Oben platzieren',
+    sortWant: '👍 Irgendwann kaufen', sortWantSub: 'In der Mitte',
+    sortSale: '💰 Nur im Sale', sortSaleSub: 'Unten platzieren',
+    sortSkip: '❌ Nicht interessiert', sortSkipSub: 'Ganz unten',
+    btnLater: '💾 Für heute genug',
+    btnCancel: 'Abbrechen',
+    btnNextRound: '🔄 Genauigkeit verbessern',
+    btnSortLow: '📋 Spiele einstufen',
+    btnSync: '🎮 Auf Steam anwenden',
+    btnShare: '𝕏 Teilen',
+    btnKofi: '☕ Unterstützen',
+    btnToBattle: '⬅ Zurück zum Kampf',
+    popupNote: '※ Bitte erlaube Pop-ups, um das X-Posting-Fenster zu öffnen',
+    thRank: 'Rang |', thImg: 'Bild |', thTitle: 'Titel |', thRelease: 'Release |', thWin: 'S |', thLose: 'N |', thConf: 'Konfidenz |',
+    rcResult: '📊 Ergebnisse', rcNext: '🔄 Nächste Runde', rcBack: '⬅ Zurück',
+    storeLink: '🔗 Store-Seite',
+    chooseL: '👈 Dieses priorisieren', chooseR: 'Dieses priorisieren 👉',
+    accuracyLow: 'Niedrig (1. Runde)', accuracyMid: 'Mittel', accuracyHigh: 'Hoch', accuracyPerfect: 'Sehr hoch',
+    accuracy: 'Genauigkeit: ',
+    streak: 'Siegesserie',
+    battles: 'Kämpfe',
+    total: 'Kämpfe gesamt',
+    games: 'Spiele',
+    confHigh: 'Hoch', confMid: 'Mittel', confLow: 'Niedrig (wenige Kämpfe)',
+    resultTitle: '🏆 Ranglistenergebnis (Runde {r} abgeschlossen)',
+    resultSub: 'Kämpfe gesamt: {b} | Genauigkeit: {a} | {n} Spiele',
+    roundComplete: '🏆 Runde {r} abgeschlossen!',
+    roundCompleteSub: 'Kämpfe gesamt: {b} | {n} Spiele',
+    fetchStart: '📋 Wunschliste wird geladen...',
+    fetchOwned: '🎮 Überprüfe besessene Spiele...',
+    fetchGot: '✅ {n} Spiele gefunden! Lade Informationen...',
+    fetchProgress: '🎮 Lade Spielinfo... {d} / {n}',
+    fetchRetry: '🔄 Erneuter Versuch... ({n} Spiele)',
+    fetchDone: '✅ {n} Spiele geladen!',
+    fetchErrId: 'Bitte SteamID64 eingeben',
+    fetchErrIdNum: 'SteamID64 darf nur Zahlen enthalten',
+    fetchErrKey: 'Bitte API-Schlüssel eingeben',
+    fetchErrEmpty: 'Wunschliste leer oder API-Schlüssel/SteamID falsch',
+    fetchErrFail: 'Ladefehler ',
+    savedNone: 'Keine gespeicherten Daten gefunden',
+    savedResume: '✅ Fortfahren: {n} Spiele, Runde {r}',
+    savedFail: '❌ Gespeicherte Daten konnten nicht geladen werden',
+    demoLoaded: '✅ Demo-Daten: {n} Spiele',
+    sortSubtitle: '{n} Spiele mit wenigen Kämpfen einstufen',
+    sortNone: 'Keine Spiele zum Einstufen!',
+    sortDone: '✅ {n} Spiele eingestuft!',
+    sortSaved: '💾 {n} Spiele gespeichert.\nFortfahren unter "Spiele einstufen".',
+    syncCopied: '✅ Code in Zwischenablage kopiert!\n\nOK klicken, um Steam-Wunschliste zu öffnen.\nF12 → Console → Ctrl+V → Enter.',
+    syncFail: '❌ Kopieren in Zwischenablage fehlgeschlagen.',
+    shareCapture: '📸 Bild kopiert!\nX-Fenster öffnet sich. Mit Ctrl+V einfügen.',
+    shareCaptureFail: '⚠️ Bild kopieren fehlgeschlagen.\nBitte manuell Screenshot machen.',
+    shareGenerating: '⏳ Bild wird generiert...',
+    free: 'Kostenlos',
+    unknown: 'Preis unbekannt',
+  }
+};
+
+var currentLang = 'ja';
+
+function t(key) {
+  var l = LANGS[currentLang] || LANGS['ja'];
+  return l[key] || LANGS['ja'][key] || key;
+}
+
+function fmt(key, obj) {
+  var s = t(key);
+  for (var k in obj) {
+    s = s.replace(new RegExp('{'+k+'}','g'), obj[k]);
+  }
+  return s;
+}
+
+function changeLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('swr_lang', lang);
+  applyLang();
+}
+
+function applyLang() {
+  var l = LANGS[currentLang] || LANGS['ja'];
+  function setText(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+  setText('txt-subtitle', l.subtitle);
+  setText('txt-card-title', l.cardTitle);
+  setText('txt-label-id', l.labelId);
+  setText('txt-hint-id', l.hintId);
+  setText('txt-label-key', l.labelKey);
+  setText('txt-key-link', l.keyLink);
+  setText('txt-domain', l.domain);
+  setText('txt-hint-key', l.hintKey);
+  setText('txt-privacy', l.privacy);
+  setText('txt-footer-privacy', l.privacy);
+  document.getElementById('btn-fetch').textContent = l.btnFetch;
+  setText('txt-btn-saved', l.btnSaved);
+  setText('txt-btn-demo', l.btnDemo);
+  setText('txt-btn-result', l.btnResult);
+  setText('txt-btn-back', l.btnBack);
+  setText('txt-btn-undo', l.btnUndo);
+  setText('txt-btn-both', l.btnBoth);
+  setText('txt-btn-neither', l.btnNeither);
+  setText('txt-sidebar-header', l.sidebarHeader);
+  setText('txt-sort-title', l.sortTitle);
+  document.getElementById('txt-sort-must').childNodes[0].textContent = l.sortMust;
+  setText('txt-sort-must-sub', l.sortMustSub);
+  document.getElementById('txt-sort-want').childNodes[0].textContent = l.sortWant;
+  setText('txt-sort-want-sub', l.sortWantSub);
+  document.getElementById('txt-sort-sale').childNodes[0].textContent = l.sortSale;
+  setText('txt-sort-sale-sub', l.sortSaleSub);
+  document.getElementById('txt-sort-skip').childNodes[0].textContent = l.sortSkip;
+  setText('txt-sort-skip-sub', l.sortSkipSub);
+  setText('txt-btn-later', l.btnLater);
+  setText('txt-btn-cancel', l.btnCancel);
+  setText('txt-btn-nextround', l.btnNextRound);
+  setText('txt-btn-sort', l.btnSortLow);
+  setText('txt-btn-sync', l.btnSync);
+  setText('txt-btn-share', l.btnShare);
+  setText('txt-btn-kofi', l.btnKofi);
+  setText('txt-btn-tobattle', l.btnToBattle);
+  setText('txt-popup-note', l.popupNote);
+  setText('txt-th-rank', l.thRank);
+  setText('txt-th-img', l.thImg);
+  setText('txt-th-title', l.thTitle);
+  setText('txt-th-release', l.thRelease);
+  setText('txt-th-win', l.thWin);
+  setText('txt-th-lose', l.thLose);
+  setText('txt-th-conf', l.thConf);
+  setText('txt-rc-result', l.rcResult);
+  setText('txt-rc-next', l.rcNext);
+  setText('txt-rc-back', l.rcBack);
+  var storeLinks = ['txt-store-l','txt-store-r'];
+  storeLinks.forEach(function(id){ setText(id, l.storeLink); });
+  setText('txt-choose-l', l.chooseL);
+  setText('txt-choose-r', l.chooseR);
+  // html lang属性
+  document.documentElement.lang = currentLang;
+}
+
+// ========== シェア文言（日本語のみ・他言語は英語共通） ==========
+var mkLow  = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+( currentLang==='ja'?'件のウィッシュリスト、まだランク付け中！':' games in wishlist, still ranking!')+'\n\n'+u+'\n\n'+TAG+b; }; };
+var mkMid  = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+(currentLang==='ja'?'件・':'/')+v+(currentLang==='ja'?'回の対決で出した中間結果':' battles - interim results')+'\n\n'+u+'\n\n'+TAG+b; }; };
+var mkHigh = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+(currentLang==='ja'?'件・':'/')+v+(currentLang==='ja'?'回の対決でかなり固まってきた':' battles - getting solid')+'\n\n'+u+'\n\n'+TAG+b; }; };
+var mkPfct = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+(currentLang==='ja'?'件・':'/')+v+(currentLang==='ja'?'回の対決で決定した完全版ランキング':' battles - final ranking')+'\n\n'+u+'\n\n'+TAG+b; }; };
 
 var SHARE_LOW=[
   mkLow('🎮 とりあえず今の段階のウィッシュリストランキング'),mkLow('まだ途中だけど現時点の優先順位を公開'),mkLow('🔄 ランク付け進行中。今はこんな感じ'),mkLow('途中経過だけど、上位はだいたい固まってきた'),mkLow('🎯 まだ精度低いけど今の気持ちはこれ'),mkLow('ウィッシュリスト整理中。とりあえず今の順位'),mkLow('暫定ランキング公開。まだ変わるかも'),mkLow('🎮 ざっくりランキング、まだ途中'),mkLow('今の段階ではこれが上位。まだ続く'),mkLow('とりあえず回してみた結果がこちら'),mkLow('🔥 1ラウンド目終了。上位はこんな感じ'),mkLow('まずはざっくり順位をつけてみた'),mkLow('🎮 初回ランキング。これから精度上げていく'),mkLow('途中だけど上位は揺るがない気がする'),mkLow('暫定1位から目が離せない'),mkLow('🎯 まだランク付け中だけど報告'),mkLow('とりあえず1周目が終わった'),mkLow('まだ精度低いけど、傾向は見えてきた'),mkLow('🔄 進行中。上位は安定してきた'),mkLow('初戦終了。まだまだこれから'),mkLow('ざっくりだけどこんな感じ',' #Steam'),mkLow('まず1ラウンドやった結果',' #PCゲーム'),mkLow('🎮 途中経過を晒す',' #ゲーム'),mkLow('暫定ランキング。まだ変動あり',' #Steam'),mkLow('とりあえず今はこれが上位',' #積みゲー'),mkLow('精度低いけど公開する',' #Steam'),mkLow('🔥 初回なのに上位は決まりかけてる',' #ゲーム'),mkLow('まだ途中だけど上位は固い気がする',' #PCゲーム'),mkLow('1周目終了報告',' #Steam'),mkLow('🎯 まずはここから。次ラウンドで精度上げる',' #ゲーム'),mkLow('Steamウィッシュリストのランク付け始めた'),mkLow('🎮 ランキング作成中。今はこんな感じ'),mkLow('途中だけど見せちゃう'),mkLow('まだ全然終わってないけど現時点の結果'),mkLow('🔄 ゲームたちを戦わせ始めた'),mkLow('初ラウンドの結果を公開'),mkLow('まだ精度は低いが方向性は見えた',' #Steam'),mkLow('🎯 ざっくり仕分け完了。上位はこれ',' #ゲーム'),mkLow('1対1で戦わせ始めた。途中経過',' #Steam'),mkLow('ウィッシュリスト整理スタート',' #積みゲー'),mkLow('初戦の結果。まだ精度は低い',' #Steam'),mkLow('🎮 とりあえず回してみた',' #ゲーム'),mkLow('途中だけど上位は確定っぽい',' #PCゲーム'),mkLow('最初の結果。これから詰めていく',' #Steam'),mkLow('🔥 1ラウンド目。まずまずの結果',' #ゲーム'),mkLow('ざっくり版を公開します',' #Steam'),mkLow('まだ途中なので変動するかも',' #ゲーム'),mkLow('🎯 初回にしてはいい感じ',' #Steam'),mkLow('とりあえず今の順位を公開',' #PCゲーム'),mkLow('🎮 ランク付け開始。途中経過',' #Steam'),mkLow('1周目終わった。上位はだいたい決まった',' #ゲーム'),mkLow('まず大まかに整理した結果',' #Steam'),mkLow('🔄 初ラウンド完了。次は精度上げる',' #ゲーム'),mkLow('今の段階の正直な順位',' #Steam'),mkLow('途中経過を晒します',' #積みゲー'),mkLow('🎮 まずはざっくりランキング',' #ゲーム'),mkLow('初回なのでまだ荒削り',' #Steam'),mkLow('とりあえず1周目の結果です',' #PCゲーム'),mkLow('🎯 上位はだいたい見えてきた',' #ゲーム'),mkLow('途中だけど報告したかった',' #Steam'),mkLow('🔥 1ラウンド目終了！上位はこれ',' #ゲーム'),mkLow('まだ精度低いよ？という前置きで',' #Steam'),mkLow('初戦終了。手応えあり',' #ゲーム'),mkLow('🎮 まず1回やってみた',' #Steam'),mkLow('暫定ランキング（変わるかも）',' #ゲーム'),mkLow('🔄 ランク付け中。経過報告',' #Steam'),mkLow('上位は固まってきた気がする',' #ゲーム'),mkLow('まだ途中だけどこんな感じ',' #Steam'),mkLow('🎯 初ラウンドの結果を公開',' #PCゲーム'),mkLow('ゲームたちに戦わせてみた初回結果',' #ゲーム'),mkLow('🎮 まずはここから始める',' #Steam'),mkLow('途中経過。上位は安定中',' #ゲーム'),mkLow('1周目だけど上位は揺るがない',' #Steam'),mkLow('🔥 初戦の結果がこちら',' #ゲーム'),mkLow('ざっくりだけど傾向は見えた',' #Steam'),mkLow('まず回してみた。これが今の答え',' #ゲーム'),mkLow('🎯 1ラウンド目完了',' #Steam'),mkLow('途中だけど見せちゃう（変わるかも）',' #ゲーム'),mkLow('🎮 初回ランキング公開',' #Steam'),mkLow('まだ荒削りだけど上位は固い',' #ゲーム'),mkLow('とりあえずの結果です',' #Steam #積みゲー'),mkLow('🔄 進行中。途中経過',' #Steam #ゲーム'),mkLow('初ラウンド終了。感触よし',' #Steam #PCゲーム'),mkLow('まず大まかに決めた',' #Steam #ゲーム'),mkLow('🎮 1周目の結果',' #Steam #ゲーム'),mkLow('途中だけど上位は決まりつつある',' #Steam #ゲーム'),mkLow('🎯 暫定版ランキング',' #Steam #ゲーム'),mkLow('まだ精度低いけど公開する勇気',' #Steam #ゲーム'),mkLow('🔥 初回の結果を晒す',' #Steam #ゲーム'),mkLow('ランク付け中。現時点の結果',' #Steam #ゲーム'),mkLow('🎮 1対1で戦わせ始めた',' #Steam #ゲーム'),mkLow('途中経過。参考程度に',' #Steam #ゲーム'),mkLow('暫定トップはこれだ',' #Steam #ゲーム'),mkLow('🔄 まだ途中。続きは次回',' #Steam #ゲーム'),mkLow('初ラウンドなのに上位は揺るがない気がする',' #Steam #ゲーム'),mkLow('🎯 とりあえず今の気持ち',' #Steam #ゲーム'),mkLow('1周目終了。上位はほぼ決まり',' #Steam #ゲーム'),mkLow('途中だけど自信ある上位',' #Steam #ゲーム')
@@ -434,20 +974,20 @@ var sortQueue=[],sortIdx=0,sortResults={};
 function fetchWishlist(){
   var steamId=document.getElementById('steam-id').value.trim();
   var apiKey=document.getElementById('api-key').value.trim();
-  if(!steamId){setStatus('SteamID64を入力してください','red');return;}
-  if(!/^\d+$/.test(steamId)){setStatus('SteamID64は数字のみです','red');return;}
-  if(!apiKey){setStatus('APIキーを入力してください','red');return;}
+  if(!steamId){setStatus(t('fetchErrId'),'red');return;}
+  if(!/^\d+$/.test(steamId)){setStatus(t('fetchErrIdNum'),'red');return;}
+  if(!apiKey){setStatus(t('fetchErrKey'),'red');return;}
   var btn=document.getElementById('btn-fetch');
   btn.disabled=true;showProgress(true);setProgress(0);
   (async function(){
     try{
-      setStatus('📋 ウィッシュリストを取得中...','info');
+      setStatus(t('fetchStart'),'info');
       var wrRes=await fetch(WORKER_URL+'/wishlist?key='+encodeURIComponent(apiKey)+'&steamid='+encodeURIComponent(steamId));
-      if(!wrRes.ok)throw new Error('取得失敗 ('+wrRes.status+')');
+      if(!wrRes.ok)throw new Error(t('fetchErrFail')+'('+wrRes.status+')');
       var wrData=await wrRes.json();
       var wishItems=(wrData&&wrData.response&&wrData.response.items)||[];
-      if(!wishItems.length)throw new Error('ウィッシュリストが空か、APIキーまたはSteamIDが正しくありません');
-      setStatus('🎮 所持ゲームを確認中...','info');
+      if(!wishItems.length)throw new Error(t('fetchErrEmpty'));
+      setStatus(t('fetchOwned'),'info');
       var ownedRes=await fetch(WORKER_URL+'/owned?key='+encodeURIComponent(apiKey)+'&steamid='+encodeURIComponent(steamId));
       var ownedData=await ownedRes.json();
       var ownedArr=(ownedData&&ownedData.response&&ownedData.response.games)||[];
@@ -455,7 +995,7 @@ function fetchWishlist(){
       var filtered=wishItems.filter(function(i){return !owned.has(String(i.appid));});
       filtered.sort(function(a,b){return (a.priority||9999)-(b.priority||9999);});
       var appids=filtered.map(function(i){return String(i.appid);});
-      setStatus('✅ '+appids.length+'件取得！ゲーム情報を読み込み中...','info');
+      setStatus(fmt('fetchGot',{n:appids.length}),'info');
       var games=[],failed=[],BATCH=10,done=0;
       for(var i=0;i<appids.length;i+=BATCH){
         var batch=appids.slice(i,i+BATCH);
@@ -466,20 +1006,20 @@ function fetchWishlist(){
             var info=data&&data[appid];
             if(info&&info.success&&info.data&&info.data.name){
               var d=info.data;
-              var price='無料';
+              var price=t('free');
               if(!d.is_free&&d.price_overview)price=d.price_overview.final_formatted;
-              else if(!d.is_free)price='価格不明';
+              else if(!d.is_free)price=t('unknown');
               games.push({appid:String(appid),name:d.name,capsule:(d.header_image||IMG_BASE+appid+'/header.jpg'),price:price,release:(d.release_date&&d.release_date.date)||''});
             }else{failed.push(appid);}
           }catch(e){failed.push(appid);}
           done++;
         }));
         setProgress(done/appids.length*80);
-        setStatus('🎮 ゲーム情報取得中... '+done+' / '+appids.length,'info');
+        setStatus(fmt('fetchProgress',{d:done,n:appids.length}),'info');
         if(i+BATCH<appids.length)await sleep(1500);
       }
       if(failed.length>0){
-        setStatus('🔄 再取得中... ('+failed.length+'件)','info');
+        setStatus(fmt('fetchRetry',{n:failed.length}),'info');
         await sleep(8000);
         for(var j=0;j<failed.length;j+=5){
           var b2=failed.slice(j,j+5);
@@ -490,9 +1030,9 @@ function fetchWishlist(){
               var info=data&&data[appid];
               if(info&&info.success&&info.data&&info.data.name){
                 var d=info.data;
-                var price='無料';
+                var price=t('free');
                 if(!d.is_free&&d.price_overview)price=d.price_overview.final_formatted;
-                else if(!d.is_free)price='価格不明';
+                else if(!d.is_free)price=t('unknown');
                 games.push({appid:String(appid),name:d.name,capsule:(d.header_image||IMG_BASE+appid+'/header.jpg'),price:price,release:(d.release_date&&d.release_date.date)||''});
               }
             }catch(e){}
@@ -502,7 +1042,7 @@ function fetchWishlist(){
         }
       }
       setProgress(100);
-      setStatus('✅ '+games.length+'件の読み込み完了！','green');
+      setStatus(fmt('fetchDone',{n:games.length}),'green');
       localStorage.setItem('swr_steamid',steamId);
       localStorage.setItem('swr_apikey',apiKey);
       initState(games);
@@ -528,27 +1068,27 @@ function loadDemo(){
     {appid:'413150',name:'Stardew Valley',price:'¥980',release:'2016年2月26日'},
     {appid:'1174180',name:'Red Dead Redemption 2',price:'¥9,680',release:'2019年12月5日'},
     {appid:'1203220',name:'DEATH STRANDING',price:'¥6,490',release:'2020年7月14日'},
-    {appid:'230410',name:'Warframe',price:'無料',release:'2013年3月25日'},
+    {appid:'230410',name:'Warframe',price:t('free'),release:'2013年3月25日'},
     {appid:'1517290',name:'Battlefield 2042',price:'¥8,778',release:'2021年11月19日'},
     {appid:'271590',name:'Grand Theft Auto V',price:'¥3,090',release:'2015年4月14日'}
   ].map(function(g){g.capsule=IMG_BASE+g.appid+'/header.jpg';return g;});
   initState(demos);
-  setStatus('✅ デモデータ '+demos.length+'件','green');
+  setStatus(fmt('demoLoaded',{n:demos.length}),'green');
   setTimeout(startBattle,400);
 }
 
 function loadSaved(){
   var saved=localStorage.getItem(STORAGE_KEY);
-  if(!saved){setStatus('保存データが見つかりません','red');return;}
+  if(!saved){setStatus(t('savedNone'),'red');return;}
   try{
     state=JSON.parse(saved);
     var sid=localStorage.getItem('swr_steamid');
     var key=localStorage.getItem('swr_apikey');
     if(sid)document.getElementById('steam-id').value=sid;
     if(key)document.getElementById('api-key').value=key;
-    setStatus('✅ '+state.games.length+'件・ラウンド'+state.roundNo+'から再開','green');
+    setStatus(fmt('savedResume',{n:state.games.length,r:state.roundNo}),'green');
     setTimeout(startBattle,400);
-  }catch(e){setStatus('❌ 保存データの読み込みに失敗しました','red');}
+  }catch(e){setStatus(t('savedFail'),'red');}
 }
 
 function setStatus(msg,type){
@@ -567,11 +1107,8 @@ function initState(games){
 
 function buildQueue(){
   var ordered;
-  if(state.roundNo===1){
-    ordered=state.games.slice().sort(function(){return Math.random()-.5;});
-  }else{
-    ordered=getRankedGames();
-  }
+  if(state.roundNo===1){ordered=state.games.slice().sort(function(){return Math.random()-.5;});}
+  else{ordered=getRankedGames();}
   var q=[];
   for(var i=0;i+1<ordered.length;i+=2)q.push([ordered[i].appid,ordered[i+1].appid]);
   if(state.unknownQueue.length>=2){
@@ -611,6 +1148,7 @@ function fillCard(side,game){
   document.getElementById('price-'+side).textContent=game.price||'';
   document.getElementById('release-'+side).textContent=game.release?'📅 '+game.release:'';
   document.getElementById('link-'+side).href='https://store.steampowered.com/app/'+game.appid+'/';
+  document.getElementById('txt-store-'+side.charAt(0)).textContent=t('storeLink');
   document.getElementById('card-'+side)._game=game;
 }
 
@@ -627,19 +1165,22 @@ function renderNextPreview(){
 function updateProgress(){
   var total=state.queue.length,done=state.queueIdx;
   var pct=total?Math.round(done/total*100):0;
-  document.getElementById('progress-label').textContent=done+' / '+total+' 対戦';
+  document.getElementById('progress-label').textContent=done+' / '+total+' '+t('battles');
   document.getElementById('progress-fill').style.width=pct+'%';
   document.getElementById('round-badge').textContent='Round '+state.roundNo;
-  document.getElementById('accuracy-label').textContent='精度: '+accuracyLabel();
-  document.getElementById('header-info').textContent=state.games.length+'件 | 総対戦数 '+state.totalBattles+'回';
+  var aLabel=t('accuracy');
+  var r=state.roundNo;
+  var aText=r<=1?t('accuracyLow'):r<=2?t('accuracyMid'):r<=3?t('accuracyHigh'):t('accuracyPerfect');
+  document.getElementById('accuracy-label').textContent=aLabel+aText;
+  document.getElementById('header-info').textContent=state.games.length+t('games')+' | '+t('total')+' '+state.totalBattles;
   var badge=document.getElementById('streak-badge');
-  if(state.streak>=3){badge.textContent='🔥 '+state.streak+'連勝中';badge.classList.add('show');}
+  if(state.streak>=3){badge.textContent='🔥 '+state.streak+t('streak');badge.classList.add('show');}
   else badge.classList.remove('show');
 }
 
 function accuracyLabel(){
   var r=state.roundNo;
-  if(r<=1)return '低（初回）';if(r<=2)return '中';if(r<=3)return '高';return '非常に高い';
+  return r<=1?t('accuracyLow'):r<=2?t('accuracyMid'):r<=3?t('accuracyHigh'):t('accuracyPerfect');
 }
 
 function accuracyLevel(){
@@ -649,8 +1190,8 @@ function accuracyLevel(){
 
 function showRoundComplete(){
   saveState();
-  document.getElementById('round-complete-title').textContent='🏆 Round '+state.roundNo+' 完了！';
-  document.getElementById('round-complete-sub').textContent='総対戦数: '+state.totalBattles+'回 | '+state.games.length+'件';
+  document.getElementById('round-complete-title').textContent=fmt('roundComplete',{r:state.roundNo});
+  document.getElementById('round-complete-sub').textContent=fmt('roundCompleteSub',{b:state.totalBattles,n:state.games.length});
   document.getElementById('round-complete').classList.add('show');
 }
 function hideRoundComplete(){document.getElementById('round-complete').classList.remove('show');}
@@ -730,8 +1271,8 @@ function renderSidebar(){
 function saveAndGoResult(){
   hideRoundComplete();saveState();showScreen('result');
   var ranked=getRankedGames();
-  document.getElementById('result-title').textContent='🏆 ランキング結果（ラウンド '+state.roundNo+' 完了）';
-  document.getElementById('result-subtitle').textContent='総対戦数: '+state.totalBattles+'回 | 精度: '+accuracyLabel()+' | '+state.games.length+'件';
+  document.getElementById('result-title').textContent=fmt('resultTitle',{r:state.roundNo});
+  document.getElementById('result-subtitle').textContent=fmt('resultSub',{b:state.totalBattles,a:accuracyLabel(),n:state.games.length});
   renderPodium(ranked);renderResultTable(ranked);
 }
 
@@ -769,9 +1310,9 @@ function renderResultTable(ranked){
 }
 
 function getConf(sc){
-  if(sc.battles>=6)return{cls:'conf-high',label:'高'};
-  if(sc.battles>=3)return{cls:'conf-mid',label:'中'};
-  return{cls:'conf-low',label:'低（対戦少）'};
+  if(sc.battles>=6)return{cls:'conf-high',label:t('confHigh')};
+  if(sc.battles>=3)return{cls:'conf-mid',label:t('confMid')};
+  return{cls:'conf-low',label:t('confLow')};
 }
 
 function startNextRound(){
@@ -784,9 +1325,9 @@ function backToBattle(){hideRoundComplete();showScreen('battle');renderPair();re
 
 function startSort(){
   var low=state.games.filter(function(g){return state.scores[g.appid].battles<3&&!state.scores[g.appid].sorted;});
-  if(!low.length){alert('仕分けが必要なゲームはありません！');return;}
+  if(!low.length){alert(t('sortNone'));return;}
   sortQueue=low.sort(function(){return Math.random()-.5;});sortIdx=0;sortResults={};
-  document.getElementById('sort-subtitle').textContent='対戦数が少ない '+sortQueue.length+'件 をまとめて仕分けします';
+  document.getElementById('sort-subtitle').textContent=fmt('sortSubtitle',{n:sortQueue.length});
   showScreen('sort');renderSortCard();
 }
 
@@ -815,7 +1356,7 @@ function applySortResults(){
     if(state.scores[appid]){state.scores[appid].points=pts[sortResults[appid]];state.scores[appid].sorted=true;}
   }
   saveState();
-  alert('✅ '+keys.length+'件の仕分けが完了しました！');
+  alert(fmt('sortDone',{n:keys.length}));
   saveAndGoResult();
 }
 
@@ -827,7 +1368,7 @@ function saveAndContinueLater(){
     if(state.scores[appid]){state.scores[appid].points=pts[sortResults[appid]];state.scores[appid].sorted=true;}
   }
   saveState();
-  alert('💾 '+keys.length+'件を保存しました。\n続きは「下位をまとめて仕分け」から再開できます。');
+  alert(fmt('sortSaved',{n:keys.length}));
   saveAndGoResult();
 }
 
@@ -836,17 +1377,14 @@ function cancelSort(){saveAndGoResult();}
 function syncToSteam(){
   var ranked=getRankedGames();
   var payload=ranked.map(function(g,i){return {appid:parseInt(g.appid),priority:i+1};});
-  var code="fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction'},body:JSON.stringify({m:'Reorder',mp:["+JSON.stringify(payload)+"]})}).then(function(r){return r.json();}).then(function(d){alert(d.data&&d.data.result===1?'✅ 並び替え完了！ページをリロードしてください':'❌ 失敗: '+JSON.stringify(d));}).catch(function(e){alert('エラー: '+e.message);});";
-
-  // 先にコピー
+  var code="fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction'},body:JSON.stringify({m:'Reorder',mp:["+JSON.stringify(payload)+"]})}).then(function(r){return r.json();}).then(function(d){alert(d.data&&d.data.result===1?'✅ Done! Please reload the page.':'❌ Failed: '+JSON.stringify(d));}).catch(function(e){alert('Error: '+e.message);});";
   navigator.clipboard.writeText(code).then(function(){
-    alert('✅ コードをクリップボードにコピーしました！\n\nOKを押すとSteamのウィッシュリストページが開きます。\nF12 → Console → Ctrl+V → Enter で並び替え完了です。');
-    // アラートを閉じてからページを開く
+    alert(t('syncCopied'));
     var steamId=localStorage.getItem('swr_steamid');
     var wishUrl=steamId?'https://store.steampowered.com/wishlist/profiles/'+steamId+'/':'https://store.steampowered.com/';
     window.open(wishUrl,'_blank');
   }).catch(function(){
-    alert('❌ クリップボードへのコピーに失敗しました。');
+    alert(t('syncFail'));
   });
 }
 
@@ -861,30 +1399,24 @@ function shareToX(){
   var text=tmpl(top5,SITE_URL,n,b);
 
   (async function(){
-    // ステータス表示
-    var btn=document.querySelector('.btn-x');
+    var btn=document.getElementById('txt-btn-share');
     var orig=btn?btn.textContent:'';
-    if(btn){btn.textContent='⏳ 画像生成中...';btn.disabled=true;}
-
+    if(btn){btn.textContent=t('shareGenerating');btn.disabled=true;}
     try{
       var target=document.getElementById('result-capture');
       var canvas=await html2canvas(target,{backgroundColor:'#1b2838',scale:1.5,useCORS:true,allowTaint:false});
       await new Promise(function(resolve,reject){
         canvas.toBlob(async function(blob){
-          try{
-            await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
-            resolve();
-          }catch(e){reject(e);}
+          try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);resolve();}
+          catch(e){reject(e);}
         },'image/png');
       });
       if(btn){btn.textContent=orig;btn.disabled=false;}
-      alert('✅ 画像をクリップボードにコピーしました！\n\nXの投稿画面が開かない場合は\nアドレスバー右側のポップアップブロックを許可してください。\n\nその後 Ctrl+V で画像を貼り付けて投稿してください。');
+      alert(t('shareCapture'));
     }catch(e){
       if(btn){btn.textContent=orig;btn.disabled=false;}
-      alert('⚠️ 画像のコピーに失敗しました。\nスクリーンショットを手動で撮って添付してください。');
+      alert(t('shareCaptureFail'));
     }
-
-    // クリップボード処理後にX投稿画面を開く
     window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text),'_blank','width=550,height=450');
   })();
 }
@@ -907,6 +1439,10 @@ function esc(s){
 }
 
 window.addEventListener('DOMContentLoaded',function(){
+  var savedLang=localStorage.getItem('swr_lang')||'ja';
+  currentLang=savedLang;
+  document.getElementById('lang-select').value=savedLang;
+  applyLang();
   var sid=localStorage.getItem('swr_steamid');
   var key=localStorage.getItem('swr_apikey');
   if(sid)document.getElementById('steam-id').value=sid;
