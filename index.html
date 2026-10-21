@@ -6,13 +6,13 @@
 <title>Steam Wishlist Ranker</title>
 <meta name="description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。積みゲー整理や購入順の迷いに。">
 <link rel="canonical" href="https://steam-wishlist-ranker.vercel.app">
-<meta property="og:type"        content="website">
-<meta property="og:site_name"   content="Steam Wishlist Ranker">
-<meta property="og:title"       content="Steam Wishlist Ranker - ウィッシュリストを1対1でランク付け">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steam Wishlist Ranker">
+<meta property="og:title" content="Steam Wishlist Ranker - ウィッシュリストを1対1でランク付け">
 <meta property="og:description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。">
-<meta property="og:url"         content="https://steam-wishlist-ranker.vercel.app">
-<meta name="twitter:card"        content="summary">
-<meta name="twitter:title"       content="Steam Wishlist Ranker">
+<meta property="og:url" content="https://steam-wishlist-ranker.vercel.app">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Steam Wishlist Ranker">
 <meta name="twitter:description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -33,7 +33,7 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
 
 .navbar{background:linear-gradient(to bottom,#1b2838,#152231);border-bottom:1px solid #000;padding:0 16px;display:flex;align-items:center;height:52px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.4)}
 .navbar-brand{display:flex;align-items:center;gap:10px;padding-right:16px;border-right:1px solid var(--border);margin-right:16px}
-.navbar-brand .si{width:26px;height:26px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:var(--bg)}
+.si{width:26px;height:26px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:var(--bg)}
 .navbar-brand span{font-size:.92rem;font-weight:700;color:var(--text)}
 .navbar-info{font-size:.78rem;color:var(--text2);margin-left:auto}
 .navbar-actions{display:flex;gap:8px;margin-left:16px}
@@ -276,11 +276,17 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
         <div class="game-card" id="card-left">
           <div class="card-img-wrap">
             <img id="img-left" src="" alt="">
-            <div class="card-img-fallback" id="fb-left"><span style="font-size:1.5rem">🎮</span><span class="fallback-title" id="fb-title-left"></span></div>
+            <div class="card-img-fallback" id="fb-left">
+              <span style="font-size:1.5rem">🎮</span>
+              <span class="fallback-title" id="fb-title-left"></span>
+            </div>
           </div>
           <div class="card-body">
             <div class="card-title" id="title-left">-</div>
-            <div class="card-meta"><span class="card-price" id="price-left"></span><span class="card-release" id="release-left"></span></div>
+            <div class="card-meta">
+              <span class="card-price" id="price-left"></span>
+              <span class="card-release" id="release-left"></span>
+            </div>
             <a id="link-left" class="card-store-link" href="#" target="_blank" rel="noopener">🔗 ストアページ</a>
           </div>
           <button class="card-choose-btn" onclick="choose(0)">👈 こちらを優先する</button>
@@ -289,11 +295,17 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
         <div class="game-card" id="card-right">
           <div class="card-img-wrap">
             <img id="img-right" src="" alt="">
-            <div class="card-img-fallback" id="fb-right"><span style="font-size:1.5rem">🎮</span><span class="fallback-title" id="fb-title-right"></span></div>
+            <div class="card-img-fallback" id="fb-right">
+              <span style="font-size:1.5rem">🎮</span>
+              <span class="fallback-title" id="fb-title-right"></span>
+            </div>
           </div>
           <div class="card-body">
             <div class="card-title" id="title-right">-</div>
-            <div class="card-meta"><span class="card-price" id="price-right"></span><span class="card-release" id="release-right"></span></div>
+            <div class="card-meta">
+              <span class="card-price" id="price-right"></span>
+              <span class="card-release" id="release-right"></span>
+            </div>
             <a id="link-right" class="card-store-link" href="#" target="_blank" rel="noopener">🔗 ストアページ</a>
           </div>
           <button class="card-choose-btn" onclick="choose(1)">こちらを優先する 👉</button>
@@ -389,7 +401,6 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
 <script>
 'use strict';
 
-// ========== 設定 ==========
 const WORKER_URL  = 'https://steam-wishlist-api.swranker.workers.dev';
 const STORAGE_KEY = 'swr_v14';
 const IMG_BASE    = 'https://cdn.akamai.steamstatic.com/steam/apps/';
@@ -397,115 +408,115 @@ const SITE_URL    = 'https://steam-wishlist-ranker.vercel.app';
 const KOFI_URL    = 'https://ko-fi.com/4545nameless';
 const TAG         = '#SteamWishlistRanker';
 
-// ========== シェア文言 400パターン ==========
-const mkLow  = (a,b='') => (t,u,n,v) => `${a}\n\n${t}\n\n${n}件のウィッシュリスト、まだランク付け中！\n\n${u}\n\n${TAG}${b}`;
-const mkMid  = (a,b='') => (t,u,n,v) => `${a}\n\n${t}\n\n${n}件・${v}回の対決で出した中間結果\n\n${u}\n\n${TAG}${b}`;
-const mkHigh = (a,b='') => (t,u,n,v) => `${a}\n\n${t}\n\n${n}件・${v}回の対決でかなり固まってきた\n\n${u}\n\n${TAG}${b}`;
-const mkPfct = (a,b='') => (t,u,n,v) => `${a}\n\n${t}\n\n${n}件・${v}回の対決で決定した完全版ランキング\n\n${u}\n\n${TAG}${b}`;
+const mkLow  = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+'件のウィッシュリスト、まだランク付け中！\n\n'+u+'\n\n'+TAG+b; }; };
+const mkMid  = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+'件・'+v+'回の対決で出した中間結果\n\n'+u+'\n\n'+TAG+b; }; };
+const mkHigh = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+'件・'+v+'回の対決でかなり固まってきた\n\n'+u+'\n\n'+TAG+b; }; };
+const mkPfct = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+'件・'+v+'回の対決で決定した完全版ランキング\n\n'+u+'\n\n'+TAG+b; }; };
 
-const SHARE_LOW=[
-  mkLow('🎮 とりあえず今の段階のウィッシュリストランキング'),mkLow('まだ途中だけど現時点の優先順位を公開'),mkLow('🔄 ランク付け進行中。今はこんな感じ'),mkLow('途中経過だけど、上位はだいたい固まってきた'),mkLow('🎯 まだ精度低いけど今の気持ちはこれ'),mkLow('ウィッシュリスト整理中。とりあえず今の順位'),mkLow('暫定ランキング公開。まだ変わるかも'),mkLow('🎮 ざっくりランキング、まだ途中'),mkLow('今の段階ではこれが上位。まだ続く'),mkLow('とりあえず回してみた結果がこちら'),mkLow('🔥 1ラウンド目終了。上位はこんな感じ'),mkLow('まずはざっくり順位をつけてみた'),mkLow('🎮 初回ランキング。これから精度上げていく'),mkLow('途中だけど上位は揺るがない気がする'),mkLow('暫定1位から目が離せない'),mkLow('🎯 まだランク付け中だけど報告'),mkLow('とりあえず1周目が終わった'),mkLow('まだ精度低いけど、傾向は見えてきた'),mkLow('🔄 進行中。上位は安定してきた'),mkLow('初戦終了。まだまだこれから'),mkLow('ざっくりだけどこんな感じ',' #Steam'),mkLow('まず1ラウンドやった結果',' #PCゲーム'),mkLow('🎮 途中経過を晒す',' #ゲーム'),mkLow('暫定ランキング。まだ変動あり',' #Steam'),mkLow('とりあえず今はこれが上位',' #積みゲー'),mkLow('精度低いけど公開する',' #Steam'),mkLow('🔥 初回なのに上位は決まりかけてる',' #ゲーム'),mkLow('まだ途中だけど上位は固い気がする',' #PCゲーム'),mkLow('1周目終了報告',' #Steam'),mkLow('🎯 まずはここから。次ラウンドで精度上げる',' #ゲーム'),mkLow('Steamウィッシュリストのランク付け始めた'),mkLow('🎮 ランキング作成中。今はこんな感じ'),mkLow('途中だけど見せちゃう'),mkLow('まだ全然終わってないけど現時点の結果'),mkLow('🔄 ゲームたちを戦わせ始めた'),mkLow('初ラウンドの結果を公開'),mkLow('まだ精度は低いが方向性は見えた',' #Steam'),mkLow('🎯 ざっくり仕分け完了。上位はこれ',' #ゲーム'),mkLow('1対1で戦わせ始めた。途中経過',' #Steam'),mkLow('ウィッシュリスト整理スタート',' #積みゲー'),mkLow('初戦の結果。まだ精度は低い',' #Steam'),mkLow('🎮 とりあえず回してみた',' #ゲーム'),mkLow('途中だけど上位は確定っぽい',' #PCゲーム'),mkLow('最初の結果。これから詰めていく',' #Steam'),mkLow('🔥 1ラウンド目。まずまずの結果',' #ゲーム'),mkLow('ざっくり版を公開します',' #Steam'),mkLow('まだ途中なので変動するかも',' #ゲーム'),mkLow('🎯 初回にしてはいい感じ',' #Steam'),mkLow('とりあえず今の順位を公開',' #PCゲーム'),mkLow('🎮 ランク付け開始。途中経過',' #Steam'),mkLow('1周目終わった。上位はだいたい決まった',' #ゲーム'),mkLow('まず大まかに整理した結果',' #Steam'),mkLow('🔄 初ラウンド完了。次は精度上げる',' #ゲーム'),mkLow('今の段階の正直な順位',' #Steam'),mkLow('途中経過を晒します',' #積みゲー'),mkLow('🎮 まずはざっくりランキング',' #ゲーム'),mkLow('初回なのでまだ荒削り',' #Steam'),mkLow('とりあえず1周目の結果です',' #PCゲーム'),mkLow('🎯 上位はだいたい見えてきた',' #ゲーム'),mkLow('途中だけど報告したかった',' #Steam'),mkLow('🔥 1ラウンド目終了！上位はこれ',' #ゲーム'),mkLow('まだ精度低いよ？という前置きで',' #Steam'),mkLow('初戦終了。手応えあり',' #ゲーム'),mkLow('🎮 まず1回やってみた',' #Steam'),mkLow('暫定ランキング（変わるかも）',' #ゲーム'),mkLow('🔄 ランク付け中。経過報告',' #Steam'),mkLow('上位は固まってきた気がする',' #ゲーム'),mkLow('まだ途中だけどこんな感じ',' #Steam'),mkLow('🎯 初ラウンドの結果を公開',' #PCゲーム'),mkLow('ゲームたちに戦わせてみた初回結果',' #ゲーム'),mkLow('🎮 まずはここから始める',' #Steam'),mkLow('途中経過。上位は安定中',' #ゲーム'),mkLow('1周目だけど上位は揺るがない',' #Steam'),mkLow('🔥 初戦の結果がこちら',' #ゲーム'),mkLow('ざっくりだけど傾向は見えた',' #Steam'),mkLow('まず回してみた。これが今の答え',' #ゲーム'),mkLow('🎯 1ラウンド目完了',' #Steam'),mkLow('途中だけど見せちゃう（変わるかも）',' #ゲーム'),mkLow('🎮 初回ランキング公開',' #Steam'),mkLow('まだ荒削りだけど上位は固い',' #ゲーム'),mkLow('とりあえずの結果です',' #Steam #積みゲー'),mkLow('🔄 進行中。途中経過',' #Steam #ゲーム'),mkLow('初ラウンド終了。感触よし',' #Steam #PCゲーム'),mkLow('まず大まかに決めた',' #Steam #ゲーム'),mkLow('🎮 1周目の結果',' #Steam #ゲーム'),mkLow('途中だけど上位は決まりつつある',' #Steam #ゲーム'),mkLow('🎯 暫定版ランキング',' #Steam #ゲーム'),mkLow('まだ精度低いけど公開する勇気',' #Steam #ゲーム'),mkLow('🔥 初回の結果を晒す',' #Steam #ゲーム'),mkLow('ランク付け中。現時点の結果',' #Steam #ゲーム'),mkLow('🎮 1対1で戦わせ始めた',' #Steam #ゲーム'),mkLow('途中経過。参考程度に',' #Steam #ゲーム'),mkLow('暫定トップはこれだ',' #Steam #ゲーム'),mkLow('🔄 まだ途中。続きは次回',' #Steam #ゲーム'),mkLow('初ラウンドなのに上位は揺るがない気がする',' #Steam #ゲーム'),mkLow('🎯 とりあえず今の気持ち',' #Steam #ゲーム'),mkLow('1周目終了。上位はほぼ決まり',' #Steam #ゲーム'),mkLow('途中だけど自信ある上位',' #Steam #ゲーム'),
+var SHARE_LOW=[
+  mkLow('🎮 とりあえず今の段階のウィッシュリストランキング'),mkLow('まだ途中だけど現時点の優先順位を公開'),mkLow('🔄 ランク付け進行中。今はこんな感じ'),mkLow('途中経過だけど、上位はだいたい固まってきた'),mkLow('🎯 まだ精度低いけど今の気持ちはこれ'),mkLow('ウィッシュリスト整理中。とりあえず今の順位'),mkLow('暫定ランキング公開。まだ変わるかも'),mkLow('🎮 ざっくりランキング、まだ途中'),mkLow('今の段階ではこれが上位。まだ続く'),mkLow('とりあえず回してみた結果がこちら'),mkLow('🔥 1ラウンド目終了。上位はこんな感じ'),mkLow('まずはざっくり順位をつけてみた'),mkLow('🎮 初回ランキング。これから精度上げていく'),mkLow('途中だけど上位は揺るがない気がする'),mkLow('暫定1位から目が離せない'),mkLow('🎯 まだランク付け中だけど報告'),mkLow('とりあえず1周目が終わった'),mkLow('まだ精度低いけど、傾向は見えてきた'),mkLow('🔄 進行中。上位は安定してきた'),mkLow('初戦終了。まだまだこれから'),mkLow('ざっくりだけどこんな感じ',' #Steam'),mkLow('まず1ラウンドやった結果',' #PCゲーム'),mkLow('🎮 途中経過を晒す',' #ゲーム'),mkLow('暫定ランキング。まだ変動あり',' #Steam'),mkLow('とりあえず今はこれが上位',' #積みゲー'),mkLow('精度低いけど公開する',' #Steam'),mkLow('🔥 初回なのに上位は決まりかけてる',' #ゲーム'),mkLow('まだ途中だけど上位は固い気がする',' #PCゲーム'),mkLow('1周目終了報告',' #Steam'),mkLow('🎯 まずはここから。次ラウンドで精度上げる',' #ゲーム'),mkLow('Steamウィッシュリストのランク付け始めた'),mkLow('🎮 ランキング作成中。今はこんな感じ'),mkLow('途中だけど見せちゃう'),mkLow('まだ全然終わってないけど現時点の結果'),mkLow('🔄 ゲームたちを戦わせ始めた'),mkLow('初ラウンドの結果を公開'),mkLow('まだ精度は低いが方向性は見えた',' #Steam'),mkLow('🎯 ざっくり仕分け完了。上位はこれ',' #ゲーム'),mkLow('1対1で戦わせ始めた。途中経過',' #Steam'),mkLow('ウィッシュリスト整理スタート',' #積みゲー'),mkLow('初戦の結果。まだ精度は低い',' #Steam'),mkLow('🎮 とりあえず回してみた',' #ゲーム'),mkLow('途中だけど上位は確定っぽい',' #PCゲーム'),mkLow('最初の結果。これから詰めていく',' #Steam'),mkLow('🔥 1ラウンド目。まずまずの結果',' #ゲーム'),mkLow('ざっくり版を公開します',' #Steam'),mkLow('まだ途中なので変動するかも',' #ゲーム'),mkLow('🎯 初回にしてはいい感じ',' #Steam'),mkLow('とりあえず今の順位を公開',' #PCゲーム'),mkLow('🎮 ランク付け開始。途中経過',' #Steam'),mkLow('1周目終わった。上位はだいたい決まった',' #ゲーム'),mkLow('まず大まかに整理した結果',' #Steam'),mkLow('🔄 初ラウンド完了。次は精度上げる',' #ゲーム'),mkLow('今の段階の正直な順位',' #Steam'),mkLow('途中経過を晒します',' #積みゲー'),mkLow('🎮 まずはざっくりランキング',' #ゲーム'),mkLow('初回なのでまだ荒削り',' #Steam'),mkLow('とりあえず1周目の結果です',' #PCゲーム'),mkLow('🎯 上位はだいたい見えてきた',' #ゲーム'),mkLow('途中だけど報告したかった',' #Steam'),mkLow('🔥 1ラウンド目終了！上位はこれ',' #ゲーム'),mkLow('まだ精度低いよ？という前置きで',' #Steam'),mkLow('初戦終了。手応えあり',' #ゲーム'),mkLow('🎮 まず1回やってみた',' #Steam'),mkLow('暫定ランキング（変わるかも）',' #ゲーム'),mkLow('🔄 ランク付け中。経過報告',' #Steam'),mkLow('上位は固まってきた気がする',' #ゲーム'),mkLow('まだ途中だけどこんな感じ',' #Steam'),mkLow('🎯 初ラウンドの結果を公開',' #PCゲーム'),mkLow('ゲームたちに戦わせてみた初回結果',' #ゲーム'),mkLow('🎮 まずはここから始める',' #Steam'),mkLow('途中経過。上位は安定中',' #ゲーム'),mkLow('1周目だけど上位は揺るがない',' #Steam'),mkLow('🔥 初戦の結果がこちら',' #ゲーム'),mkLow('ざっくりだけど傾向は見えた',' #Steam'),mkLow('まず回してみた。これが今の答え',' #ゲーム'),mkLow('🎯 1ラウンド目完了',' #Steam'),mkLow('途中だけど見せちゃう（変わるかも）',' #ゲーム'),mkLow('🎮 初回ランキング公開',' #Steam'),mkLow('まだ荒削りだけど上位は固い',' #ゲーム'),mkLow('とりあえずの結果です',' #Steam #積みゲー'),mkLow('🔄 進行中。途中経過',' #Steam #ゲーム'),mkLow('初ラウンド終了。感触よし',' #Steam #PCゲーム'),mkLow('まず大まかに決めた',' #Steam #ゲーム'),mkLow('🎮 1周目の結果',' #Steam #ゲーム'),mkLow('途中だけど上位は決まりつつある',' #Steam #ゲーム'),mkLow('🎯 暫定版ランキング',' #Steam #ゲーム'),mkLow('まだ精度低いけど公開する勇気',' #Steam #ゲーム'),mkLow('🔥 初回の結果を晒す',' #Steam #ゲーム'),mkLow('ランク付け中。現時点の結果',' #Steam #ゲーム'),mkLow('🎮 1対1で戦わせ始めた',' #Steam #ゲーム'),mkLow('途中経過。参考程度に',' #Steam #ゲーム'),mkLow('暫定トップはこれだ',' #Steam #ゲーム'),mkLow('🔄 まだ途中。続きは次回',' #Steam #ゲーム'),mkLow('初ラウンドなのに上位は揺るがない気がする',' #Steam #ゲーム'),mkLow('🎯 とりあえず今の気持ち',' #Steam #ゲーム'),mkLow('1周目終了。上位はほぼ決まり',' #Steam #ゲーム'),mkLow('途中だけど自信ある上位',' #Steam #ゲーム')
 ];
-const SHARE_MID=[
-  mkMid('だいたい決まってきた。現時点のランキング'),mkMid('🎯 2ラウンド目終了。だいぶ固まってきた'),mkMid('割と自信あり。現時点の順位'),mkMid('🎮 だいたいこんな感じになってきた'),mkMid('上位はほぼ確定。現時点のランキング'),mkMid('🔥 精度が上がってきた。現在の順位'),mkMid('ある程度固まってきた現時点のランキング'),mkMid('もうだいたい決まってる気がする'),mkMid('🎮 中間発表。上位は安定してきた'),mkMid('割と本気のランキングになってきた'),mkMid('上位は動かないと思う。現時点で',' #Steam'),mkMid('🎯 精度中。でも上位は確信あり',' #ゲーム'),mkMid('だいぶ整理されてきた',' #Steam'),mkMid('🔄 2周目終了。かなり見えてきた',' #ゲーム'),mkMid('現時点の答えがほぼ固まった',' #Steam'),mkMid('🎮 中間地点のランキング',' #ゲーム'),mkMid('上位の顔ぶれが安定してきた',' #Steam'),mkMid('🔥 だいたいこれで確定な気がする',' #ゲーム'),mkMid('割と自信のあるランキングになってきた',' #Steam'),mkMid('中間発表。上位は不動',' #ゲーム'),mkMid('🎯 現時点でかなり固まった'),mkMid('2ラウンドやった結果がこちら'),mkMid('だいぶ決まってきた。これが中間発表'),mkMid('🎮 上位は安定。中間ランキング公開'),mkMid('割と本気のランキングになってきた'),mkMid('現時点の正直な順位',' #Steam'),mkMid('🔄 まだ続けるけど現時点はこれ',' #ゲーム'),mkMid('上位の顔ぶれが安定してきた',' #PCゲーム'),mkMid('だいたい見えてきた現在のランキング',' #Steam'),mkMid('🎯 中間発表。かなり自信あり',' #ゲーム'),mkMid('2周目終了。上位はほぼ確定',' #Steam'),mkMid('🎮 精度が上がってきた',' #ゲーム'),mkMid('割と決まってきた感じがある',' #Steam'),mkMid('現時点で自信のある順位',' #ゲーム'),mkMid('🔥 だいぶ固まってきたランキング',' #Steam'),mkMid('中間地点の答えがこちら',' #ゲーム'),mkMid('🎯 上位は揺るがない。中間発表',' #Steam'),mkMid('ある程度決まってきた',' #ゲーム'),mkMid('🎮 2ラウンド目の結果',' #Steam'),mkMid('現時点でかなり固まってきた',' #ゲーム'),mkMid('割と自信あり。でもまだ続ける',' #Steam'),mkMid('🔄 だいたいこんな感じになった',' #ゲーム'),mkMid('上位は安定。中間ランキング',' #Steam'),mkMid('🎮 まだ続けるけど現時点はこれ',' #ゲーム'),mkMid('だいたい決まった気がする',' #Steam'),mkMid('🎯 中間発表。自信あり',' #ゲーム'),mkMid('2周目でかなり整理できた',' #Steam'),mkMid('現時点でほぼ答えが出た',' #ゲーム'),mkMid('🔥 中間なのに上位は確信あり',' #Steam'),mkMid('だいぶ見えてきた現在地',' #ゲーム'),mkMid('割と本気になってきた現時点の順位'),mkMid('🎮 2ラウンド終了。かなり固まった'),mkMid('上位の顔ぶれが安定してきた'),mkMid('中間発表。これが今の答え'),mkMid('🎯 精度中でこれなら完成も近い'),mkMid('だいたい決まってきた感じ',' #Steam'),mkMid('🔄 現時点の中間ランキング',' #ゲーム'),mkMid('上位はほぼ確定してきた',' #PCゲーム'),mkMid('中間地点の正直な順位',' #Steam'),mkMid('🎮 2周目の結果がこちら',' #ゲーム'),mkMid('だいぶ固まってきた',' #Steam'),mkMid('🎯 中間発表。上位は不動',' #ゲーム'),mkMid('割と決まった感じがする',' #Steam'),mkMid('現在地を公開します',' #ゲーム'),mkMid('🔥 2ラウンドでここまで固まった',' #Steam'),mkMid('だいぶ整理されてきたランキング',' #ゲーム'),mkMid('🎮 中間地点のランキング公開',' #Steam'),mkMid('割と自信のある中間結果',' #ゲーム'),mkMid('現時点でほぼ確信あり',' #Steam'),mkMid('🎯 上位は安定してきた',' #ゲーム'),mkMid('2周目終了報告',' #Steam'),mkMid('だいたいこれが答えかも',' #ゲーム'),mkMid('🔄 精度が上がってきた現時点の結果',' #Steam'),mkMid('中間にしては自信あり',' #ゲーム'),mkMid('🎮 現時点でかなり固まってきた',' #Steam'),mkMid('上位はもう動かない気がする',' #ゲーム'),mkMid('🎯 中間発表します',' #Steam'),mkMid('2ラウンドやってかなり見えてきた',' #ゲーム'),mkMid('割と本気の中間ランキング',' #Steam'),mkMid('🔥 だいぶ整理されてきた',' #ゲーム'),mkMid('現時点の中間結果を公開',' #Steam'),mkMid('だいたいこんな感じになってきた',' #ゲーム'),mkMid('🎮 中間なのに自信満々',' #Steam #ゲーム'),mkMid('割と決まってきた現在のランキング',' #Steam #ゲーム'),mkMid('🎯 現時点の答えを公開',' #Steam #ゲーム'),mkMid('2周目終了。かなりよくなった',' #Steam #ゲーム'),mkMid('上位は確定してきた感じ',' #Steam #ゲーム'),mkMid('🔄 中間発表。これが今の順位',' #Steam #ゲーム'),mkMid('だいぶ固まってきたランキング',' #Steam #ゲーム'),mkMid('🎮 中間地点での答え',' #Steam #ゲーム'),mkMid('現時点でかなり自信あり',' #Steam #ゲーム'),mkMid('🎯 割と本気の中間ランキング',' #Steam #ゲーム'),mkMid('2ラウンド目の結果がこちら',' #Steam #ゲーム'),mkMid('上位の顔ぶれが安定してきた',' #Steam #ゲーム'),mkMid('🔥 中間なのに上位は揺るがない',' #Steam #ゲーム'),mkMid('だいたい決まった現時点の順位',' #Steam #ゲーム'),mkMid('🎮 精度上がってきた。中間発表',' #Steam #ゲーム'),mkMid('現在地を報告します',' #Steam #ゲーム'),mkMid('中間でこれなら完成版も楽しみ',' #Steam #ゲーム'),
+var SHARE_MID=[
+  mkMid('だいたい決まってきた。現時点のランキング'),mkMid('🎯 2ラウンド目終了。だいぶ固まってきた'),mkMid('割と自信あり。現時点の順位'),mkMid('🎮 だいたいこんな感じになってきた'),mkMid('上位はほぼ確定。現時点のランキング'),mkMid('🔥 精度が上がってきた。現在の順位'),mkMid('ある程度固まってきた現時点のランキング'),mkMid('もうだいたい決まってる気がする'),mkMid('🎮 中間発表。上位は安定してきた'),mkMid('割と本気のランキングになってきた'),mkMid('上位は動かないと思う。現時点で',' #Steam'),mkMid('🎯 精度中。でも上位は確信あり',' #ゲーム'),mkMid('だいぶ整理されてきた',' #Steam'),mkMid('🔄 2周目終了。かなり見えてきた',' #ゲーム'),mkMid('現時点の答えがほぼ固まった',' #Steam'),mkMid('🎮 中間地点のランキング',' #ゲーム'),mkMid('上位の顔ぶれが安定してきた',' #Steam'),mkMid('🔥 だいたいこれで確定な気がする',' #ゲーム'),mkMid('割と自信のあるランキングになってきた',' #Steam'),mkMid('中間発表。上位は不動',' #ゲーム'),mkMid('🎯 現時点でかなり固まった'),mkMid('2ラウンドやった結果がこちら'),mkMid('だいぶ決まってきた。これが中間発表'),mkMid('🎮 上位は安定。中間ランキング公開'),mkMid('割と本気のランキングになってきた'),mkMid('現時点の正直な順位',' #Steam'),mkMid('🔄 まだ続けるけど現時点はこれ',' #ゲーム'),mkMid('上位の顔ぶれが安定してきた',' #PCゲーム'),mkMid('だいたい見えてきた現在のランキング',' #Steam'),mkMid('🎯 中間発表。かなり自信あり',' #ゲーム'),mkMid('2周目終了。上位はほぼ確定',' #Steam'),mkMid('🎮 精度が上がってきた',' #ゲーム'),mkMid('割と決まってきた感じがある',' #Steam'),mkMid('現時点で自信のある順位',' #ゲーム'),mkMid('🔥 だいぶ固まってきたランキング',' #Steam'),mkMid('中間地点の答えがこちら',' #ゲーム'),mkMid('🎯 上位は揺るがない。中間発表',' #Steam'),mkMid('ある程度決まってきた',' #ゲーム'),mkMid('🎮 2ラウンド目の結果',' #Steam'),mkMid('現時点でかなり固まってきた',' #ゲーム'),mkMid('割と自信あり。でもまだ続ける',' #Steam'),mkMid('🔄 だいたいこんな感じになった',' #ゲーム'),mkMid('上位は安定。中間ランキング',' #Steam'),mkMid('🎮 まだ続けるけど現時点はこれ',' #ゲーム'),mkMid('だいたい決まった気がする',' #Steam'),mkMid('🎯 中間発表。自信あり',' #ゲーム'),mkMid('2周目でかなり整理できた',' #Steam'),mkMid('現時点でほぼ答えが出た',' #ゲーム'),mkMid('🔥 中間なのに上位は確信あり',' #Steam'),mkMid('だいぶ見えてきた現在地',' #ゲーム'),mkMid('割と本気になってきた現時点の順位'),mkMid('🎮 2ラウンド終了。かなり固まった'),mkMid('上位の顔ぶれが安定してきた'),mkMid('中間発表。これが今の答え'),mkMid('🎯 精度中でこれなら完成も近い'),mkMid('だいたい決まってきた感じ',' #Steam'),mkMid('🔄 現時点の中間ランキング',' #ゲーム'),mkMid('上位はほぼ確定してきた',' #PCゲーム'),mkMid('中間地点の正直な順位',' #Steam'),mkMid('🎮 2周目の結果がこちら',' #ゲーム'),mkMid('だいぶ固まってきた',' #Steam'),mkMid('🎯 中間発表。上位は不動',' #ゲーム'),mkMid('割と決まった感じがする',' #Steam'),mkMid('現在地を公開します',' #ゲーム'),mkMid('🔥 2ラウンドでここまで固まった',' #Steam'),mkMid('だいぶ整理されてきたランキング',' #ゲーム'),mkMid('🎮 中間地点のランキング公開',' #Steam'),mkMid('割と自信のある中間結果',' #ゲーム'),mkMid('現時点でほぼ確信あり',' #Steam'),mkMid('🎯 上位は安定してきた',' #ゲーム'),mkMid('2周目終了報告',' #Steam'),mkMid('だいたいこれが答えかも',' #ゲーム'),mkMid('🔄 精度が上がってきた現時点の結果',' #Steam'),mkMid('中間にしては自信あり',' #ゲーム'),mkMid('🎮 現時点でかなり固まってきた',' #Steam'),mkMid('上位はもう動かない気がする',' #ゲーム'),mkMid('🎯 中間発表します',' #Steam'),mkMid('2ラウンドやってかなり見えてきた',' #ゲーム'),mkMid('割と本気の中間ランキング',' #Steam'),mkMid('🔥 だいぶ整理されてきた',' #ゲーム'),mkMid('現時点の中間結果を公開',' #Steam'),mkMid('だいたいこんな感じになってきた',' #ゲーム'),mkMid('🎮 中間なのに自信満々',' #Steam #ゲーム'),mkMid('割と決まってきた現在のランキング',' #Steam #ゲーム'),mkMid('🎯 現時点の答えを公開',' #Steam #ゲーム'),mkMid('2周目終了。かなりよくなった',' #Steam #ゲーム'),mkMid('上位は確定してきた感じ',' #Steam #ゲーム'),mkMid('🔄 中間発表。これが今の順位',' #Steam #ゲーム'),mkMid('だいぶ固まってきたランキング',' #Steam #ゲーム'),mkMid('🎮 中間地点での答え',' #Steam #ゲーム'),mkMid('現時点でかなり自信あり',' #Steam #ゲーム'),mkMid('🎯 割と本気の中間ランキング',' #Steam #ゲーム'),mkMid('2ラウンド目の結果がこちら',' #Steam #ゲーム'),mkMid('上位の顔ぶれが安定してきた',' #Steam #ゲーム'),mkMid('🔥 中間なのに上位は揺るがない',' #Steam #ゲーム'),mkMid('だいたい決まった現時点の順位',' #Steam #ゲーム'),mkMid('🎮 精度上がってきた。中間発表',' #Steam #ゲーム'),mkMid('現在地を報告します',' #Steam #ゲーム'),mkMid('中間でこれなら完成版も楽しみ',' #Steam #ゲーム')
 ];
-const SHARE_HIGH=[
-  mkHigh('🎯 かなり自信あり。現時点のランキング'),mkHigh('もうほぼ確定。現在のランキング'),mkHigh('🏆 精度高め。これが今の答え'),mkHigh('自信を持って公開できるランキング'),mkHigh('🎮 かなり固まった。これが今の順位'),mkHigh('精度高いのでほぼ完成版'),mkHigh('🔥 これが俺のウィッシュリストランキング'),mkHigh('高精度になってきた。現時点の答え'),mkHigh('🎯 自信満々のランキングがこちら'),mkHigh('もうほぼ変わらないと思う'),mkHigh('かなり精度が上がったランキング',' #Steam'),mkHigh('🏆 これが今の正直な順位',' #ゲーム'),mkHigh('自信ありのランキングを公開',' #Steam'),mkHigh('🎮 ほぼ完成版のランキング',' #ゲーム'),mkHigh('高精度版のランキングがこちら',' #Steam'),mkHigh('🔥 これが俺の答えだ',' #ゲーム'),mkHigh('かなり固まったランキングを公開',' #Steam'),mkHigh('🎯 精度高め。自信あり',' #ゲーム'),mkHigh('ほぼ完成。これが今の順位',' #Steam'),mkHigh('高精度ランキングを公開します',' #ゲーム'),mkHigh('かなり自信のあるランキング'),mkHigh('🏆 これがほぼ完成版'),mkHigh('自信を持って言える今の順位'),mkHigh('🎮 ほぼ確定のランキング'),mkHigh('精度が上がって自信が出てきた'),mkHigh('これが今の正直な答え',' #Steam'),mkHigh('🎯 かなり固まった。ほぼ確定版',' #ゲーム'),mkHigh('高精度になってきた現在のランキング',' #Steam'),mkHigh('もうほぼ変わらないランキング',' #PCゲーム'),mkHigh('🔥 精度高め。これが俺の順位',' #Steam'),mkHigh('かなり本気のランキング',' #ゲーム'),mkHigh('🏆 自信満々版ランキング',' #Steam'),mkHigh('ほぼ完成版を公開します',' #ゲーム'),mkHigh('🎮 これが今の答えです',' #Steam'),mkHigh('精度高いのでほぼ確定',' #ゲーム'),mkHigh('かなり固まってきた。ほぼ完成',' #Steam'),mkHigh('🎯 自信ありのランキングを公開',' #ゲーム'),mkHigh('高精度ランキング。ほぼ完成版',' #Steam'),mkHigh('もう変わらないと思う順位',' #ゲーム'),mkHigh('🔥 これが今の俺の答えだ',' #Steam'),mkHigh('精度が高くなってきた現在地'),mkHigh('🏆 ほぼ完成版のランキング'),mkHigh('自信を持って公開できる'),mkHigh('🎮 かなり固まった現在のランキング'),mkHigh('高精度。これが今の順位'),mkHigh('ほぼ確定した現時点のランキング',' #Steam'),mkHigh('🎯 精度高め。自信あり',' #ゲーム'),mkHigh('これがほぼ完成版の答え',' #Steam'),mkHigh('かなり自信のある現時点の順位',' #ゲーム'),mkHigh('🔥 高精度ランキングを公開',' #Steam'),mkHigh('自信満々のランキングがこちら',' #ゲーム'),mkHigh('🏆 ほぼ完成版を公開',' #Steam'),mkHigh('かなり固まった。もうほぼ確定',' #ゲーム'),mkHigh('精度高め。これが俺の順位',' #Steam'),mkHigh('🎮 ほぼ決まりのランキング',' #ゲーム'),mkHigh('これが今の正直な気持ち',' #Steam'),mkHigh('🎯 高精度版ランキング公開',' #ゲーム'),mkHigh('自信があるから公開する',' #Steam'),mkHigh('ほぼ完成のランキング',' #ゲーム'),mkHigh('🔥 精度が上がって確信が持てた',' #Steam'),mkHigh('かなり自信のあるランキング',' #ゲーム'),mkHigh('もうほぼ確定した順位',' #Steam #ゲーム'),mkHigh('🏆 高精度ランキング',' #Steam #ゲーム'),mkHigh('かなり固まった現在のランキング',' #Steam #ゲーム'),mkHigh('🎮 自信満々版を公開',' #Steam #ゲーム'),mkHigh('精度高め。ほぼ完成版',' #Steam #ゲーム'),mkHigh('🎯 これが今の答えです',' #Steam #ゲーム'),mkHigh('ほぼ確定。高精度ランキング',' #Steam #ゲーム'),mkHigh('自信ありのランキング',' #Steam #ゲーム'),mkHigh('🔥 かなり固まってきた',' #Steam #ゲーム'),mkHigh('高精度版がこちら',' #Steam #ゲーム'),mkHigh('🏆 ほぼ完成した現在のランキング',' #Steam #ゲーム'),mkHigh('かなり自信あり。これが今の順位',' #Steam #ゲーム'),mkHigh('精度高め。もうほぼ決まり',' #Steam #ゲーム'),mkHigh('🎮 これが高精度版ランキング',' #Steam #ゲーム'),mkHigh('自信満々で公開する',' #Steam #ゲーム'),mkHigh('🎯 高精度ランキングを公開します',' #Steam #ゲーム'),mkHigh('ほぼ完成版を公開します',' #Steam #ゲーム'),mkHigh('かなり固まった高精度ランキング',' #Steam #ゲーム'),mkHigh('🔥 これが今の俺のランキング',' #Steam #ゲーム'),mkHigh('もう変わらないと思う高精度版',' #Steam #ゲーム'),mkHigh('🏆 自信ありの高精度ランキング',' #Steam #ゲーム'),mkHigh('精度高めでかなり自信あり',' #Steam #ゲーム'),mkHigh('🎮 高精度版。ほぼ完成',' #Steam #ゲーム'),mkHigh('これがほぼ完成版のランキング',' #Steam #ゲーム'),mkHigh('🎯 高精度でほぼ確定',' #Steam #ゲーム'),mkHigh('かなり本気のランキングがこちら',' #Steam #ゲーム'),mkHigh('自信持って公開できる高精度版',' #Steam #ゲーム'),mkHigh('🔥 ほぼ完成した高精度ランキング',' #Steam #ゲーム'),mkHigh('もうほぼ変わらない順位',' #Steam #ゲーム'),mkHigh('🏆 高精度版ランキング公開',' #Steam #ゲーム'),mkHigh('かなり固まった。自信あり',' #Steam #ゲーム'),mkHigh('精度高いのでほぼ完成版です',' #Steam #ゲーム'),mkHigh('🎮 ほぼ確定のランキングがこちら',' #Steam #ゲーム'),mkHigh('これが今の本気の順位',' #Steam #ゲーム'),mkHigh('🎯 自信満々。高精度版',' #Steam #ゲーム'),mkHigh('高精度ランキング。自信あり',' #Steam #ゲーム'),mkHigh('ほぼ完成。これが俺の答え',' #Steam #ゲーム'),
+var SHARE_HIGH=[
+  mkHigh('🎯 かなり自信あり。現時点のランキング'),mkHigh('もうほぼ確定。現在のランキング'),mkHigh('🏆 精度高め。これが今の答え'),mkHigh('自信を持って公開できるランキング'),mkHigh('🎮 かなり固まった。これが今の順位'),mkHigh('精度高いのでほぼ完成版'),mkHigh('🔥 これが俺のウィッシュリストランキング'),mkHigh('高精度になってきた。現時点の答え'),mkHigh('🎯 自信満々のランキングがこちら'),mkHigh('もうほぼ変わらないと思う'),mkHigh('かなり精度が上がったランキング',' #Steam'),mkHigh('🏆 これが今の正直な順位',' #ゲーム'),mkHigh('自信ありのランキングを公開',' #Steam'),mkHigh('🎮 ほぼ完成版のランキング',' #ゲーム'),mkHigh('高精度版のランキングがこちら',' #Steam'),mkHigh('🔥 これが俺の答えだ',' #ゲーム'),mkHigh('かなり固まったランキングを公開',' #Steam'),mkHigh('🎯 精度高め。自信あり',' #ゲーム'),mkHigh('ほぼ完成。これが今の順位',' #Steam'),mkHigh('高精度ランキングを公開します',' #ゲーム'),mkHigh('かなり自信のあるランキング'),mkHigh('🏆 これがほぼ完成版'),mkHigh('自信を持って言える今の順位'),mkHigh('🎮 ほぼ確定のランキング'),mkHigh('精度が上がって自信が出てきた'),mkHigh('これが今の正直な答え',' #Steam'),mkHigh('🎯 かなり固まった。ほぼ確定版',' #ゲーム'),mkHigh('高精度になってきた現在のランキング',' #Steam'),mkHigh('もうほぼ変わらないランキング',' #PCゲーム'),mkHigh('🔥 精度高め。これが俺の順位',' #Steam'),mkHigh('かなり本気のランキング',' #ゲーム'),mkHigh('🏆 自信満々版ランキング',' #Steam'),mkHigh('ほぼ完成版を公開します',' #ゲーム'),mkHigh('🎮 これが今の答えです',' #Steam'),mkHigh('精度高いのでほぼ確定',' #ゲーム'),mkHigh('かなり固まってきた。ほぼ完成',' #Steam'),mkHigh('🎯 自信ありのランキングを公開',' #ゲーム'),mkHigh('高精度ランキング。ほぼ完成版',' #Steam'),mkHigh('もう変わらないと思う順位',' #ゲーム'),mkHigh('🔥 これが今の俺の答えだ',' #Steam'),mkHigh('精度が高くなってきた現在地'),mkHigh('🏆 ほぼ完成版のランキング'),mkHigh('自信を持って公開できる'),mkHigh('🎮 かなり固まった現在のランキング'),mkHigh('高精度。これが今の順位'),mkHigh('ほぼ確定した現時点のランキング',' #Steam'),mkHigh('🎯 精度高め。自信あり',' #ゲーム'),mkHigh('これがほぼ完成版の答え',' #Steam'),mkHigh('かなり自信のある現時点の順位',' #ゲーム'),mkHigh('🔥 高精度ランキングを公開',' #Steam'),mkHigh('自信満々のランキングがこちら',' #ゲーム'),mkHigh('🏆 ほぼ完成版を公開',' #Steam'),mkHigh('かなり固まった。もうほぼ確定',' #ゲーム'),mkHigh('精度高め。これが俺の順位',' #Steam'),mkHigh('🎮 ほぼ決まりのランキング',' #ゲーム'),mkHigh('これが今の正直な気持ち',' #Steam'),mkHigh('🎯 高精度版ランキング公開',' #ゲーム'),mkHigh('自信があるから公開する',' #Steam'),mkHigh('ほぼ完成のランキング',' #ゲーム'),mkHigh('🔥 精度が上がって確信が持てた',' #Steam'),mkHigh('かなり自信のあるランキング',' #ゲーム'),mkHigh('もうほぼ確定した順位',' #Steam #ゲーム'),mkHigh('🏆 高精度ランキング',' #Steam #ゲーム'),mkHigh('かなり固まった現在のランキング',' #Steam #ゲーム'),mkHigh('🎮 自信満々版を公開',' #Steam #ゲーム'),mkHigh('精度高め。ほぼ完成版',' #Steam #ゲーム'),mkHigh('🎯 これが今の答えです',' #Steam #ゲーム'),mkHigh('ほぼ確定。高精度ランキング',' #Steam #ゲーム'),mkHigh('自信ありのランキング',' #Steam #ゲーム'),mkHigh('🔥 かなり固まってきた',' #Steam #ゲーム'),mkHigh('高精度版がこちら',' #Steam #ゲーム'),mkHigh('🏆 ほぼ完成した現在のランキング',' #Steam #ゲーム'),mkHigh('かなり自信あり。これが今の順位',' #Steam #ゲーム'),mkHigh('精度高め。もうほぼ決まり',' #Steam #ゲーム'),mkHigh('🎮 これが高精度版ランキング',' #Steam #ゲーム'),mkHigh('自信満々で公開する',' #Steam #ゲーム'),mkHigh('🎯 高精度ランキングを公開します',' #Steam #ゲーム'),mkHigh('ほぼ完成版を公開します',' #Steam #ゲーム'),mkHigh('かなり固まった高精度ランキング',' #Steam #ゲーム'),mkHigh('🔥 これが今の俺のランキング',' #Steam #ゲーム'),mkHigh('もう変わらないと思う高精度版',' #Steam #ゲーム'),mkHigh('🏆 自信ありの高精度ランキング',' #Steam #ゲーム'),mkHigh('精度高めでかなり自信あり',' #Steam #ゲーム'),mkHigh('🎮 高精度版。ほぼ完成',' #Steam #ゲーム'),mkHigh('これがほぼ完成版のランキング',' #Steam #ゲーム'),mkHigh('🎯 高精度でほぼ確定',' #Steam #ゲーム'),mkHigh('かなり本気のランキングがこちら',' #Steam #ゲーム'),mkHigh('自信持って公開できる高精度版',' #Steam #ゲーム'),mkHigh('🔥 ほぼ完成した高精度ランキング',' #Steam #ゲーム'),mkHigh('もうほぼ変わらない順位',' #Steam #ゲーム'),mkHigh('🏆 高精度版ランキング公開',' #Steam #ゲーム'),mkHigh('かなり固まった。自信あり',' #Steam #ゲーム'),mkHigh('精度高いのでほぼ完成版です',' #Steam #ゲーム'),mkHigh('🎮 ほぼ確定のランキングがこちら',' #Steam #ゲーム'),mkHigh('これが今の本気の順位',' #Steam #ゲーム'),mkHigh('🎯 自信満々。高精度版',' #Steam #ゲーム'),mkHigh('高精度ランキング。自信あり',' #Steam #ゲーム'),mkHigh('ほぼ完成。これが俺の答え',' #Steam #ゲーム')
 ];
-const SHARE_PFCT=[
-  mkPfct('🏆 完璧に整理した！これが最終ランキング'),mkPfct('✅ ウィッシュリスト完全整理完了！'),mkPfct('これが俺の最終答えだ。異論は認める'),mkPfct('🎮 完全版ランキング完成！'),mkPfct('完璧に決まった。これが最終版'),mkPfct('🔥 完全版！これが俺のウィッシュリストランキング'),mkPfct('迷いなし。これが最終決定'),mkPfct('🎯 完璧なランキングが完成した'),mkPfct('これ以上ない仕上がり。最終版'),mkPfct('🏆 完成！これが俺の答えだ'),mkPfct('完全版ランキングを公開します',' #Steam'),mkPfct('🎮 完璧に整理完了！最終版',' #ゲーム'),mkPfct('これが最終決定版のランキング',' #Steam'),mkPfct('迷いなし。完璧な仕上がり',' #ゲーム'),mkPfct('🔥 完成版！異論は認める',' #Steam'),mkPfct('完璧に決まった最終ランキング',' #ゲーム'),mkPfct('🏆 これが俺の最終答え',' #Steam'),mkPfct('完全版を公開します',' #ゲーム'),mkPfct('🎯 完成！これが最終版',' #Steam'),mkPfct('迷いなし。これが答えだ',' #ゲーム'),mkPfct('完全版ランキング完成！'),mkPfct('🏆 これが最終決定版'),mkPfct('完璧に整理できた'),mkPfct('🎮 最終版ランキングを公開'),mkPfct('これ以上ない仕上がり'),mkPfct('🔥 完成版。これが俺の答え',' #Steam'),mkPfct('迷いなし！最終決定版',' #ゲーム'),mkPfct('完璧なランキングが完成した',' #Steam'),mkPfct('🏆 これが完成版のランキング',' #ゲーム'),mkPfct('最終版を公開します',' #Steam'),mkPfct('🎯 完璧に整理した結果がこちら',' #ゲーム'),mkPfct('完全版！これが最終答え',' #Steam'),mkPfct('🎮 完成した！最終ランキング公開',' #ゲーム'),mkPfct('迷いなし。完璧な順位',' #Steam'),mkPfct('🔥 完成版ランキングがこちら',' #ゲーム'),mkPfct('完璧に決まった。これが俺の答え',' #Steam'),mkPfct('🏆 最終決定版を公開',' #ゲーム'),mkPfct('これが最終版のランキング',' #Steam'),mkPfct('🎯 完璧な仕上がり。最終版',' #ゲーム'),mkPfct('完全版完成！異論は認める',' #Steam'),mkPfct('完璧に整理した！',' #Steam #ゲーム'),mkPfct('🏆 最終版ランキング完成',' #Steam #ゲーム'),mkPfct('これが俺の最終決定',' #Steam #ゲーム'),mkPfct('🎮 完全版を公開します',' #Steam #ゲーム'),mkPfct('完璧な順位が決まった',' #Steam #ゲーム'),mkPfct('🔥 最終版。これが答えだ',' #Steam #ゲーム'),mkPfct('迷いなし。完璧な仕上がり',' #Steam #ゲーム'),mkPfct('🏆 完成版ランキング公開',' #Steam #ゲーム'),mkPfct('これが最終答えです',' #Steam #ゲーム'),mkPfct('🎯 完璧に整理完了！',' #Steam #ゲーム'),mkPfct('完全版！これが俺のランキング',' #Steam #ゲーム'),mkPfct('最終決定版を公開します',' #Steam #ゲーム'),mkPfct('🎮 完成した最終ランキング',' #Steam #ゲーム'),mkPfct('完璧に決まった！最終版',' #Steam #ゲーム'),mkPfct('🔥 これが完全版のランキング',' #Steam #ゲーム'),mkPfct('迷いなし！これが最終答え',' #Steam #ゲーム'),mkPfct('🏆 完璧な仕上がりのランキング',' #Steam #ゲーム'),mkPfct('完全版ランキングがこちら',' #Steam #ゲーム'),mkPfct('🎯 最終決定版！完璧に整理した',' #Steam #ゲーム'),mkPfct('これ以上ない完成度',' #Steam #ゲーム'),mkPfct('🎮 完成！これが俺の最終答え',' #Steam #ゲーム'),mkPfct('完璧に整理した最終ランキング',' #Steam #ゲーム'),mkPfct('🔥 完全版！異論は認める',' #Steam #ゲーム'),mkPfct('最終版。これが俺の答えだ',' #Steam #ゲーム'),mkPfct('🏆 完璧に決まった最終版',' #Steam #ゲーム'),mkPfct('これが完全版のランキングです',' #Steam #ゲーム'),mkPfct('🎯 完成版！迷いなし',' #Steam #ゲーム'),mkPfct('完全版ランキングを公開',' #Steam #ゲーム'),mkPfct('🎮 最終版！完璧な仕上がり',' #Steam #ゲーム'),mkPfct('完璧に整理した！これが答え',' #Steam #ゲーム'),mkPfct('🔥 最終決定！これが俺のランキング',' #Steam #ゲーム'),mkPfct('完成版。変える気はない',' #Steam #ゲーム'),mkPfct('🏆 これが完璧な仕上がり',' #Steam #ゲーム'),mkPfct('最終版ランキングがこちら',' #Steam #ゲーム'),mkPfct('🎯 完全版！これが最終答え',' #Steam #ゲーム'),mkPfct('完璧に整理できた最終版',' #Steam #ゲーム'),mkPfct('🎮 完成版のランキングを公開',' #Steam #ゲーム'),mkPfct('これが俺の完璧なランキング',' #Steam #ゲーム'),mkPfct('🔥 完全版！迷いなし',' #Steam #ゲーム'),mkPfct('最終答え。これが俺の順位',' #Steam #ゲーム'),mkPfct('🏆 完璧に決まった！最終版',' #Steam #ゲーム'),mkPfct('完成版ランキング！異論は認める',' #Steam #ゲーム'),mkPfct('🎯 最終決定版。完璧な仕上がり',' #Steam #ゲーム'),mkPfct('これが完成版の最終ランキング',' #Steam #ゲーム'),mkPfct('完全版！これが俺の答えだ',' #Steam #ゲーム'),mkPfct('🎮 完璧なランキングが完成した',' #Steam #ゲーム'),mkPfct('最終版を公開。変える気はない',' #Steam #ゲーム'),mkPfct('🔥 完成！これが最終決定版',' #Steam #ゲーム'),mkPfct('完璧に整理した！最終ランキング公開',' #Steam #ゲーム'),mkPfct('🏆 これが俺の完全版ランキング',' #Steam #ゲーム'),mkPfct('最終決定。完璧な仕上がりです',' #Steam #ゲーム'),mkPfct('🎯 完成版！これが最終版',' #Steam #ゲーム'),mkPfct('完全版ランキング。迷いなし',' #Steam #ゲーム'),mkPfct('🎮 完璧に整理した最終版',' #Steam #ゲーム'),mkPfct('これが最終決定版のランキングです',' #Steam #ゲーム'),mkPfct('🔥 完成版！完璧な仕上がり',' #Steam #ゲーム'),mkPfct('最終版。これが俺の最終答え',' #Steam #ゲーム'),mkPfct('🏆 完全版完成！これが答えだ',' #Steam #ゲーム'),
+var SHARE_PFCT=[
+  mkPfct('🏆 完璧に整理した！これが最終ランキング'),mkPfct('✅ ウィッシュリスト完全整理完了！'),mkPfct('これが俺の最終答えだ。異論は認める'),mkPfct('🎮 完全版ランキング完成！'),mkPfct('完璧に決まった。これが最終版'),mkPfct('🔥 完全版！これが俺のウィッシュリストランキング'),mkPfct('迷いなし。これが最終決定'),mkPfct('🎯 完璧なランキングが完成した'),mkPfct('これ以上ない仕上がり。最終版'),mkPfct('🏆 完成！これが俺の答えだ'),mkPfct('完全版ランキングを公開します',' #Steam'),mkPfct('🎮 完璧に整理完了！最終版',' #ゲーム'),mkPfct('これが最終決定版のランキング',' #Steam'),mkPfct('迷いなし。完璧な仕上がり',' #ゲーム'),mkPfct('🔥 完成版！異論は認める',' #Steam'),mkPfct('完璧に決まった最終ランキング',' #ゲーム'),mkPfct('🏆 これが俺の最終答え',' #Steam'),mkPfct('完全版を公開します',' #ゲーム'),mkPfct('🎯 完成！これが最終版',' #Steam'),mkPfct('迷いなし。これが答えだ',' #ゲーム'),mkPfct('完全版ランキング完成！'),mkPfct('🏆 これが最終決定版'),mkPfct('完璧に整理できた'),mkPfct('🎮 最終版ランキングを公開'),mkPfct('これ以上ない仕上がり'),mkPfct('🔥 完成版。これが俺の答え',' #Steam'),mkPfct('迷いなし！最終決定版',' #ゲーム'),mkPfct('完璧なランキングが完成した',' #Steam'),mkPfct('🏆 これが完成版のランキング',' #ゲーム'),mkPfct('最終版を公開します',' #Steam'),mkPfct('🎯 完璧に整理した結果がこちら',' #ゲーム'),mkPfct('完全版！これが最終答え',' #Steam'),mkPfct('🎮 完成した！最終ランキング公開',' #ゲーム'),mkPfct('迷いなし。完璧な順位',' #Steam'),mkPfct('🔥 完成版ランキングがこちら',' #ゲーム'),mkPfct('完璧に決まった。これが俺の答え',' #Steam'),mkPfct('🏆 最終決定版を公開',' #ゲーム'),mkPfct('これが最終版のランキング',' #Steam'),mkPfct('🎯 完璧な仕上がり。最終版',' #ゲーム'),mkPfct('完全版完成！異論は認める',' #Steam'),mkPfct('完璧に整理した！',' #Steam #ゲーム'),mkPfct('🏆 最終版ランキング完成',' #Steam #ゲーム'),mkPfct('これが俺の最終決定',' #Steam #ゲーム'),mkPfct('🎮 完全版を公開します',' #Steam #ゲーム'),mkPfct('完璧な順位が決まった',' #Steam #ゲーム'),mkPfct('🔥 最終版。これが答えだ',' #Steam #ゲーム'),mkPfct('迷いなし。完璧な仕上がり',' #Steam #ゲーム'),mkPfct('🏆 完成版ランキング公開',' #Steam #ゲーム'),mkPfct('これが最終答えです',' #Steam #ゲーム'),mkPfct('🎯 完璧に整理完了！',' #Steam #ゲーム'),mkPfct('完全版！これが俺のランキング',' #Steam #ゲーム'),mkPfct('最終決定版を公開します',' #Steam #ゲーム'),mkPfct('🎮 完成した最終ランキング',' #Steam #ゲーム'),mkPfct('完璧に決まった！最終版',' #Steam #ゲーム'),mkPfct('🔥 これが完全版のランキング',' #Steam #ゲーム'),mkPfct('迷いなし！これが最終答え',' #Steam #ゲーム'),mkPfct('🏆 完璧な仕上がりのランキング',' #Steam #ゲーム'),mkPfct('完全版ランキングがこちら',' #Steam #ゲーム'),mkPfct('🎯 最終決定版！完璧に整理した',' #Steam #ゲーム'),mkPfct('これ以上ない完成度',' #Steam #ゲーム'),mkPfct('🎮 完成！これが俺の最終答え',' #Steam #ゲーム'),mkPfct('完璧に整理した最終ランキング',' #Steam #ゲーム'),mkPfct('🔥 完全版！異論は認める',' #Steam #ゲーム'),mkPfct('最終版。これが俺の答えだ',' #Steam #ゲーム'),mkPfct('🏆 完璧に決まった最終版',' #Steam #ゲーム'),mkPfct('これが完全版のランキングです',' #Steam #ゲーム'),mkPfct('🎯 完成版！迷いなし',' #Steam #ゲーム'),mkPfct('完全版ランキングを公開',' #Steam #ゲーム'),mkPfct('🎮 最終版！完璧な仕上がり',' #Steam #ゲーム'),mkPfct('完璧に整理した！これが答え',' #Steam #ゲーム'),mkPfct('🔥 最終決定！これが俺のランキング',' #Steam #ゲーム'),mkPfct('完成版。変える気はない',' #Steam #ゲーム'),mkPfct('🏆 これが完璧な仕上がり',' #Steam #ゲーム'),mkPfct('最終版ランキングがこちら',' #Steam #ゲーム'),mkPfct('🎯 完全版！これが最終答え',' #Steam #ゲーム'),mkPfct('完璧に整理できた最終版',' #Steam #ゲーム'),mkPfct('🎮 完成版のランキングを公開',' #Steam #ゲーム'),mkPfct('これが俺の完璧なランキング',' #Steam #ゲーム'),mkPfct('🔥 完全版！迷いなし',' #Steam #ゲーム'),mkPfct('最終答え。これが俺の順位',' #Steam #ゲーム'),mkPfct('🏆 完璧に決まった！最終版',' #Steam #ゲーム'),mkPfct('完成版ランキング！異論は認める',' #Steam #ゲーム'),mkPfct('🎯 最終決定版。完璧な仕上がり',' #Steam #ゲーム'),mkPfct('これが完成版の最終ランキング',' #Steam #ゲーム'),mkPfct('完全版！これが俺の答えだ',' #Steam #ゲーム'),mkPfct('🎮 完璧なランキングが完成した',' #Steam #ゲーム'),mkPfct('最終版を公開。変える気はない',' #Steam #ゲーム'),mkPfct('🔥 完成！これが最終決定版',' #Steam #ゲーム'),mkPfct('完璧に整理した！最終ランキング公開',' #Steam #ゲーム'),mkPfct('🏆 これが俺の完全版ランキング',' #Steam #ゲーム'),mkPfct('最終決定。完璧な仕上がりです',' #Steam #ゲーム'),mkPfct('🎯 完成版！これが最終版',' #Steam #ゲーム'),mkPfct('完全版ランキング。迷いなし',' #Steam #ゲーム'),mkPfct('🎮 完璧に整理した最終版',' #Steam #ゲーム'),mkPfct('これが最終決定版のランキングです',' #Steam #ゲーム'),mkPfct('🔥 完成版！完璧な仕上がり',' #Steam #ゲーム'),mkPfct('最終版。これが俺の最終答え',' #Steam #ゲーム'),mkPfct('🏆 完全版完成！これが答えだ',' #Steam #ゲーム')
 ];
 
-// ========== 状態 ==========
-let state={games:[],scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],streak:0,lastWinnerId:null};
-let sortQueue=[],sortIdx=0,sortResults={};
+var state={games:[],scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],streak:0,lastWinnerId:null};
+var sortQueue=[],sortIdx=0,sortResults={};
 
-// ========== データ取得 ==========
-async function fetchWishlist(){
-  const steamId=document.getElementById('steam-id').value.trim();
-  const apiKey=document.getElementById('api-key').value.trim();
+function fetchWishlist(){
+  var steamId=document.getElementById('steam-id').value.trim();
+  var apiKey=document.getElementById('api-key').value.trim();
   if(!steamId){setStatus('SteamID64を入力してください','red');return;}
   if(!/^\d+$/.test(steamId)){setStatus('SteamID64は数字のみです','red');return;}
   if(!apiKey){setStatus('APIキーを入力してください','red');return;}
-  const btn=document.getElementById('btn-fetch');
+  var btn=document.getElementById('btn-fetch');
   btn.disabled=true;showProgress(true);setProgress(0);
-  try{
-    setStatus('📋 ウィッシュリストを取得中...','info');
-    const wrRes=await fetch(`${WORKER_URL}/wishlist?key=${encodeURIComponent(apiKey)}&steamid=${encodeURIComponent(steamId)}`);
-    if(!wrRes.ok)throw new Error(`取得失敗 (${wrRes.status})`);
-    const wrData=await wrRes.json();
-    const wishItems=wrData?.response?.items??[];
-    if(!wishItems.length)throw new Error('ウィッシュリストが空か、APIキーまたはSteamIDが正しくありません');
-    setStatus('🎮 所持ゲームを確認中...','info');
-    const ownedRes=await fetch(`${WORKER_URL}/owned?key=${encodeURIComponent(apiKey)}&steamid=${encodeURIComponent(steamId)}`);
-    const ownedData=await ownedRes.json();
-    const owned=new Set((ownedData?.response?.games??[]).map(g=>String(g.appid)));
-    const filtered=wishItems.filter(i=>!owned.has(String(i.appid))).sort((a,b)=>(a.priority??9999)-(b.priority??9999));
-    const appids=filtered.map(i=>String(i.appid));
-    setStatus(`✅ ${appids.length}件取得！ゲーム情報を読み込み中...`,'info');
-    const games=[],failed=[],BATCH=10;let done=0;
-    for(let i=0;i<appids.length;i+=BATCH){
-      const batch=appids.slice(i,i+BATCH);
-      await Promise.allSettled(batch.map(async appid=>{
-        try{
-          const res=await fetch(`${WORKER_URL}/appdetails?appid=${encodeURIComponent(appid)}`);
-          const data=await res.json();
-          const info=data?.[appid];
-          if(info?.success&&info.data?.name){
-            const d=info.data;
-            let price='無料';
-            if(!d.is_free&&d.price_overview)price=d.price_overview.final_formatted;
-            else if(!d.is_free)price='価格不明';
-            games.push({appid:String(appid),name:d.name,capsule:d.header_image||`${IMG_BASE}${appid}/header.jpg`,price,release:d.release_date?.date??''});
-          }else{failed.push(appid);}
-        }catch(e){failed.push(appid);}
-        done++;
-      }));
-      setProgress(done/appids.length*80);
-      setStatus(`🎮 ゲーム情報取得中... ${done} / ${appids.length}`,'info');
-      if(i+BATCH<appids.length)await sleep(1500);
-    }
-    if(failed.length>0){
-      setStatus(`🔄 再取得中... (${failed.length}件)`,'info');
-      await sleep(8000);
-      for(let i=0;i<failed.length;i+=5){
-        const batch=failed.slice(i,i+5);
-        await Promise.allSettled(batch.map(async appid=>{
+  (async function(){
+    try{
+      setStatus('📋 ウィッシュリストを取得中...','info');
+      var wrRes=await fetch(WORKER_URL+'/wishlist?key='+encodeURIComponent(apiKey)+'&steamid='+encodeURIComponent(steamId));
+      if(!wrRes.ok)throw new Error('取得失敗 ('+wrRes.status+')');
+      var wrData=await wrRes.json();
+      var wishItems=(wrData&&wrData.response&&wrData.response.items)||[];
+      if(!wishItems.length)throw new Error('ウィッシュリストが空か、APIキーまたはSteamIDが正しくありません');
+      setStatus('🎮 所持ゲームを確認中...','info');
+      var ownedRes=await fetch(WORKER_URL+'/owned?key='+encodeURIComponent(apiKey)+'&steamid='+encodeURIComponent(steamId));
+      var ownedData=await ownedRes.json();
+      var ownedArr=(ownedData&&ownedData.response&&ownedData.response.games)||[];
+      var owned=new Set(ownedArr.map(function(g){return String(g.appid);}));
+      var filtered=wishItems.filter(function(i){return !owned.has(String(i.appid));});
+      filtered.sort(function(a,b){return (a.priority||9999)-(b.priority||9999);});
+      var appids=filtered.map(function(i){return String(i.appid);});
+      setStatus('✅ '+appids.length+'件取得！ゲーム情報を読み込み中...','info');
+      var games=[],failed=[],BATCH=10,done=0;
+      for(var i=0;i<appids.length;i+=BATCH){
+        var batch=appids.slice(i,i+BATCH);
+        await Promise.allSettled(batch.map(async function(appid){
           try{
-            const res=await fetch(`${WORKER_URL}/appdetails?appid=${encodeURIComponent(appid)}`);
-            const data=await res.json();
-            const info=data?.[appid];
-            if(info?.success&&info.data?.name){
-              const d=info.data;
-              let price='無料';
+            var res=await fetch(WORKER_URL+'/appdetails?appid='+encodeURIComponent(appid));
+            var data=await res.json();
+            var info=data&&data[appid];
+            if(info&&info.success&&info.data&&info.data.name){
+              var d=info.data;
+              var price='無料';
               if(!d.is_free&&d.price_overview)price=d.price_overview.final_formatted;
               else if(!d.is_free)price='価格不明';
-              games.push({appid:String(appid),name:d.name,capsule:d.header_image||`${IMG_BASE}${appid}/header.jpg`,price,release:d.release_date?.date??''});
-            }
-          }catch(e){}
+              games.push({appid:String(appid),name:d.name,capsule:(d.header_image||IMG_BASE+appid+'/header.jpg'),price:price,release:(d.release_date&&d.release_date.date)||''});
+            }else{failed.push(appid);}
+          }catch(e){failed.push(appid);}
+          done++;
         }));
-        setProgress(80+(i/failed.length*20));
-        if(i+5<failed.length)await sleep(4000);
+        setProgress(done/appids.length*80);
+        setStatus('🎮 ゲーム情報取得中... '+done+' / '+appids.length,'info');
+        if(i+BATCH<appids.length)await sleep(1500);
       }
+      if(failed.length>0){
+        setStatus('🔄 再取得中... ('+failed.length+'件)','info');
+        await sleep(8000);
+        for(var j=0;j<failed.length;j+=5){
+          var b2=failed.slice(j,j+5);
+          await Promise.allSettled(b2.map(async function(appid){
+            try{
+              var res=await fetch(WORKER_URL+'/appdetails?appid='+encodeURIComponent(appid));
+              var data=await res.json();
+              var info=data&&data[appid];
+              if(info&&info.success&&info.data&&info.data.name){
+                var d=info.data;
+                var price='無料';
+                if(!d.is_free&&d.price_overview)price=d.price_overview.final_formatted;
+                else if(!d.is_free)price='価格不明';
+                games.push({appid:String(appid),name:d.name,capsule:(d.header_image||IMG_BASE+appid+'/header.jpg'),price:price,release:(d.release_date&&d.release_date.date)||''});
+              }
+            }catch(e){}
+          }));
+          setProgress(80+(j/failed.length*20));
+          if(j+5<failed.length)await sleep(4000);
+        }
+      }
+      setProgress(100);
+      setStatus('✅ '+games.length+'件の読み込み完了！','green');
+      localStorage.setItem('swr_steamid',steamId);
+      localStorage.setItem('swr_apikey',apiKey);
+      initState(games);
+      setTimeout(startBattle,500);
+    }catch(e){
+      setStatus('❌ '+e.message,'red');
+      showProgress(false);
+      btn.disabled=false;
     }
-    setProgress(100);
-    setStatus(`✅ ${games.length}件の読み込み完了！`,'green');
-    localStorage.setItem('swr_steamid',steamId);
-    localStorage.setItem('swr_apikey',apiKey);
-    initState(games);
-    setTimeout(startBattle,500);
-  }catch(e){
-    setStatus('❌ '+e.message,'red');
-    showProgress(false);
-    btn.disabled=false;
-  }
+  })();
 }
 
-function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 
-// ========== デモ・続きから ==========
 function loadDemo(){
-  const demos=[
+  var demos=[
     {appid:'1091500',name:'Cyberpunk 2077',price:'¥7,590',release:'2020年12月10日'},
     {appid:'1245620',name:'Elden Ring',price:'¥7,900',release:'2022年2月25日'},
     {appid:'1086940',name:"Baldur's Gate 3",price:'¥8,700',release:'2023年8月3日'},
@@ -517,93 +528,94 @@ function loadDemo(){
     {appid:'1203220',name:'DEATH STRANDING',price:'¥6,490',release:'2020年7月14日'},
     {appid:'230410',name:'Warframe',price:'無料',release:'2013年3月25日'},
     {appid:'1517290',name:'Battlefield 2042',price:'¥8,778',release:'2021年11月19日'},
-    {appid:'271590',name:'Grand Theft Auto V',price:'¥3,090',release:'2015年4月14日'},
-  ].map(g=>({...g,capsule:`${IMG_BASE}${g.appid}/header.jpg`}));
+    {appid:'271590',name:'Grand Theft Auto V',price:'¥3,090',release:'2015年4月14日'}
+  ].map(function(g){g.capsule=IMG_BASE+g.appid+'/header.jpg';return g;});
   initState(demos);
-  setStatus(`✅ デモデータ ${demos.length}件`,'green');
+  setStatus('✅ デモデータ '+demos.length+'件','green');
   setTimeout(startBattle,400);
 }
 
 function loadSaved(){
-  const saved=localStorage.getItem(STORAGE_KEY);
+  var saved=localStorage.getItem(STORAGE_KEY);
   if(!saved){setStatus('保存データが見つかりません','red');return;}
   try{
     state=JSON.parse(saved);
-    const sid=localStorage.getItem('swr_steamid');
-    const key=localStorage.getItem('swr_apikey');
+    var sid=localStorage.getItem('swr_steamid');
+    var key=localStorage.getItem('swr_apikey');
     if(sid)document.getElementById('steam-id').value=sid;
     if(key)document.getElementById('api-key').value=key;
-    setStatus(`✅ ${state.games.length}件・ラウンド${state.roundNo}から再開`,'green');
+    setStatus('✅ '+state.games.length+'件・ラウンド'+state.roundNo+'から再開','green');
     setTimeout(startBattle,400);
   }catch(e){setStatus('❌ 保存データの読み込みに失敗しました','red');}
 }
 
-// ========== UI ==========
-function setStatus(msg,type='info'){
-  const el=document.getElementById('load-status');
+function setStatus(msg,type){
+  var el=document.getElementById('load-status');
   el.textContent=msg;
   el.style.color=type==='red'?'var(--red)':type==='green'?'var(--green)':'var(--text2)';
 }
 function showProgress(show){document.getElementById('load-progress').classList.toggle('show',show);}
 function setProgress(pct){document.getElementById('load-progress-fill').style.width=pct+'%';}
 
-// ========== 状態・キュー ==========
 function initState(games){
-  state={games,scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],streak:0,lastWinnerId:null};
-  games.forEach(g=>{state.scores[g.appid]={wins:0,losses:0,draws:0,points:1500,battles:0,sorted:false};});
+  state={games:games,scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],streak:0,lastWinnerId:null};
+  games.forEach(function(g){state.scores[g.appid]={wins:0,losses:0,draws:0,points:1500,battles:0,sorted:false};});
   state.queue=buildQueue();
 }
 
 function buildQueue(){
-  const ordered=state.roundNo===1?[...state.games].sort(()=>Math.random()-.5):getRankedGames();
-  const q=[];
-  for(let i=0;i+1<ordered.length;i+=2)q.push([ordered[i].appid,ordered[i+1].appid]);
+  var ordered;
+  if(state.roundNo===1){
+    ordered=state.games.slice().sort(function(){return Math.random()-.5;});
+  }else{
+    ordered=getRankedGames();
+  }
+  var q=[];
+  for(var i=0;i+1<ordered.length;i+=2)q.push([ordered[i].appid,ordered[i+1].appid]);
   if(state.unknownQueue.length>=2){
-    const uq=[...state.unknownQueue].sort(()=>Math.random()-.5);
+    var uq=state.unknownQueue.slice().sort(function(){return Math.random()-.5;});
     state.unknownQueue=[];
-    for(let i=0;i+1<uq.length;i+=2)q.push([uq[i],uq[i+1]]);
+    for(var j=0;j+1<uq.length;j+=2)q.push([uq[j],uq[j+1]]);
   }
   return q;
 }
 
 function getRankedGames(){
-  return[...state.games].sort((a,b)=>state.scores[b.appid].points-state.scores[a.appid].points);
+  return state.games.slice().sort(function(a,b){return state.scores[b.appid].points-state.scores[a.appid].points;});
 }
 
-// ========== バトル画面 ==========
 function startBattle(){saveState();showScreen('battle');renderPair();renderSidebar();}
 
 function renderPair(){
   if(state.queueIdx>=state.queue.length){showRoundComplete();return;}
-  const[idA,idB]=state.queue[state.queueIdx];
-  const gA=state.games.find(g=>g.appid===idA);
-  const gB=state.games.find(g=>g.appid===idB);
+  var ids=state.queue[state.queueIdx];
+  var gA=state.games.filter(function(g){return g.appid===ids[0];})[0];
+  var gB=state.games.filter(function(g){return g.appid===ids[1];})[0];
   if(!gA||!gB){state.queueIdx++;renderPair();return;}
   fillCard('left',gA);fillCard('right',gB);
   updateProgress();renderNextPreview();
 }
 
 function fillCard(side,game){
-  const img=document.getElementById('img-'+side);
-  const fb=document.getElementById('fb-'+side);
-  const fbt=document.getElementById('fb-title-'+side);
+  var img=document.getElementById('img-'+side);
+  var fb=document.getElementById('fb-'+side);
+  var fbt=document.getElementById('fb-title-'+side);
   img.style.display='none';fb.style.display='none';
-  const tmp=new Image();
-  tmp.onload=()=>{img.src=tmp.src;img.style.display='';fb.style.display='none';};
-  tmp.onerror=()=>{img.style.display='none';fb.style.display='flex';fbt.textContent=game.name;};
+  var tmp=new Image();
+  tmp.onload=function(){img.src=tmp.src;img.style.display='';fb.style.display='none';};
+  tmp.onerror=function(){img.style.display='none';fb.style.display='flex';fbt.textContent=game.name;};
   tmp.src=game.capsule;
   document.getElementById('title-'+side).textContent=game.name;
-  document.getElementById('price-'+side).textContent=game.price??'';
+  document.getElementById('price-'+side).textContent=game.price||'';
   document.getElementById('release-'+side).textContent=game.release?'📅 '+game.release:'';
   document.getElementById('link-'+side).href='https://store.steampowered.com/app/'+game.appid+'/';
   document.getElementById('card-'+side)._game=game;
 }
 
 function renderNextPreview(){
-  const ni=state.queueIdx+1;
+  var ni=state.queueIdx+1;
   if(ni>=state.queue.length){document.getElementById('next-preview').style.display='none';return;}
-  const[idA]=state.queue[ni];
-  const g=state.games.find(g=>g.appid===idA);
+  var g=state.games.filter(function(g){return g.appid===state.queue[ni][0];})[0];
   if(!g){document.getElementById('next-preview').style.display='none';return;}
   document.getElementById('next-preview').style.display='flex';
   document.getElementById('next-thumb').src=g.capsule;
@@ -611,25 +623,25 @@ function renderNextPreview(){
 }
 
 function updateProgress(){
-  const total=state.queue.length,done=state.queueIdx;
-  const pct=total?Math.round(done/total*100):0;
+  var total=state.queue.length,done=state.queueIdx;
+  var pct=total?Math.round(done/total*100):0;
   document.getElementById('progress-label').textContent=done+' / '+total+' 対戦';
   document.getElementById('progress-fill').style.width=pct+'%';
   document.getElementById('round-badge').textContent='Round '+state.roundNo;
   document.getElementById('accuracy-label').textContent='精度: '+accuracyLabel();
   document.getElementById('header-info').textContent=state.games.length+'件 | 総対戦数 '+state.totalBattles+'回';
-  const badge=document.getElementById('streak-badge');
+  var badge=document.getElementById('streak-badge');
   if(state.streak>=3){badge.textContent='🔥 '+state.streak+'連勝中';badge.classList.add('show');}
   else badge.classList.remove('show');
 }
 
 function accuracyLabel(){
-  const r=state.roundNo;
+  var r=state.roundNo;
   if(r<=1)return '低（初回）';if(r<=2)return '中';if(r<=3)return '高';return '非常に高い';
 }
 
 function accuracyLevel(){
-  const r=state.roundNo;
+  var r=state.roundNo;
   if(r<=1)return 'low';if(r<=2)return 'mid';if(r<=3)return 'high';return 'perfect';
 }
 
@@ -641,22 +653,23 @@ function showRoundComplete(){
 }
 function hideRoundComplete(){document.getElementById('round-complete').classList.remove('show');}
 
-// ========== 対戦ロジック ==========
 function choose(idx){
-  const[idA,idB]=state.queue[state.queueIdx];
-  const wId=idx===0?idA:idB,lId=idx===0?idB:idA;
-  const wCard=document.getElementById(idx===0?'card-left':'card-right');
-  state.history.push({type:'win',wId,lId,wPoints:state.scores[wId].points,lPoints:state.scores[lId].points,wWins:state.scores[wId].wins,lLosses:state.scores[lId].losses,wBattles:state.scores[wId].battles,lBattles:state.scores[lId].battles,queueIdx:state.queueIdx,streak:state.streak});
+  var ids=state.queue[state.queueIdx];
+  var wId=idx===0?ids[0]:ids[1];
+  var lId=idx===0?ids[1]:ids[0];
+  var wCard=document.getElementById(idx===0?'card-left':'card-right');
+  state.history.push({type:'win',wId:wId,lId:lId,wPoints:state.scores[wId].points,lPoints:state.scores[lId].points,wWins:state.scores[wId].wins,lLosses:state.scores[lId].losses,wBattles:state.scores[wId].battles,lBattles:state.scores[lId].battles,queueIdx:state.queueIdx,streak:state.streak});
   state.streak=(state.lastWinnerId===wId)?state.streak+1:1;
   state.lastWinnerId=wId;
   wCard.classList.add('winner');
   updateElo(wId,lId,'win');
   state.totalBattles++;state.queueIdx++;
-  setTimeout(()=>{wCard.classList.remove('winner');renderPair();renderSidebar();saveState();},380);
+  setTimeout(function(){wCard.classList.remove('winner');renderPair();renderSidebar();saveState();},380);
 }
 
 function chooseBoth(){
-  const[idA,idB]=state.queue[state.queueIdx];
+  var ids=state.queue[state.queueIdx];
+  var idA=ids[0],idB=ids[1];
   state.history.push({type:'both',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
   state.scores[idA].points+=16;state.scores[idA].battles++;
   state.scores[idB].points+=16;state.scores[idB].battles++;
@@ -666,7 +679,8 @@ function chooseBoth(){
 }
 
 function chooseNeither(){
-  const[idA,idB]=state.queue[state.queueIdx];
+  var ids=state.queue[state.queueIdx];
+  var idA=ids[0],idB=ids[1];
   state.history.push({type:'neither',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
   state.scores[idA].points-=16;state.scores[idA].battles++;
   state.scores[idB].points-=16;state.scores[idB].battles++;
@@ -677,8 +691,8 @@ function chooseNeither(){
 
 function undoLast(){
   if(!state.history.length||state.queueIdx===0)return;
-  const last=state.history.pop();
-  const ws=state.scores[last.wId],ls=state.scores[last.lId];
+  var last=state.history.pop();
+  var ws=state.scores[last.wId],ls=state.scores[last.lId];
   ws.points=last.wPoints;ls.points=last.lPoints;
   ws.battles=last.wBattles;ls.battles=last.lBattles;
   if(last.type==='win'){ws.wins--;ls.losses--;}
@@ -687,61 +701,69 @@ function undoLast(){
 }
 
 function updateElo(wId,lId,result){
-  const K=32,ws=state.scores[wId],ls=state.scores[lId];
+  var K=32,ws=state.scores[wId],ls=state.scores[lId];
   if(!ws||!ls)return;
-  const expW=1/(1+Math.pow(10,(ls.points-ws.points)/400));
+  var expW=1/(1+Math.pow(10,(ls.points-ws.points)/400));
   if(result==='win'){ws.points+=K*(1-expW);ws.wins++;ls.points+=K*(0-(1-expW));ls.losses++;}
   else{ws.points+=K*(.5-expW);ws.draws++;ls.points+=K*(.5-(1-expW));ls.draws++;}
   ws.battles++;ls.battles++;
 }
 
-// ========== サイドバー ==========
 function renderSidebar(){
-  document.getElementById('sidebar-ranking').innerHTML=
-    getRankedGames().slice(0,30).map((g,i)=>
-      '<div class="rank-item">'+
-      '<span class="rank-no'+(i<3?' top3':'')+'">'+（i+1)+'</span>'+
-      '<img class="rank-thumb" src="'+g.capsule+'" alt="" onerror="this.style.opacity=0.2">'+
-      '<span class="rank-name">'+esc(g.name)+'</span>'+
-      '<span class="rank-score">'+Math.round(state.scores[g.appid].points)+'</span>'+
-      '</div>'
-    ).join('');
+  var ranked=getRankedGames().slice(0,30);
+  var html='';
+  for(var i=0;i<ranked.length;i++){
+    var g=ranked[i];
+    var cls=i<3?' top3':'';
+    html+='<div class="rank-item">';
+    html+='<span class="rank-no'+cls+'">'+(i+1)+'</span>';
+    html+='<img class="rank-thumb" src="'+g.capsule+'" alt="" onerror="this.style.opacity=0.2">';
+    html+='<span class="rank-name">'+esc(g.name)+'</span>';
+    html+='<span class="rank-score">'+Math.round(state.scores[g.appid].points)+'</span>';
+    html+='</div>';
+  }
+  document.getElementById('sidebar-ranking').innerHTML=html;
 }
 
-// ========== リザルト ==========
 function saveAndGoResult(){
   hideRoundComplete();saveState();showScreen('result');
-  const ranked=getRankedGames();
+  var ranked=getRankedGames();
   document.getElementById('result-title').textContent='🏆 ランキング結果（ラウンド '+state.roundNo+' 完了）';
   document.getElementById('result-subtitle').textContent='総対戦数: '+state.totalBattles+'回 | 精度: '+accuracyLabel()+' | '+state.games.length+'件';
   renderPodium(ranked);renderResultTable(ranked);
 }
 
 function renderPodium(ranked){
-  const medals=['🥇','🥈','🥉'];
-  document.getElementById('podium').innerHTML=ranked.slice(0,3).map((g,i)=>
-    '<div class="podium-item p'+(i+1)+'">'+
-    '<img class="podium-img" src="'+g.capsule+'" alt="" onerror="this.style.opacity=0.3">'+
-    '<div class="podium-body"><div class="podium-rank">'+medals[i]+'</div><div class="podium-name">'+esc(g.name)+'</div></div>'+
-    '<div class="podium-base"></div></div>'
-  ).join('');
+  var medals=['🥇','🥈','🥉'];
+  var html='';
+  for(var i=0;i<Math.min(3,ranked.length);i++){
+    var g=ranked[i];
+    html+='<div class="podium-item p'+(i+1)+'">';
+    html+='<img class="podium-img" src="'+g.capsule+'" alt="" onerror="this.style.opacity=0.3">';
+    html+='<div class="podium-body"><div class="podium-rank">'+medals[i]+'</div><div class="podium-name">'+esc(g.name)+'</div></div>';
+    html+='<div class="podium-base"></div></div>';
+  }
+  document.getElementById('podium').innerHTML=html;
 }
 
 function renderResultTable(ranked){
-  document.getElementById('result-tbody').innerHTML=ranked.map((g,i)=>{
-    const sc=state.scores[g.appid],conf=getConf(sc);
-    const rank=i===0?'<span class="medal">🥇</span>':i===1?'<span class="medal">🥈</span>':i===2?'<span class="medal">🥉</span>':i+1;
-    return '<tr>'+
-      '<td class="rt-rank">'+rank+'</td>'+
-      '<td><img class="rt-thumb" src="'+g.capsule+'" alt="" onerror="this.style.opacity=0.2"></td>'+
-      '<td class="rt-title"><a href="https://store.steampowered.com/app/'+g.appid+'/" target="_blank" rel="noopener">'+esc(g.name)+'</a>'+
-      '<div class="rt-sub">'+(g.price??'')+'</div></td>'+
-      '<td style="font-size:.72rem;color:var(--text2);white-space:nowrap">'+(g.release??'')+'</td>'+
-      '<td class="rt-wins">'+sc.wins+'</td>'+
-      '<td class="rt-losses">'+sc.losses+'</td>'+
-      '<td><span class="rt-conf '+conf.cls+'">'+conf.label+'</span></td>'+
-      '</tr>';
-  }).join('');
+  var html='';
+  for(var i=0;i<ranked.length;i++){
+    var g=ranked[i];
+    var sc=state.scores[g.appid];
+    var conf=getConf(sc);
+    var rank=i===0?'<span class="medal">🥇</span>':i===1?'<span class="medal">🥈</span>':i===2?'<span class="medal">🥉</span>':(i+1);
+    html+='<tr>';
+    html+='<td class="rt-rank">'+rank+'</td>';
+    html+='<td><img class="rt-thumb" src="'+g.capsule+'" alt="" onerror="this.style.opacity=0.2"></td>';
+    html+='<td class="rt-title"><a href="https://store.steampowered.com/app/'+g.appid+'/" target="_blank" rel="noopener">'+esc(g.name)+'</a><div class="rt-sub">'+(g.price||'')+'</div></td>';
+    html+='<td style="font-size:.72rem;color:var(--text2);white-space:nowrap">'+(g.release||'')+'</td>';
+    html+='<td class="rt-wins">'+sc.wins+'</td>';
+    html+='<td class="rt-losses">'+sc.losses+'</td>';
+    html+='<td><span class="rt-conf '+conf.cls+'">'+conf.label+'</span></td>';
+    html+='</tr>';
+  }
+  document.getElementById('result-tbody').innerHTML=html;
 }
 
 function getConf(sc){
@@ -750,7 +772,6 @@ function getConf(sc){
   return{cls:'conf-low',label:'低（対戦少）'};
 }
 
-// ========== 次ラウンド ==========
 function startNextRound(){
   hideRoundComplete();
   state.roundNo++;state.queue=buildQueue();state.queueIdx=0;
@@ -759,22 +780,21 @@ function startNextRound(){
 }
 function backToBattle(){hideRoundComplete();showScreen('battle');renderPair();renderSidebar();}
 
-// ========== 仕分け ==========
 function startSort(){
-  const low=state.games.filter(g=>state.scores[g.appid].battles<3&&!state.scores[g.appid].sorted);
+  var low=state.games.filter(function(g){return state.scores[g.appid].battles<3&&!state.scores[g.appid].sorted;});
   if(!low.length){alert('仕分けが必要なゲームはありません！');return;}
-  sortQueue=low.sort(()=>Math.random()-.5);sortIdx=0;sortResults={};
+  sortQueue=low.sort(function(){return Math.random()-.5;});sortIdx=0;sortResults={};
   document.getElementById('sort-subtitle').textContent='対戦数が少ない '+sortQueue.length+'件 をまとめて仕分けします';
   showScreen('sort');renderSortCard();
 }
 
 function renderSortCard(){
   if(sortIdx>=sortQueue.length){applySortResults();return;}
-  const g=sortQueue[sortIdx];
-  const img=document.getElementById('sort-img');
+  var g=sortQueue[sortIdx];
+  var img=document.getElementById('sort-img');
   img.src=g.capsule;img.alt=g.name;img.style.opacity='1';
   document.getElementById('sort-title').textContent=g.name;
-  const meta=[];if(g.price)meta.push(g.price);if(g.release)meta.push('📅 '+g.release);
+  var meta=[];if(g.price)meta.push(g.price);if(g.release)meta.push('📅 '+g.release);
   document.getElementById('sort-meta').textContent=meta.join('　');
   document.getElementById('sort-progress').textContent=(sortIdx+1)+' / '+sortQueue.length;
 }
@@ -786,86 +806,96 @@ function sortGame(cat){
 }
 
 function applySortResults(){
-  const pts={must:1800,want:1600,sale:1400,skip:1200};
-  for(const[appid,cat]of Object.entries(sortResults)){
-    if(state.scores[appid]){state.scores[appid].points=pts[cat];state.scores[appid].sorted=true;}
+  var pts={must:1800,want:1600,sale:1400,skip:1200};
+  var keys=Object.keys(sortResults);
+  for(var i=0;i<keys.length;i++){
+    var appid=keys[i];
+    if(state.scores[appid]){state.scores[appid].points=pts[sortResults[appid]];state.scores[appid].sorted=true;}
   }
   saveState();
-  alert('✅ '+Object.keys(sortResults).length+'件の仕分けが完了しました！');
+  alert('✅ '+keys.length+'件の仕分けが完了しました！');
   saveAndGoResult();
 }
 
 function saveAndContinueLater(){
-  const pts={must:1800,want:1600,sale:1400,skip:1200};
-  for(const[appid,cat]of Object.entries(sortResults)){
-    if(state.scores[appid]){state.scores[appid].points=pts[cat];state.scores[appid].sorted=true;}
+  var pts={must:1800,want:1600,sale:1400,skip:1200};
+  var keys=Object.keys(sortResults);
+  for(var i=0;i<keys.length;i++){
+    var appid=keys[i];
+    if(state.scores[appid]){state.scores[appid].points=pts[sortResults[appid]];state.scores[appid].sorted=true;}
   }
   saveState();
-  alert('💾 '+Object.keys(sortResults).length+'件を保存しました。\n続きは「下位をまとめて仕分け」から再開できます。');
+  alert('💾 '+keys.length+'件を保存しました。\n続きは「下位をまとめて仕分け」から再開できます。');
   saveAndGoResult();
 }
 
 function cancelSort(){saveAndGoResult();}
 
-// ========== Steam反映 ==========
-async function syncToSteam(){
-  const ranked=getRankedGames();
-  const payload=ranked.map((g,i)=>({appid:parseInt(g.appid),priority:i+1}));
-  const code="fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction'},body:JSON.stringify({m:'Reorder',mp:["+JSON.stringify(payload)+"]})}).then(r=>r.json()).then(d=>alert(d.data?.result===1?'✅ 並び替え完了！ページをリロードしてください':'❌ 失敗: '+JSON.stringify(d))).catch(e=>alert('エラー: '+e.message));";
-  await navigator.clipboard.writeText(code);
-  const steamId=localStorage.getItem('swr_steamid');
-  const wishUrl=steamId?'https://store.steampowered.com/wishlist/profiles/'+steamId+'/':'https://store.steampowered.com/';
-  window.open(wishUrl,'_blank');
-  alert('✅ コードをクリップボードにコピーしました！\n\n開いたSteamページで\nF12 → Console → Ctrl+V → Enter\nで並び替えが完了します。');
+function syncToSteam(){
+  var ranked=getRankedGames();
+  var payload=ranked.map(function(g,i){return {appid:parseInt(g.appid),priority:i+1};});
+  var code="fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction'},body:JSON.stringify({m:'Reorder',mp:["+JSON.stringify(payload)+"]})}).then(function(r){return r.json();}).then(function(d){alert(d.data&&d.data.result===1?'✅ 並び替え完了！ページをリロードしてください':'❌ 失敗: '+JSON.stringify(d));}).catch(function(e){alert('エラー: '+e.message);});";
+  navigator.clipboard.writeText(code).then(function(){
+    var steamId=localStorage.getItem('swr_steamid');
+    var wishUrl=steamId?'https://store.steampowered.com/wishlist/profiles/'+steamId+'/':'https://store.steampowered.com/';
+    window.open(wishUrl,'_blank');
+    alert('✅ コードをクリップボードにコピーしました！\n\n開いたSteamページで\nF12 → Console → Ctrl+V → Enter\nで並び替えが完了します。');
+  });
 }
 
-// ========== Xシェア ==========
-async function shareToX(){
-  const ranked=getRankedGames();
-  const medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
-  const top5=ranked.slice(0,5).map((g,i)=>medals[i]+' '+g.name).join('\n');
-  const n=state.games.length,b=state.totalBattles;
-  const level=accuracyLevel();
-  const pool=level==='low'?SHARE_LOW:level==='mid'?SHARE_MID:level==='high'?SHARE_HIGH:SHARE_PFCT;
-  const tmpl=pool[Math.floor(Math.random()*pool.length)];
-  const text=tmpl(top5,SITE_URL,n,b);
-  try{
-    const target=document.getElementById('result-capture');
-    const canvas=await html2canvas(target,{backgroundColor:'#1b2838',scale:1.5,useCORS:true,allowTaint:false});
-    await new Promise((resolve,reject)=>{
-      canvas.toBlob(async blob=>{
-        try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);resolve();}
-        catch(e){reject(e);}
-      },'image/png');
-    });
-    alert('📸 画像をクリップボードにコピーしました！\nXの投稿画面が開くので、Ctrl+V で画像を貼り付けて投稿してください。');
-  }catch(e){
+function shareToX(){
+  var ranked=getRankedGames();
+  var medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
+  var top5=ranked.slice(0,5).map(function(g,i){return medals[i]+' '+g.name;}).join('\n');
+  var n=state.games.length,b=state.totalBattles;
+  var level=accuracyLevel();
+  var pool=level==='low'?SHARE_LOW:level==='mid'?SHARE_MID:level==='high'?SHARE_HIGH:SHARE_PFCT;
+  var tmpl=pool[Math.floor(Math.random()*pool.length)];
+  var text=tmpl(top5,SITE_URL,n,b);
+  (async function(){
     try{
-      const target=document.getElementById('result-capture');
-      const canvas=await html2canvas(target,{backgroundColor:'#1b2838',scale:1.5});
-      const a=document.createElement('a');
-      a.download='wishlist-ranking.png';a.href=canvas.toDataURL('image/png');a.click();
-      alert('📸 画像をダウンロードしました。\nXの投稿画面で画像を添付して投稿してください。');
-    }catch(e2){}
-  }
-  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text),'_blank','width=550,height=450');
+      var target=document.getElementById('result-capture');
+      var canvas=await html2canvas(target,{backgroundColor:'#1b2838',scale:1.5,useCORS:true,allowTaint:false});
+      await new Promise(function(resolve,reject){
+        canvas.toBlob(async function(blob){
+          try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);resolve();}
+          catch(e){reject(e);}
+        },'image/png');
+      });
+      alert('📸 画像をクリップボードにコピーしました！\nXの投稿画面が開くので、Ctrl+V で画像を貼り付けて投稿してください。');
+    }catch(e){
+      try{
+        var target2=document.getElementById('result-capture');
+        var canvas2=await html2canvas(target2,{backgroundColor:'#1b2838',scale:1.5});
+        var a=document.createElement('a');
+        a.download='wishlist-ranking.png';a.href=canvas2.toDataURL('image/png');a.click();
+        alert('📸 画像をダウンロードしました。\nXの投稿画面で画像を添付して投稿してください。');
+      }catch(e2){}
+    }
+    window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text),'_blank','width=550,height=450');
+  })();
 }
 
 function openKofi(){window.open(KOFI_URL,'_blank');}
 
-// ========== 保存・画面遷移・ユーティリティ ==========
 function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+
 function showScreen(name){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  var screens=document.querySelectorAll('.screen');
+  for(var i=0;i<screens.length;i++)screens[i].classList.remove('active');
   document.getElementById('screen-'+name).classList.add('active');
   window.scrollTo(0,0);
 }
-function backToStart(){saveState();showScreen('start');}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-window.addEventListener('DOMContentLoaded',()=>{
-  const sid=localStorage.getItem('swr_steamid');
-  const key=localStorage.getItem('swr_apikey');
+function backToStart(){saveState();showScreen('start');}
+
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+window.addEventListener('DOMContentLoaded',function(){
+  var sid=localStorage.getItem('swr_steamid');
+  var key=localStorage.getItem('swr_apikey');
   if(sid)document.getElementById('steam-id').value=sid;
   if(key)document.getElementById('api-key').value=key;
 });
