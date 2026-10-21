@@ -436,7 +436,7 @@ const WORKER_URL  = 'https://steam-wishlist-api.swranker.workers.dev';
 const STORAGE_KEY = 'swr_v14';
 const IMG_BASE    = 'https://cdn.akamai.steamstatic.com/steam/apps/';
 const SITE_URL    = 'https://steam-wishlist-ranker.vercel.app';
-const KOFI_URL    = 'https://ko-fi.com/'; // TODO: 正しいURLに差し替え
+const KOFI_URL    = 'https://ko-fi.com/4545nameless'; 
 const TAG         = '#SteamWishlistRanker';
 
 // =====================================================
@@ -999,4 +999,19 @@ function loadSaved() {
     state=JSON.parse(saved);
     const sid=localStorage.getItem('swr_steamid');
     const key=localStorage.getItem('swr_apikey');
-    if (sid)
+    if (sid) document.getElementById('steam-id').value=sid;
+    if (key) document.getElementById('api-key').value=key;
+    setStatus(`✅ ${state.games.length}件・ラウンド${state.roundNo}から再開`,'green');
+    setTimeout(startBattle,400);
+  } catch(e) { setStatus('❌ 保存データの読み込みに失敗しました','red'); }
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const sid=localStorage.getItem('swr_steamid');
+  const key=localStorage.getItem('swr_apikey');
+  if (sid) document.getElementById('steam-id').value=sid;
+  if (key) document.getElementById('api-key').value=key;
+});
+</script>
+</body>
+</html>
