@@ -14,223 +14,201 @@
 <meta name="twitter:card"        content="summary">
 <meta name="twitter:title"       content="Steam Wishlist Ranker">
 <meta name="twitter:description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。">
-<!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864" crossorigin="anonymous"></script>
-<!-- html2canvas -->
 <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg:      #1b2838;
-    --bg2:     #2a3f5f;
-    --bg3:     #1e3351;
-    --panel:   #16202d;
-    --panel2:  #1e2d3d;
-    --accent:  #4c9bdb;
-    --accent2: #66c0f4;
-    --gold:    #f6c90e;
-    --green:   #5ba32b;
-    --red:     #c94040;
-    --orange:  #e8832a;
-    --text:    #c6d4df;
-    --text2:   #8ba2b5;
-    --border:  #2a4766;
-    --border2: #3d6b99;
-    --radius:  4px;
-    --radius2: 6px;
-  }
-  body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
-  .screen { display:none; }
-  .screen.active { display:flex; flex-direction:column; min-height:100vh; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1b2838;--bg2:#2a3f5f;--bg3:#1e3351;
+  --panel:#16202d;--panel2:#1e2d3d;
+  --accent:#4c9bdb;--accent2:#66c0f4;
+  --gold:#f6c90e;--green:#5ba32b;--red:#c94040;--orange:#e8832a;
+  --text:#c6d4df;--text2:#8ba2b5;
+  --border:#2a4766;--border2:#3d6b99;
+  --radius:4px;--radius2:6px;
+}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.screen{display:none}
+.screen.active{display:flex;flex-direction:column;min-height:100vh}
 
-  /* ナビ */
-  .navbar { background:linear-gradient(to bottom,#1b2838,#152231); border-bottom:1px solid #000; padding:0 16px; display:flex; align-items:center; height:52px; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,.4); }
-  .navbar-brand { display:flex; align-items:center; gap:10px; padding-right:16px; border-right:1px solid var(--border); margin-right:16px; }
-  .navbar-brand .steam-icon { width:26px; height:26px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:900; color:var(--bg); }
-  .navbar-brand span { font-size:.92rem; font-weight:700; color:var(--text); }
-  .navbar-info { font-size:.78rem; color:var(--text2); margin-left:auto; }
-  .navbar-actions { display:flex; gap:8px; margin-left:16px; }
+.navbar{background:linear-gradient(to bottom,#1b2838,#152231);border-bottom:1px solid #000;padding:0 16px;display:flex;align-items:center;height:52px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.navbar-brand{display:flex;align-items:center;gap:10px;padding-right:16px;border-right:1px solid var(--border);margin-right:16px}
+.navbar-brand .si{width:26px;height:26px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:var(--bg)}
+.navbar-brand span{font-size:.92rem;font-weight:700;color:var(--text)}
+.navbar-info{font-size:.78rem;color:var(--text2);margin-left:auto}
+.navbar-actions{display:flex;gap:8px;margin-left:16px}
 
-  /* ボタン */
-  .btn { padding:8px 16px; border:none; border-radius:var(--radius); cursor:pointer; font-size:.85rem; font-weight:600; font-family:inherit; transition:filter .15s,transform .1s; white-space:nowrap; }
-  .btn:hover  { filter:brightness(1.15); transform:translateY(-1px); }
-  .btn:active { transform:translateY(0); filter:brightness(.95); }
-  .btn-steam  { background:linear-gradient(to bottom,#4c9bdb,#3a80c0); color:#fff; border:1px solid #2a6090; text-shadow:0 1px 2px rgba(0,0,0,.3); }
-  .btn-dark   { background:linear-gradient(to bottom,#3d5a78,#2a3f5f); color:var(--text); border:1px solid var(--border2); }
-  .btn-gold   { background:linear-gradient(to bottom,#f6c90e,#d4a800); color:#1b2838; border:1px solid #a07800; font-weight:700; }
-  .btn-green  { background:linear-gradient(to bottom,#5ba32b,#4a8a20); color:#fff; border:1px solid #3a7010; }
-  .btn-orange { background:linear-gradient(to bottom,#e8832a,#c96a18); color:#fff; border:1px solid #a05010; }
-  .btn-x      { background:#000; color:#fff; border:1px solid #333; display:inline-flex; align-items:center; gap:6px; }
-  .btn-kofi   { background:linear-gradient(to bottom,#ff5e5b,#e04a47); color:#fff; border:1px solid #c03a37; }
-  .btn-sm { padding:5px 12px; font-size:.78rem; }
-  .btn:disabled { opacity:.4; cursor:not-allowed; transform:none; filter:none; }
+.btn{padding:8px 16px;border:none;border-radius:var(--radius);cursor:pointer;font-size:.85rem;font-weight:600;font-family:inherit;transition:filter .15s,transform .1s;white-space:nowrap}
+.btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.btn:active{transform:translateY(0);filter:brightness(.95)}
+.btn-steam{background:linear-gradient(to bottom,#4c9bdb,#3a80c0);color:#fff;border:1px solid #2a6090;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+.btn-dark{background:linear-gradient(to bottom,#3d5a78,#2a3f5f);color:var(--text);border:1px solid var(--border2)}
+.btn-gold{background:linear-gradient(to bottom,#f6c90e,#d4a800);color:#1b2838;border:1px solid #a07800;font-weight:700}
+.btn-green{background:linear-gradient(to bottom,#5ba32b,#4a8a20);color:#fff;border:1px solid #3a7010}
+.btn-orange{background:linear-gradient(to bottom,#e8832a,#c96a18);color:#fff;border:1px solid #a05010}
+.btn-x{background:#000;color:#fff;border:1px solid #333;display:inline-flex;align-items:center;gap:6px}
+.btn-kofi{background:linear-gradient(to bottom,#ff5e5b,#e04a47);color:#fff;border:1px solid #c03a37}
+.btn-sm{padding:5px 12px;font-size:.78rem}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none}
 
-  /* スタート画面 */
-  #screen-start { align-items:center; justify-content:center; padding:40px 20px; gap:24px; background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%); }
-  .logo-area { text-align:center; }
-  .logo-area h2 { font-size:2rem; color:#fff; margin-bottom:8px; text-shadow:0 2px 12px rgba(76,155,219,.5); }
-  .logo-area p  { color:var(--text2); font-size:.92rem; }
-  .start-card { background:linear-gradient(to bottom,var(--panel2),var(--panel)); border:1px solid var(--border); border-radius:var(--radius2); padding:28px 32px; width:100%; max-width:580px; display:flex; flex-direction:column; gap:20px; box-shadow:0 4px 24px rgba(0,0,0,.4); }
-  .start-card h3 { color:var(--accent2); font-size:.88rem; text-transform:uppercase; letter-spacing:.08em; border-bottom:1px solid var(--border); padding-bottom:10px; }
-  .input-group { display:flex; flex-direction:column; gap:6px; }
-  .input-label { font-size:.82rem; color:var(--text2); }
-  .input-label a { color:var(--accent2); }
-  .steam-input { width:100%; padding:10px 14px; background:rgba(0,0,0,.3); border:1px solid var(--border); border-radius:var(--radius); color:var(--text); font-size:.9rem; font-family:inherit; transition:border-color .15s; }
-  .steam-input:focus { outline:none; border-color:var(--accent2); }
-  .steam-input::placeholder { color:var(--text2); opacity:.6; }
-  .input-hint { font-size:.75rem; color:var(--text2); line-height:1.7; background:rgba(0,0,0,.2); border-radius:var(--radius); padding:8px 10px; border-left:2px solid var(--accent); }
-  .input-hint .hl { color:var(--accent2); font-family:monospace; font-weight:700; }
-  .progress-mini { height:4px; background:rgba(0,0,0,.3); border-radius:2px; overflow:hidden; display:none; }
-  .progress-mini.show { display:block; }
-  .progress-mini-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:2px; transition:width .3s; width:0%; }
-  #load-status { font-size:.85rem; min-height:1.4em; line-height:1.6; }
-  .start-actions { display:flex; gap:8px; flex-wrap:wrap; }
-  .footer-links { font-size:.75rem; color:var(--text2); text-align:center; }
-  .footer-links a { color:var(--text2); text-decoration:none; }
-  .footer-links a:hover { color:var(--accent2); }
+#screen-start{align-items:center;justify-content:center;padding:40px 20px;gap:24px;background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%)}
+.logo-area{text-align:center}
+.logo-area h2{font-size:2rem;color:#fff;margin-bottom:8px;text-shadow:0 2px 12px rgba(76,155,219,.5)}
+.logo-area p{color:var(--text2);font-size:.92rem}
+.start-card{background:linear-gradient(to bottom,var(--panel2),var(--panel));border:1px solid var(--border);border-radius:var(--radius2);padding:28px 32px;width:100%;max-width:580px;display:flex;flex-direction:column;gap:20px;box-shadow:0 4px 24px rgba(0,0,0,.4)}
+.start-card h3{color:var(--accent2);font-size:.88rem;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border);padding-bottom:10px}
+.input-group{display:flex;flex-direction:column;gap:6px}
+.input-label{font-size:.82rem;color:var(--text2)}
+.input-label a{color:var(--accent2)}
+.steam-input{width:100%;padding:10px 14px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:.9rem;font-family:inherit;transition:border-color .15s}
+.steam-input:focus{outline:none;border-color:var(--accent2)}
+.steam-input::placeholder{color:var(--text2);opacity:.6}
+.input-hint{font-size:.75rem;color:var(--text2);line-height:1.7;background:rgba(0,0,0,.2);border-radius:var(--radius);padding:8px 10px;border-left:2px solid var(--accent)}
+.input-hint .hl{color:var(--accent2);font-family:monospace;font-weight:700}
+.progress-mini{height:4px;background:rgba(0,0,0,.3);border-radius:2px;overflow:hidden;display:none}
+.progress-mini.show{display:block}
+.progress-mini-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .3s;width:0%}
+#load-status{font-size:.85rem;min-height:1.4em;line-height:1.6}
+.start-actions{display:flex;gap:8px;flex-wrap:wrap}
+.footer-links{font-size:.75rem;color:var(--text2);text-align:center}
+.footer-links a{color:var(--text2);text-decoration:none}
+.footer-links a:hover{color:var(--accent2)}
 
-  /* バトル画面 */
-  #screen-battle { flex-direction:column; }
-  .progress-bar-wrap { background:linear-gradient(to bottom,#1e2d3d,#192638); border-bottom:1px solid #000; padding:8px 20px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-  .round-badge { background:rgba(76,155,219,.15); border:1px solid var(--accent); border-radius:3px; padding:3px 10px; font-size:.72rem; color:var(--accent2); font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
-  .progress-label { font-size:.8rem; color:var(--text2); white-space:nowrap; }
-  .progress-track { flex:1; min-width:80px; height:6px; background:rgba(0,0,0,.4); border-radius:3px; overflow:hidden; border:1px solid var(--border); }
-  .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:3px; transition:width .3s; }
-  .accuracy-badge { font-size:.75rem; color:var(--text2); white-space:nowrap; }
-  .streak-badge { font-size:.75rem; font-weight:700; padding:3px 10px; border-radius:3px; white-space:nowrap; display:none; background:rgba(232,131,42,.2); border:1px solid var(--orange); color:var(--orange); }
-  .streak-badge.show { display:inline; }
+#screen-battle{flex-direction:column}
+.progress-bar-wrap{background:linear-gradient(to bottom,#1e2d3d,#192638);border-bottom:1px solid #000;padding:8px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.round-badge{background:rgba(76,155,219,.15);border:1px solid var(--accent);border-radius:3px;padding:3px 10px;font-size:.72rem;color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.progress-label{font-size:.8rem;color:var(--text2);white-space:nowrap}
+.progress-track{flex:1;min-width:80px;height:6px;background:rgba(0,0,0,.4);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .3s}
+.accuracy-badge{font-size:.75rem;color:var(--text2);white-space:nowrap}
+.streak-badge{font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:3px;white-space:nowrap;display:none;background:rgba(232,131,42,.2);border:1px solid var(--orange);color:var(--orange)}
+.streak-badge.show{display:inline}
 
-  .battle-main { flex:1; display:flex; overflow:hidden; }
-  .battle-center { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px; gap:12px; background:radial-gradient(ellipse at center,#1e3351 0%,#1b2838 70%); }
-  .next-preview { font-size:.72rem; color:var(--text2); display:flex; align-items:center; gap:6px; opacity:.7; }
-  .next-preview img { width:48px; height:22px; object-fit:cover; border-radius:2px; background:var(--bg2); }
+.battle-main{flex:1;display:flex;overflow:hidden}
+.battle-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px;background:radial-gradient(ellipse at center,#1e3351 0%,#1b2838 70%)}
+.next-preview{font-size:.72rem;color:var(--text2);display:flex;align-items:center;gap:6px;opacity:.7}
+.next-preview img{width:48px;height:22px;object-fit:cover;border-radius:2px;background:var(--bg2)}
 
-  .versus-row { display:flex; align-items:stretch; width:100%; max-width:820px; }
-  .vs-divider { width:52px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:900; color:var(--accent2); text-shadow:0 0 12px var(--accent2); flex-shrink:0; flex-direction:column; gap:6px; }
-  .vs-line { width:1px; flex:1; background:linear-gradient(to bottom,transparent,var(--border2),transparent); }
+.versus-row{display:flex;align-items:stretch;width:100%;max-width:820px}
+.vs-divider{width:52px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;color:var(--accent2);text-shadow:0 0 12px var(--accent2);flex-shrink:0;flex-direction:column;gap:6px}
+.vs-line{width:1px;flex:1;background:linear-gradient(to bottom,transparent,var(--border2),transparent)}
 
-  .game-card { flex:1; background:linear-gradient(to bottom,var(--panel2),var(--panel)); border:1px solid var(--border); border-radius:var(--radius2); overflow:hidden; display:flex; flex-direction:column; transition:border-color .2s,transform .15s,box-shadow .2s; box-shadow:0 4px 16px rgba(0,0,0,.3); }
-  .game-card:hover { border-color:var(--accent2); transform:translateY(-2px); box-shadow:0 8px 24px rgba(76,155,219,.25); }
-  .game-card.winner { border-color:var(--gold); box-shadow:0 0 28px rgba(246,201,14,.4); animation:winPulse .38s ease; }
-  @keyframes winPulse { 0%{transform:translateY(-2px) scale(1)} 50%{transform:translateY(-4px) scale(1.02)} 100%{transform:translateY(-2px) scale(1)} }
+.game-card{flex:1;background:linear-gradient(to bottom,var(--panel2),var(--panel));border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s,transform .15s,box-shadow .2s;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.game-card:hover{border-color:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(76,155,219,.25)}
+.game-card.winner{border-color:var(--gold);box-shadow:0 0 28px rgba(246,201,14,.4);animation:winPulse .38s ease}
+@keyframes winPulse{0%{transform:translateY(-2px) scale(1)}50%{transform:translateY(-4px) scale(1.02)}100%{transform:translateY(-2px) scale(1)}}
 
-  .card-img-wrap { width:100%; aspect-ratio:460/215; background:var(--bg2); overflow:hidden; position:relative; }
-  .card-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
-  .card-img-fallback { position:absolute; inset:0; display:none; align-items:center; justify-content:center; flex-direction:column; gap:8px; background:linear-gradient(135deg,var(--bg2),var(--bg3)); padding:12px; }
-  .card-img-fallback .fallback-title { font-size:.85rem; color:var(--text); font-weight:700; text-align:center; line-height:1.3; }
+.card-img-wrap{width:100%;aspect-ratio:460/215;background:var(--bg2);overflow:hidden;position:relative}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.card-img-fallback{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:linear-gradient(135deg,var(--bg2),var(--bg3));padding:12px}
+.fallback-title{font-size:.85rem;color:var(--text);font-weight:700;text-align:center;line-height:1.3}
 
-  .card-body { padding:10px 12px; display:flex; flex-direction:column; gap:5px; flex:1; }
-  .card-title { font-size:.92rem; font-weight:700; color:#fff; line-height:1.3; }
-  .card-meta  { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-  .card-price   { font-size:.78rem; color:var(--accent2); font-weight:600; }
-  .card-release { font-size:.72rem; color:var(--text2); }
-  .card-store-link { font-size:.72rem; color:var(--accent2); text-decoration:none; display:inline-flex; align-items:center; gap:4px; width:fit-content; padding:3px 7px; background:rgba(76,155,219,.1); border-radius:var(--radius); border:1px solid rgba(76,155,219,.3); margin-top:auto; }
-  .card-store-link:hover { background:rgba(76,155,219,.2); }
-  .card-choose-btn { margin:0 10px 10px; padding:8px; background:linear-gradient(to bottom,#4c9bdb,#3a80c0); color:#fff; border:1px solid #2a6090; border-radius:var(--radius); font-weight:700; font-size:.85rem; cursor:pointer; transition:filter .15s; font-family:inherit; }
-  .card-choose-btn:hover { filter:brightness(1.15); }
+.card-body{padding:10px 12px;display:flex;flex-direction:column;gap:5px;flex:1}
+.card-title{font-size:.92rem;font-weight:700;color:#fff;line-height:1.3}
+.card-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.card-price{font-size:.78rem;color:var(--accent2);font-weight:600}
+.card-release{font-size:.72rem;color:var(--text2)}
+.card-store-link{font-size:.72rem;color:var(--accent2);text-decoration:none;display:inline-flex;align-items:center;gap:4px;width:fit-content;padding:3px 7px;background:rgba(76,155,219,.1);border-radius:var(--radius);border:1px solid rgba(76,155,219,.3);margin-top:auto}
+.card-store-link:hover{background:rgba(76,155,219,.2)}
+.card-choose-btn{margin:0 10px 10px;padding:8px;background:linear-gradient(to bottom,#4c9bdb,#3a80c0);color:#fff;border:1px solid #2a6090;border-radius:var(--radius);font-weight:700;font-size:.85rem;cursor:pointer;transition:filter .15s;font-family:inherit}
+.card-choose-btn:hover{filter:brightness(1.15)}
 
-  .battle-sub-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:center; }
-  .ad-battle-bottom { width:100%; padding:8px 16px; background:var(--panel); border-top:1px solid var(--border); min-height:60px; display:flex; align-items:center; justify-content:center; font-size:.7rem; color:var(--text2); }
+.battle-sub-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
+.ad-battle-bottom{width:100%;padding:8px 16px;background:var(--panel);border-top:1px solid var(--border);min-height:60px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text2)}
 
-  /* サイドバー */
-  .ranking-sidebar { width:210px; background:var(--panel); border-left:1px solid #000; display:flex; flex-direction:column; overflow:hidden; }
-  .sidebar-header { padding:8px 12px; border-bottom:1px solid var(--border); font-size:.72rem; color:var(--accent2); font-weight:700; text-transform:uppercase; letter-spacing:.08em; flex-shrink:0; background:var(--panel2); }
-  .ranking-list { flex:1; overflow-y:auto; padding:4px 0; }
-  .ranking-list::-webkit-scrollbar { width:3px; }
-  .ranking-list::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
-  .rank-item { display:flex; align-items:center; gap:6px; padding:4px 10px; transition:background .1s; }
-  .rank-item:hover { background:rgba(255,255,255,.04); }
-  .rank-no { width:18px; text-align:right; font-size:.7rem; color:var(--text2); flex-shrink:0; }
-  .rank-no.top3 { color:var(--gold); font-weight:700; }
-  .rank-thumb { width:34px; height:16px; object-fit:cover; border-radius:2px; background:var(--bg2); flex-shrink:0; }
-  .rank-name  { font-size:.7rem; color:var(--text); overflow:hidden; white-space:nowrap; text-overflow:ellipsis; flex:1; }
-  .rank-score { font-size:.65rem; color:var(--text2); flex-shrink:0; }
-  .ad-space { padding:8px 10px; border-top:1px solid var(--border); min-height:120px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:rgba(0,0,0,.1); font-size:.65rem; color:var(--text2); text-align:center; }
+.ranking-sidebar{width:210px;background:var(--panel);border-left:1px solid #000;display:flex;flex-direction:column;overflow:hidden}
+.sidebar-header{padding:8px 12px;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:.08em;flex-shrink:0;background:var(--panel2)}
+.ranking-list{flex:1;overflow-y:auto;padding:4px 0}
+.ranking-list::-webkit-scrollbar{width:3px}
+.ranking-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.rank-item{display:flex;align-items:center;gap:6px;padding:4px 10px;transition:background .1s}
+.rank-item:hover{background:rgba(255,255,255,.04)}
+.rank-no{width:18px;text-align:right;font-size:.7rem;color:var(--text2);flex-shrink:0}
+.rank-no.top3{color:var(--gold);font-weight:700}
+.rank-thumb{width:34px;height:16px;object-fit:cover;border-radius:2px;background:var(--bg2);flex-shrink:0}
+.rank-name{font-size:.7rem;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1}
+.rank-score{font-size:.65rem;color:var(--text2);flex-shrink:0}
+.ad-space{padding:8px 10px;border-top:1px solid var(--border);min-height:120px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(0,0,0,.1);font-size:.65rem;color:var(--text2);text-align:center}
 
-  /* 仕分け画面 */
-  #screen-sort { flex-direction:column; align-items:center; padding:28px 20px; gap:20px; background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%); }
-  .sort-header { text-align:center; }
-  .sort-header h2 { font-size:1.4rem; color:#fff; }
-  .sort-header p  { color:var(--text2); font-size:.85rem; margin-top:4px; }
-  .sort-card { background:linear-gradient(to bottom,var(--panel2),var(--panel)); border:1px solid var(--border); border-radius:var(--radius2); width:100%; max-width:500px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,.3); }
-  .sort-card-img  { width:100%; aspect-ratio:460/215; object-fit:cover; background:var(--bg2); display:block; }
-  .sort-card-body { padding:14px 16px; display:flex; flex-direction:column; gap:8px; }
-  .sort-card-title { font-size:1rem; font-weight:700; color:#fff; }
-  .sort-card-meta  { font-size:.78rem; color:var(--text2); }
-  .sort-buttons { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; max-width:500px; }
-  .sort-btn { padding:12px 8px; border:none; border-radius:var(--radius); cursor:pointer; font-size:.85rem; font-weight:700; font-family:inherit; transition:filter .15s,transform .1s; display:flex; flex-direction:column; align-items:center; gap:4px; }
-  .sort-btn:hover { filter:brightness(1.15); transform:translateY(-1px); }
-  .sort-btn .sort-label { font-size:.7rem; font-weight:400; opacity:.8; }
-  .sort-btn-a { background:linear-gradient(to bottom,#5ba32b,#4a8a20); color:#fff; border:1px solid #3a7010; }
-  .sort-btn-b { background:linear-gradient(to bottom,#4c9bdb,#3a80c0); color:#fff; border:1px solid #2a6090; }
-  .sort-btn-c { background:linear-gradient(to bottom,#e8832a,#c96a18); color:#fff; border:1px solid #a05010; }
-  .sort-btn-d { background:linear-gradient(to bottom,#c94040,#a83030); color:#fff; border:1px solid #882020; }
-  .sort-progress { font-size:.8rem; color:var(--text2); text-align:center; }
-  .sort-actions  { display:flex; gap:8px; justify-content:center; }
+#screen-sort{flex-direction:column;align-items:center;padding:28px 20px;gap:20px;background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%)}
+.sort-header{text-align:center}
+.sort-header h2{font-size:1.4rem;color:#fff}
+.sort-header p{color:var(--text2);font-size:.85rem;margin-top:4px}
+.sort-card{background:linear-gradient(to bottom,var(--panel2),var(--panel));border:1px solid var(--border);border-radius:var(--radius2);width:100%;max-width:500px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.sort-card-img{width:100%;aspect-ratio:460/215;object-fit:cover;background:var(--bg2);display:block}
+.sort-card-body{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.sort-card-title{font-size:1rem;font-weight:700;color:#fff}
+.sort-card-meta{font-size:.78rem;color:var(--text2)}
+.sort-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:500px}
+.sort-btn{padding:12px 8px;border:none;border-radius:var(--radius);cursor:pointer;font-size:.85rem;font-weight:700;font-family:inherit;transition:filter .15s,transform .1s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.sort-btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.sort-btn .sort-label{font-size:.7rem;font-weight:400;opacity:.8}
+.sort-btn-a{background:linear-gradient(to bottom,#5ba32b,#4a8a20);color:#fff;border:1px solid #3a7010}
+.sort-btn-b{background:linear-gradient(to bottom,#4c9bdb,#3a80c0);color:#fff;border:1px solid #2a6090}
+.sort-btn-c{background:linear-gradient(to bottom,#e8832a,#c96a18);color:#fff;border:1px solid #a05010}
+.sort-btn-d{background:linear-gradient(to bottom,#c94040,#a83030);color:#fff;border:1px solid #882020}
+.sort-progress{font-size:.8rem;color:var(--text2);text-align:center}
+.sort-actions{display:flex;gap:8px;justify-content:center}
 
-  /* リザルト画面 */
-  #screen-result { flex-direction:column; align-items:center; padding:28px 20px; gap:20px; background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%); }
-  #result-capture { width:100%; max-width:900px; display:flex; flex-direction:column; gap:20px; align-items:center; background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%); padding:20px 0; }
-  .result-header { text-align:center; }
-  .result-header h2 { font-size:1.5rem; color:#fff; text-shadow:0 2px 12px rgba(76,155,219,.4); }
-  .result-header p  { color:var(--text2); font-size:.85rem; margin-top:4px; }
-  .result-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+#screen-result{flex-direction:column;align-items:center;padding:28px 20px;gap:20px;background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%)}
+#result-capture{width:100%;max-width:900px;display:flex;flex-direction:column;gap:20px;align-items:center;background:radial-gradient(ellipse at top,#1e3a5a 0%,#1b2838 60%);padding:20px 0}
+.result-header{text-align:center}
+.result-header h2{font-size:1.5rem;color:#fff;text-shadow:0 2px 12px rgba(76,155,219,.4)}
+.result-header p{color:var(--text2);font-size:.85rem;margin-top:4px}
+.result-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 
-  .podium { display:flex; align-items:flex-end; justify-content:center; gap:6px; width:100%; max-width:580px; }
-  .podium-item { flex:1; background:linear-gradient(to bottom,var(--panel2),var(--panel)); border:1px solid var(--border); border-radius:var(--radius2) var(--radius2) 0 0; overflow:hidden; text-align:center; max-width:180px; box-shadow:0 4px 16px rgba(0,0,0,.3); }
-  .podium-item.p1 { order:2; border-color:var(--gold); box-shadow:0 4px 20px rgba(246,201,14,.2); }
-  .podium-item.p2 { order:1; }
-  .podium-item.p3 { order:3; }
-  .podium-img  { width:100%; aspect-ratio:460/215; object-fit:cover; background:var(--bg2); display:block; }
-  .podium-body { padding:6px 4px; }
-  .podium-rank { font-size:1.3rem; }
-  .podium-name { font-size:.68rem; color:var(--text); margin-top:3px; line-height:1.3; }
-  .podium-base { height:8px; background:var(--bg2); }
-  .podium-item.p1 .podium-base { background:var(--gold); height:12px; }
-  .podium-item.p2 .podium-base { background:#8a9ba8; }
-  .podium-item.p3 .podium-base { background:#7a5c3a; height:6px; }
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:6px;width:100%;max-width:580px}
+.podium-item{flex:1;background:linear-gradient(to bottom,var(--panel2),var(--panel));border:1px solid var(--border);border-radius:var(--radius2) var(--radius2) 0 0;overflow:hidden;text-align:center;max-width:180px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.podium-item.p1{order:2;border-color:var(--gold);box-shadow:0 4px 20px rgba(246,201,14,.2)}
+.podium-item.p2{order:1}
+.podium-item.p3{order:3}
+.podium-img{width:100%;aspect-ratio:460/215;object-fit:cover;background:var(--bg2);display:block}
+.podium-body{padding:6px 4px}
+.podium-rank{font-size:1.3rem}
+.podium-name{font-size:.68rem;color:var(--text);margin-top:3px;line-height:1.3}
+.podium-base{height:8px;background:var(--bg2)}
+.podium-item.p1 .podium-base{background:var(--gold);height:12px}
+.podium-item.p2 .podium-base{background:#8a9ba8}
+.podium-item.p3 .podium-base{background:#7a5c3a;height:6px}
 
-  .result-table-wrap { width:100%; max-width:900px; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius2); overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,.3); }
-  .result-table { width:100%; border-collapse:collapse; font-size:.82rem; }
-  .result-table th { background:linear-gradient(to bottom,var(--panel2),#162030); padding:8px 12px; text-align:left; color:var(--accent2); font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; border-bottom:1px solid var(--border); white-space:nowrap; }
-  .result-table td { padding:6px 12px; border-bottom:1px solid rgba(42,71,102,.5); vertical-align:middle; }
-  .result-table tr:last-child td { border-bottom:none; }
-  .result-table tr:hover td { background:rgba(255,255,255,.03); }
-  .rt-rank  { width:44px; text-align:center; font-weight:700; }
-  .medal    { font-size:1rem; }
-  .rt-thumb { width:64px; height:30px; object-fit:cover; border-radius:2px; background:var(--bg2); display:block; }
-  .rt-title a { color:var(--text); text-decoration:none; font-weight:600; }
-  .rt-title a:hover { color:var(--accent2); }
-  .rt-sub    { font-size:.68rem; color:var(--text2); margin-top:1px; }
-  .rt-wins   { color:#5ba32b; font-weight:600; }
-  .rt-losses { color:#c94040; }
-  .rt-conf   { font-size:.7rem; padding:2px 6px; border-radius:2px; white-space:nowrap; }
-  .conf-high { background:rgba(91,163,43,.2);  color:#5ba32b; border:1px solid rgba(91,163,43,.3); }
-  .conf-mid  { background:rgba(246,201,14,.15); color:#c8a800; border:1px solid rgba(246,201,14,.3); }
-  .conf-low  { background:rgba(201,64,64,.15);  color:#c94040; border:1px solid rgba(201,64,64,.3); }
+.result-table-wrap{width:100%;max-width:900px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.result-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.result-table th{background:linear-gradient(to bottom,var(--panel2),#162030);padding:8px 12px;text-align:left;color:var(--accent2);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border);white-space:nowrap}
+.result-table td{padding:6px 12px;border-bottom:1px solid rgba(42,71,102,.5);vertical-align:middle}
+.result-table tr:last-child td{border-bottom:none}
+.result-table tr:hover td{background:rgba(255,255,255,.03)}
+.rt-rank{width:44px;text-align:center;font-weight:700}
+.medal{font-size:1rem}
+.rt-thumb{width:64px;height:30px;object-fit:cover;border-radius:2px;background:var(--bg2);display:block}
+.rt-title a{color:var(--text);text-decoration:none;font-weight:600}
+.rt-title a:hover{color:var(--accent2)}
+.rt-sub{font-size:.68rem;color:var(--text2);margin-top:1px}
+.rt-wins{color:#5ba32b;font-weight:600}
+.rt-losses{color:#c94040}
+.rt-conf{font-size:.7rem;padding:2px 6px;border-radius:2px;white-space:nowrap}
+.conf-high{background:rgba(91,163,43,.2);color:#5ba32b;border:1px solid rgba(91,163,43,.3)}
+.conf-mid{background:rgba(246,201,14,.15);color:#c8a800;border:1px solid rgba(246,201,14,.3)}
+.conf-low{background:rgba(201,64,64,.15);color:#c94040;border:1px solid rgba(201,64,64,.3)}
+.ad-space-result{width:100%;max-width:900px;min-height:90px;background:rgba(0,0,0,.2);border:1px dashed var(--border);border-radius:var(--radius2);display:flex;align-items:center;justify-content:center;font-size:.72rem;color:var(--text2)}
 
-  .ad-space-result { width:100%; max-width:900px; min-height:90px; background:rgba(0,0,0,.2); border:1px dashed var(--border); border-radius:var(--radius2); display:flex; align-items:center; justify-content:center; font-size:.72rem; color:var(--text2); }
+.round-complete-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:150;align-items:center;justify-content:center;flex-direction:column;gap:20px;backdrop-filter:blur(4px)}
+.round-complete-overlay.show{display:flex}
+.round-complete-content{text-align:center}
+.round-complete-content h2{font-size:2rem;color:var(--gold);margin-bottom:8px}
+.round-complete-content p{color:var(--text2);font-size:.92rem}
+.round-complete-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 
-  /* ラウンド完了 */
-  .round-complete-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:150; align-items:center; justify-content:center; flex-direction:column; gap:20px; backdrop-filter:blur(4px); }
-  .round-complete-overlay.show { display:flex; }
-  .round-complete-content { text-align:center; }
-  .round-complete-content h2 { font-size:2rem; color:var(--gold); margin-bottom:8px; }
-  .round-complete-content p  { color:var(--text2); font-size:.92rem; }
-  .round-complete-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
-
-  @media(max-width:700px) {
-    .ranking-sidebar { display:none; }
-    .versus-row { flex-direction:column; }
-    .vs-divider { height:20px; width:auto; flex-direction:row; }
-    .vs-line { width:auto; height:1px; flex:1; background:linear-gradient(to right,transparent,var(--border2),transparent); }
-    .start-card { padding:18px 16px; }
-  }
+@media(max-width:700px){
+  .ranking-sidebar{display:none}
+  .versus-row{flex-direction:column}
+  .vs-divider{height:20px;width:auto;flex-direction:row}
+  .vs-line{width:auto;height:1px;flex:1;background:linear-gradient(to right,transparent,var(--border2),transparent)}
+  .start-card{padding:18px 16px}
+}
 </style>
 </head>
 <body>
 
-<!-- スタート画面 -->
 <div id="screen-start" class="screen active">
   <div class="logo-area">
     <h2>🎮 Steam Wishlist Ranker</h2>
@@ -261,11 +239,11 @@
     <div id="load-progress" class="progress-mini">
       <div class="progress-mini-fill" id="load-progress-fill"></div>
     </div>
-    <div id="load-status" style="color:var(--text2);"></div>
+    <div id="load-status" style="color:var(--text2)"></div>
     <div class="start-actions">
       <button class="btn btn-steam" id="btn-fetch" onclick="fetchWishlist()">🚀 取得してスタート</button>
-      <button class="btn btn-dark"  onclick="loadSaved()">💾 前回の続きから</button>
-      <button class="btn btn-dark"  onclick="loadDemo()">🎲 デモで試す</button>
+      <button class="btn btn-dark" onclick="loadSaved()">💾 前回の続きから</button>
+      <button class="btn btn-dark" onclick="loadDemo()">🎲 デモで試す</button>
     </div>
   </div>
   <div class="footer-links">
@@ -273,13 +251,9 @@
   </div>
 </div>
 
-<!-- バトル画面 -->
 <div id="screen-battle" class="screen">
   <nav class="navbar">
-    <div class="navbar-brand">
-      <div class="steam-icon">S</div>
-      <span>Wishlist Ranker</span>
-    </div>
+    <div class="navbar-brand"><div class="si">S</div><span>Wishlist Ranker</span></div>
     <div class="navbar-info" id="header-info"></div>
     <div class="navbar-actions">
       <button class="btn btn-dark btn-sm" onclick="saveAndGoResult()">📊 結果を見る</button>
@@ -287,13 +261,11 @@
     </div>
   </nav>
   <div class="progress-bar-wrap">
-    <span class="round-badge"    id="round-badge">Round 1</span>
+    <span class="round-badge" id="round-badge">Round 1</span>
     <span class="progress-label" id="progress-label">0 / 0</span>
-    <div class="progress-track">
-      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
     <span class="accuracy-badge" id="accuracy-label">精度: 低（初回）</span>
-    <span class="streak-badge"   id="streak-badge">🔥 連勝中</span>
+    <span class="streak-badge" id="streak-badge">🔥 連勝中</span>
   </div>
   <div class="battle-main">
     <div class="battle-center">
@@ -304,17 +276,11 @@
         <div class="game-card" id="card-left">
           <div class="card-img-wrap">
             <img id="img-left" src="" alt="">
-            <div class="card-img-fallback" id="fb-left">
-              <span style="font-size:1.5rem">🎮</span>
-              <span class="fallback-title" id="fb-title-left"></span>
-            </div>
+            <div class="card-img-fallback" id="fb-left"><span style="font-size:1.5rem">🎮</span><span class="fallback-title" id="fb-title-left"></span></div>
           </div>
           <div class="card-body">
             <div class="card-title" id="title-left">-</div>
-            <div class="card-meta">
-              <span class="card-price"   id="price-left"></span>
-              <span class="card-release" id="release-left"></span>
-            </div>
+            <div class="card-meta"><span class="card-price" id="price-left"></span><span class="card-release" id="release-left"></span></div>
             <a id="link-left" class="card-store-link" href="#" target="_blank" rel="noopener">🔗 ストアページ</a>
           </div>
           <button class="card-choose-btn" onclick="choose(0)">👈 こちらを優先する</button>
@@ -323,26 +289,20 @@
         <div class="game-card" id="card-right">
           <div class="card-img-wrap">
             <img id="img-right" src="" alt="">
-            <div class="card-img-fallback" id="fb-right">
-              <span style="font-size:1.5rem">🎮</span>
-              <span class="fallback-title" id="fb-title-right"></span>
-            </div>
+            <div class="card-img-fallback" id="fb-right"><span style="font-size:1.5rem">🎮</span><span class="fallback-title" id="fb-title-right"></span></div>
           </div>
           <div class="card-body">
             <div class="card-title" id="title-right">-</div>
-            <div class="card-meta">
-              <span class="card-price"   id="price-right"></span>
-              <span class="card-release" id="release-right"></span>
-            </div>
+            <div class="card-meta"><span class="card-price" id="price-right"></span><span class="card-release" id="release-right"></span></div>
             <a id="link-right" class="card-store-link" href="#" target="_blank" rel="noopener">🔗 ストアページ</a>
           </div>
           <button class="card-choose-btn" onclick="choose(1)">こちらを優先する 👉</button>
         </div>
       </div>
       <div class="battle-sub-actions">
-        <button class="btn btn-dark  btn-sm" onclick="undoLast()">↩ 一つ戻る</button>
+        <button class="btn btn-dark btn-sm" onclick="undoLast()">↩ 一つ戻る</button>
         <button class="btn btn-green btn-sm" onclick="chooseBoth()">🤝 どっちも欲しい！</button>
-        <button class="btn btn-dark  btn-sm" onclick="chooseNeither()">❓ よく知らない</button>
+        <button class="btn btn-dark btn-sm" onclick="chooseNeither()">❓ よく知らない</button>
       </div>
       <div class="ad-battle-bottom"><!-- AdSense --></div>
     </div>
@@ -354,7 +314,6 @@
   </div>
 </div>
 
-<!-- 仕分け画面 -->
 <div id="screen-sort" class="screen">
   <div class="sort-header">
     <h2>📋 下位ゲームの仕分け</h2>
@@ -364,7 +323,7 @@
     <img class="sort-card-img" id="sort-img" src="" alt="" onerror="this.style.opacity=0.3">
     <div class="sort-card-body">
       <div class="sort-card-title" id="sort-title">-</div>
-      <div class="sort-card-meta"  id="sort-meta"></div>
+      <div class="sort-card-meta" id="sort-meta"></div>
     </div>
   </div>
   <div class="sort-buttons">
@@ -376,19 +335,18 @@
   <div class="sort-progress" id="sort-progress">0 / 0</div>
   <div class="sort-actions">
     <button class="btn btn-steam btn-sm" onclick="saveAndContinueLater()">💾 今日はここまで</button>
-    <button class="btn btn-dark  btn-sm" onclick="cancelSort()">キャンセル</button>
+    <button class="btn btn-dark btn-sm" onclick="cancelSort()">キャンセル</button>
   </div>
 </div>
 
-<!-- リザルト画面 -->
 <div id="screen-result" class="screen">
   <div class="result-actions">
-    <button class="btn btn-gold"   onclick="startNextRound()">🔄 さらに精度を上げる</button>
+    <button class="btn btn-gold" onclick="startNextRound()">🔄 さらに精度を上げる</button>
     <button class="btn btn-orange" onclick="startSort()">📋 下位をまとめて仕分け</button>
-    <button class="btn btn-steam"  onclick="syncToSteam()">🎮 Steamに反映する</button>
-    <button class="btn btn-x"      onclick="shareToX()">𝕏 シェアする</button>
-    <button class="btn btn-kofi"   onclick="openKofi()">☕ 応援する</button>
-    <button class="btn btn-dark"   onclick="backToBattle()">⬅ 対戦に戻る</button>
+    <button class="btn btn-steam" onclick="syncToSteam()">🎮 Steamに反映する</button>
+    <button class="btn btn-x" onclick="shareToX()">𝕏 シェアする</button>
+    <button class="btn btn-kofi" onclick="openKofi()">☕ 応援する</button>
+    <button class="btn btn-dark" onclick="backToBattle()">⬅ 対戦に戻る</button>
   </div>
   <div class="ad-space-result"><!-- AdSense --></div>
   <div id="result-capture">
@@ -416,601 +374,500 @@
   </div>
 </div>
 
-<!-- ラウンド完了 -->
 <div class="round-complete-overlay" id="round-complete">
   <div class="round-complete-content">
     <h2 id="round-complete-title">🏆 ラウンド完了！</h2>
     <p id="round-complete-sub"></p>
   </div>
   <div class="round-complete-actions">
-    <button class="btn btn-gold"  onclick="hideRoundComplete();saveAndGoResult()">📊 結果を見る</button>
+    <button class="btn btn-gold" onclick="hideRoundComplete();saveAndGoResult()">📊 結果を見る</button>
     <button class="btn btn-steam" onclick="hideRoundComplete();startNextRound()">🔄 次のラウンドへ</button>
-    <button class="btn btn-dark"  onclick="hideRoundComplete();backToBattle()">⬅ 対戦に戻る</button>
+    <button class="btn btn-dark" onclick="hideRoundComplete();backToBattle()">⬅ 対戦に戻る</button>
   </div>
 </div>
 
 <script>
 'use strict';
 
+// ========== 設定 ==========
 const WORKER_URL  = 'https://steam-wishlist-api.swranker.workers.dev';
 const STORAGE_KEY = 'swr_v14';
 const IMG_BASE    = 'https://cdn.akamai.steamstatic.com/steam/apps/';
 const SITE_URL    = 'https://steam-wishlist-ranker.vercel.app';
-const KOFI_URL    = 'https://ko-fi.com/4545nameless'; 
+const KOFI_URL    = 'https://ko-fi.com/4545nameless';
 const TAG         = '#SteamWishlistRanker';
 
-// =====================================================
-// シェア文言 400パターン（精度別各100）
-// =====================================================
-const mkLow  = (intro, outro='') => (t,u,n,b) => `${intro}\n\n${t}\n\n${n}件のウィッシュリスト、まだランク付け中！\n\n${u}\n\n${TAG}${outro}`;
-const mkMid  = (intro, outro='') => (t,u,n,b) => `${intro}\n\n${t}\n\n${n}件・${b}回の対決で出した中間結果\n\n${u}\n\n${TAG}${outro}`;
-const mkHigh = (intro, outro='') => (t,u,n,b) => `${intro}\n\n${t}\n\n${n}件・${b}回の対決でかなり固まってきた\n\n${u}\n\n${TAG}${outro}`;
-const mkPfct = (intro, outro='') => (t,u,n,b) => `${intro}\n\n${t}\n\n${n}件・${b}回の対決で決定した完全版ランキング\n\n${u}\n\n${TAG}${outro}`;
+// ========== シェア文言 400パターン ==========
+const mkLow  = (a,b='') => (t,u,n,v) => `${a}\n\n${t}\n\n${n}件のウィッシュリスト、まだランク付け中！\n\n${u}\n\n${TAG}${b}`;
+const mkMid  = (a,b='') => (t,u,n,v) => `${a}\n\n${t}\n\n${n}件・${v}回の対決で出した中間結果\n\n${u}\n\n${TAG}${b}`;
+const mkHigh = (a,b='') => (t,u,n,v) => `${a}\n\n${t}\n\n${n}件・${v}回の対決でかなり固まってきた\n\n${u}\n\n${TAG}${b}`;
+const mkPfct = (a,b='') => (t,u,n,v) => `${a}\n\n${t}\n\n${n}件・${v}回の対決で決定した完全版ランキング\n\n${u}\n\n${TAG}${b}`;
 
-const SHARE_LOW = [
-  mkLow('🎮 とりあえず今の段階のウィッシュリストランキング'),
-  mkLow('まだ途中だけど現時点の優先順位を公開'),
-  mkLow('🔄 ランク付け進行中。今はこんな感じ'),
-  mkLow('途中経過だけど、上位はだいたい固まってきた'),
-  mkLow('🎯 まだ精度低いけど今の気持ちはこれ'),
-  mkLow('ウィッシュリスト整理中。とりあえず今の順位'),
-  mkLow('暫定ランキング公開。まだ変わるかも'),
-  mkLow('🎮 ざっくりランキング、まだ途中'),
-  mkLow('今の段階ではこれが上位。まだ続く'),
-  mkLow('とりあえず回してみた結果がこちら'),
-  mkLow('🔥 1ラウンド目終了。上位はこんな感じ'),
-  mkLow('まずはざっくり順位をつけてみた'),
-  mkLow('🎮 初回ランキング。これから精度上げていく'),
-  mkLow('途中だけど上位は揺るがない気がする'),
-  mkLow('暫定1位から目が離せない'),
-  mkLow('🎯 まだランク付け中だけど報告'),
-  mkLow('とりあえず1周目が終わった'),
-  mkLow('まだ精度低いけど、傾向は見えてきた'),
-  mkLow('🔄 進行中。上位は安定してきた'),
-  mkLow('初戦終了。まだまだこれから'),
-  mkLow('ざっくりだけどこんな感じ', ' #Steam'),
-  mkLow('まず1ラウンドやった結果', ' #PCゲーム'),
-  mkLow('🎮 途中経過を晒す', ' #ゲーム'),
-  mkLow('暫定ランキング。まだ変動あり', ' #Steam'),
-  mkLow('とりあえず今はこれが上位', ' #積みゲー'),
-  mkLow('精度低いけど公開する', ' #Steam'),
-  mkLow('🔥 初回なのに上位は決まりかけてる', ' #ゲーム'),
-  mkLow('まだ途中だけど上位は固い気がする', ' #PCゲーム'),
-  mkLow('1周目終了報告', ' #Steam'),
-  mkLow('🎯 まずはここから。次ラウンドで精度上げる', ' #ゲーム'),
-  mkLow('Steamウィッシュリストのランク付け始めた'),
-  mkLow('🎮 ランキング作成中。今はこんな感じ'),
-  mkLow('途中だけど見せちゃう'),
-  mkLow('まだ全然終わってないけど現時点の結果'),
-  mkLow('🔄 ゲームたちを戦わせ始めた'),
-  mkLow('初ラウンドの結果を公開'),
-  mkLow('まだ精度は低いが方向性は見えた', ' #Steam'),
-  mkLow('🎯 ざっくり仕分け完了。上位はこれ', ' #ゲーム'),
-  mkLow('1対1で戦わせ始めた。途中経過', ' #Steam'),
-  mkLow('ウィッシュリスト整理スタート', ' #積みゲー'),
-  mkLow('初戦の結果。まだ精度は低い', ' #Steam'),
-  mkLow('🎮 とりあえず回してみた', ' #ゲーム'),
-  mkLow('途中だけど上位は確定っぽい', ' #PCゲーム'),
-  mkLow('最初の結果。これから詰めていく', ' #Steam'),
-  mkLow('🔥 1ラウンド目。まずまずの結果', ' #ゲーム'),
-  mkLow('ざっくり版を公開します', ' #Steam'),
-  mkLow('まだ途中なので変動するかも', ' #ゲーム'),
-  mkLow('🎯 初回にしてはいい感じ', ' #Steam'),
-  mkLow('とりあえず今の順位を公開', ' #PCゲーム'),
-  mkLow('🎮 ランク付け開始。途中経過', ' #Steam'),
-  mkLow('1周目終わった。上位はだいたい決まった', ' #ゲーム'),
-  mkLow('まず大まかに整理した結果', ' #Steam'),
-  mkLow('🔄 初ラウンド完了。次は精度上げる', ' #ゲーム'),
-  mkLow('今の段階の正直な順位', ' #Steam'),
-  mkLow('途中経過を晒します', ' #積みゲー'),
-  mkLow('🎮 まずはざっくりランキング', ' #ゲーム'),
-  mkLow('初回なのでまだ荒削り', ' #Steam'),
-  mkLow('とりあえず1周目の結果です', ' #PCゲーム'),
-  mkLow('🎯 上位はだいたい見えてきた', ' #ゲーム'),
-  mkLow('途中だけど報告したかった', ' #Steam'),
-  mkLow('🔥 1ラウンド目終了！上位はこれ', ' #ゲーム'),
-  mkLow('まだ精度低いよ？という前置きで', ' #Steam'),
-  mkLow('初戦終了。手応えあり', ' #ゲーム'),
-  mkLow('🎮 まず1回やってみた', ' #Steam'),
-  mkLow('暫定ランキング（変わるかも）', ' #ゲーム'),
-  mkLow('🔄 ランク付け中。経過報告', ' #Steam'),
-  mkLow('上位は固まってきた気がする', ' #ゲーム'),
-  mkLow('まだ途中だけどこんな感じ', ' #Steam'),
-  mkLow('🎯 初ラウンドの結果を公開', ' #PCゲーム'),
-  mkLow('ゲームたちに戦わせてみた初回結果', ' #ゲーム'),
-  mkLow('🎮 まずはここから始める', ' #Steam'),
-  mkLow('途中経過。上位は安定中', ' #ゲーム'),
-  mkLow('1周目だけど上位は揺るがない', ' #Steam'),
-  mkLow('🔥 初戦の結果がこちら', ' #ゲーム'),
-  mkLow('ざっくりだけど傾向は見えた', ' #Steam'),
-  mkLow('まず回してみた。これが今の答え', ' #ゲーム'),
-  mkLow('🎯 1ラウンド目完了', ' #Steam'),
-  mkLow('途中だけど見せちゃう（変わるかも）', ' #ゲーム'),
-  mkLow('🎮 初回ランキング公開', ' #Steam'),
-  mkLow('まだ荒削りだけど上位は固い', ' #ゲーム'),
-  mkLow('とりあえずの結果です', ' #Steam #積みゲー'),
-  mkLow('🔄 進行中。途中経過', ' #Steam #ゲーム'),
-  mkLow('初ラウンド終了。感触よし', ' #Steam #PCゲーム'),
-  mkLow('まず大まかに決めた', ' #Steam #ゲーム'),
-  mkLow('🎮 1周目の結果', ' #Steam #ゲーム'),
-  mkLow('途中だけど上位は決まりつつある', ' #Steam #ゲーム'),
-  mkLow('🎯 暫定版ランキング', ' #Steam #ゲーム'),
-  mkLow('まだ精度低いけど公開する勇気', ' #Steam #ゲーム'),
-  mkLow('🔥 初回の結果を晒す', ' #Steam #ゲーム'),
-  mkLow('ランク付け中。現時点の結果', ' #Steam #ゲーム'),
-  mkLow('🎮 1対1で戦わせ始めた', ' #Steam #ゲーム'),
-  mkLow('途中経過。参考程度に', ' #Steam #ゲーム'),
-  mkLow('暫定トップはこれだ', ' #Steam #ゲーム'),
-  mkLow('🔄 まだ途中。続きは次回', ' #Steam #ゲーム'),
-  mkLow('初ラウンドなのに上位は揺るがない気がする', ' #Steam #ゲーム'),
-  mkLow('🎯 とりあえず今の気持ち', ' #Steam #ゲーム'),
-  mkLow('1周目終了。上位はほぼ決まり', ' #Steam #ゲーム'),
-  mkLow('途中だけど自信ある上位', ' #Steam #ゲーム'),
+const SHARE_LOW=[
+  mkLow('🎮 とりあえず今の段階のウィッシュリストランキング'),mkLow('まだ途中だけど現時点の優先順位を公開'),mkLow('🔄 ランク付け進行中。今はこんな感じ'),mkLow('途中経過だけど、上位はだいたい固まってきた'),mkLow('🎯 まだ精度低いけど今の気持ちはこれ'),mkLow('ウィッシュリスト整理中。とりあえず今の順位'),mkLow('暫定ランキング公開。まだ変わるかも'),mkLow('🎮 ざっくりランキング、まだ途中'),mkLow('今の段階ではこれが上位。まだ続く'),mkLow('とりあえず回してみた結果がこちら'),mkLow('🔥 1ラウンド目終了。上位はこんな感じ'),mkLow('まずはざっくり順位をつけてみた'),mkLow('🎮 初回ランキング。これから精度上げていく'),mkLow('途中だけど上位は揺るがない気がする'),mkLow('暫定1位から目が離せない'),mkLow('🎯 まだランク付け中だけど報告'),mkLow('とりあえず1周目が終わった'),mkLow('まだ精度低いけど、傾向は見えてきた'),mkLow('🔄 進行中。上位は安定してきた'),mkLow('初戦終了。まだまだこれから'),mkLow('ざっくりだけどこんな感じ',' #Steam'),mkLow('まず1ラウンドやった結果',' #PCゲーム'),mkLow('🎮 途中経過を晒す',' #ゲーム'),mkLow('暫定ランキング。まだ変動あり',' #Steam'),mkLow('とりあえず今はこれが上位',' #積みゲー'),mkLow('精度低いけど公開する',' #Steam'),mkLow('🔥 初回なのに上位は決まりかけてる',' #ゲーム'),mkLow('まだ途中だけど上位は固い気がする',' #PCゲーム'),mkLow('1周目終了報告',' #Steam'),mkLow('🎯 まずはここから。次ラウンドで精度上げる',' #ゲーム'),mkLow('Steamウィッシュリストのランク付け始めた'),mkLow('🎮 ランキング作成中。今はこんな感じ'),mkLow('途中だけど見せちゃう'),mkLow('まだ全然終わってないけど現時点の結果'),mkLow('🔄 ゲームたちを戦わせ始めた'),mkLow('初ラウンドの結果を公開'),mkLow('まだ精度は低いが方向性は見えた',' #Steam'),mkLow('🎯 ざっくり仕分け完了。上位はこれ',' #ゲーム'),mkLow('1対1で戦わせ始めた。途中経過',' #Steam'),mkLow('ウィッシュリスト整理スタート',' #積みゲー'),mkLow('初戦の結果。まだ精度は低い',' #Steam'),mkLow('🎮 とりあえず回してみた',' #ゲーム'),mkLow('途中だけど上位は確定っぽい',' #PCゲーム'),mkLow('最初の結果。これから詰めていく',' #Steam'),mkLow('🔥 1ラウンド目。まずまずの結果',' #ゲーム'),mkLow('ざっくり版を公開します',' #Steam'),mkLow('まだ途中なので変動するかも',' #ゲーム'),mkLow('🎯 初回にしてはいい感じ',' #Steam'),mkLow('とりあえず今の順位を公開',' #PCゲーム'),mkLow('🎮 ランク付け開始。途中経過',' #Steam'),mkLow('1周目終わった。上位はだいたい決まった',' #ゲーム'),mkLow('まず大まかに整理した結果',' #Steam'),mkLow('🔄 初ラウンド完了。次は精度上げる',' #ゲーム'),mkLow('今の段階の正直な順位',' #Steam'),mkLow('途中経過を晒します',' #積みゲー'),mkLow('🎮 まずはざっくりランキング',' #ゲーム'),mkLow('初回なのでまだ荒削り',' #Steam'),mkLow('とりあえず1周目の結果です',' #PCゲーム'),mkLow('🎯 上位はだいたい見えてきた',' #ゲーム'),mkLow('途中だけど報告したかった',' #Steam'),mkLow('🔥 1ラウンド目終了！上位はこれ',' #ゲーム'),mkLow('まだ精度低いよ？という前置きで',' #Steam'),mkLow('初戦終了。手応えあり',' #ゲーム'),mkLow('🎮 まず1回やってみた',' #Steam'),mkLow('暫定ランキング（変わるかも）',' #ゲーム'),mkLow('🔄 ランク付け中。経過報告',' #Steam'),mkLow('上位は固まってきた気がする',' #ゲーム'),mkLow('まだ途中だけどこんな感じ',' #Steam'),mkLow('🎯 初ラウンドの結果を公開',' #PCゲーム'),mkLow('ゲームたちに戦わせてみた初回結果',' #ゲーム'),mkLow('🎮 まずはここから始める',' #Steam'),mkLow('途中経過。上位は安定中',' #ゲーム'),mkLow('1周目だけど上位は揺るがない',' #Steam'),mkLow('🔥 初戦の結果がこちら',' #ゲーム'),mkLow('ざっくりだけど傾向は見えた',' #Steam'),mkLow('まず回してみた。これが今の答え',' #ゲーム'),mkLow('🎯 1ラウンド目完了',' #Steam'),mkLow('途中だけど見せちゃう（変わるかも）',' #ゲーム'),mkLow('🎮 初回ランキング公開',' #Steam'),mkLow('まだ荒削りだけど上位は固い',' #ゲーム'),mkLow('とりあえずの結果です',' #Steam #積みゲー'),mkLow('🔄 進行中。途中経過',' #Steam #ゲーム'),mkLow('初ラウンド終了。感触よし',' #Steam #PCゲーム'),mkLow('まず大まかに決めた',' #Steam #ゲーム'),mkLow('🎮 1周目の結果',' #Steam #ゲーム'),mkLow('途中だけど上位は決まりつつある',' #Steam #ゲーム'),mkLow('🎯 暫定版ランキング',' #Steam #ゲーム'),mkLow('まだ精度低いけど公開する勇気',' #Steam #ゲーム'),mkLow('🔥 初回の結果を晒す',' #Steam #ゲーム'),mkLow('ランク付け中。現時点の結果',' #Steam #ゲーム'),mkLow('🎮 1対1で戦わせ始めた',' #Steam #ゲーム'),mkLow('途中経過。参考程度に',' #Steam #ゲーム'),mkLow('暫定トップはこれだ',' #Steam #ゲーム'),mkLow('🔄 まだ途中。続きは次回',' #Steam #ゲーム'),mkLow('初ラウンドなのに上位は揺るがない気がする',' #Steam #ゲーム'),mkLow('🎯 とりあえず今の気持ち',' #Steam #ゲーム'),mkLow('1周目終了。上位はほぼ決まり',' #Steam #ゲーム'),mkLow('途中だけど自信ある上位',' #Steam #ゲーム'),
+];
+const SHARE_MID=[
+  mkMid('だいたい決まってきた。現時点のランキング'),mkMid('🎯 2ラウンド目終了。だいぶ固まってきた'),mkMid('割と自信あり。現時点の順位'),mkMid('🎮 だいたいこんな感じになってきた'),mkMid('上位はほぼ確定。現時点のランキング'),mkMid('🔥 精度が上がってきた。現在の順位'),mkMid('ある程度固まってきた現時点のランキング'),mkMid('もうだいたい決まってる気がする'),mkMid('🎮 中間発表。上位は安定してきた'),mkMid('割と本気のランキングになってきた'),mkMid('上位は動かないと思う。現時点で',' #Steam'),mkMid('🎯 精度中。でも上位は確信あり',' #ゲーム'),mkMid('だいぶ整理されてきた',' #Steam'),mkMid('🔄 2周目終了。かなり見えてきた',' #ゲーム'),mkMid('現時点の答えがほぼ固まった',' #Steam'),mkMid('🎮 中間地点のランキング',' #ゲーム'),mkMid('上位の顔ぶれが安定してきた',' #Steam'),mkMid('🔥 だいたいこれで確定な気がする',' #ゲーム'),mkMid('割と自信のあるランキングになってきた',' #Steam'),mkMid('中間発表。上位は不動',' #ゲーム'),mkMid('🎯 現時点でかなり固まった'),mkMid('2ラウンドやった結果がこちら'),mkMid('だいぶ決まってきた。これが中間発表'),mkMid('🎮 上位は安定。中間ランキング公開'),mkMid('割と本気のランキングになってきた'),mkMid('現時点の正直な順位',' #Steam'),mkMid('🔄 まだ続けるけど現時点はこれ',' #ゲーム'),mkMid('上位の顔ぶれが安定してきた',' #PCゲーム'),mkMid('だいたい見えてきた現在のランキング',' #Steam'),mkMid('🎯 中間発表。かなり自信あり',' #ゲーム'),mkMid('2周目終了。上位はほぼ確定',' #Steam'),mkMid('🎮 精度が上がってきた',' #ゲーム'),mkMid('割と決まってきた感じがある',' #Steam'),mkMid('現時点で自信のある順位',' #ゲーム'),mkMid('🔥 だいぶ固まってきたランキング',' #Steam'),mkMid('中間地点の答えがこちら',' #ゲーム'),mkMid('🎯 上位は揺るがない。中間発表',' #Steam'),mkMid('ある程度決まってきた',' #ゲーム'),mkMid('🎮 2ラウンド目の結果',' #Steam'),mkMid('現時点でかなり固まってきた',' #ゲーム'),mkMid('割と自信あり。でもまだ続ける',' #Steam'),mkMid('🔄 だいたいこんな感じになった',' #ゲーム'),mkMid('上位は安定。中間ランキング',' #Steam'),mkMid('🎮 まだ続けるけど現時点はこれ',' #ゲーム'),mkMid('だいたい決まった気がする',' #Steam'),mkMid('🎯 中間発表。自信あり',' #ゲーム'),mkMid('2周目でかなり整理できた',' #Steam'),mkMid('現時点でほぼ答えが出た',' #ゲーム'),mkMid('🔥 中間なのに上位は確信あり',' #Steam'),mkMid('だいぶ見えてきた現在地',' #ゲーム'),mkMid('割と本気になってきた現時点の順位'),mkMid('🎮 2ラウンド終了。かなり固まった'),mkMid('上位の顔ぶれが安定してきた'),mkMid('中間発表。これが今の答え'),mkMid('🎯 精度中でこれなら完成も近い'),mkMid('だいたい決まってきた感じ',' #Steam'),mkMid('🔄 現時点の中間ランキング',' #ゲーム'),mkMid('上位はほぼ確定してきた',' #PCゲーム'),mkMid('中間地点の正直な順位',' #Steam'),mkMid('🎮 2周目の結果がこちら',' #ゲーム'),mkMid('だいぶ固まってきた',' #Steam'),mkMid('🎯 中間発表。上位は不動',' #ゲーム'),mkMid('割と決まった感じがする',' #Steam'),mkMid('現在地を公開します',' #ゲーム'),mkMid('🔥 2ラウンドでここまで固まった',' #Steam'),mkMid('だいぶ整理されてきたランキング',' #ゲーム'),mkMid('🎮 中間地点のランキング公開',' #Steam'),mkMid('割と自信のある中間結果',' #ゲーム'),mkMid('現時点でほぼ確信あり',' #Steam'),mkMid('🎯 上位は安定してきた',' #ゲーム'),mkMid('2周目終了報告',' #Steam'),mkMid('だいたいこれが答えかも',' #ゲーム'),mkMid('🔄 精度が上がってきた現時点の結果',' #Steam'),mkMid('中間にしては自信あり',' #ゲーム'),mkMid('🎮 現時点でかなり固まってきた',' #Steam'),mkMid('上位はもう動かない気がする',' #ゲーム'),mkMid('🎯 中間発表します',' #Steam'),mkMid('2ラウンドやってかなり見えてきた',' #ゲーム'),mkMid('割と本気の中間ランキング',' #Steam'),mkMid('🔥 だいぶ整理されてきた',' #ゲーム'),mkMid('現時点の中間結果を公開',' #Steam'),mkMid('だいたいこんな感じになってきた',' #ゲーム'),mkMid('🎮 中間なのに自信満々',' #Steam #ゲーム'),mkMid('割と決まってきた現在のランキング',' #Steam #ゲーム'),mkMid('🎯 現時点の答えを公開',' #Steam #ゲーム'),mkMid('2周目終了。かなりよくなった',' #Steam #ゲーム'),mkMid('上位は確定してきた感じ',' #Steam #ゲーム'),mkMid('🔄 中間発表。これが今の順位',' #Steam #ゲーム'),mkMid('だいぶ固まってきたランキング',' #Steam #ゲーム'),mkMid('🎮 中間地点での答え',' #Steam #ゲーム'),mkMid('現時点でかなり自信あり',' #Steam #ゲーム'),mkMid('🎯 割と本気の中間ランキング',' #Steam #ゲーム'),mkMid('2ラウンド目の結果がこちら',' #Steam #ゲーム'),mkMid('上位の顔ぶれが安定してきた',' #Steam #ゲーム'),mkMid('🔥 中間なのに上位は揺るがない',' #Steam #ゲーム'),mkMid('だいたい決まった現時点の順位',' #Steam #ゲーム'),mkMid('🎮 精度上がってきた。中間発表',' #Steam #ゲーム'),mkMid('現在地を報告します',' #Steam #ゲーム'),mkMid('中間でこれなら完成版も楽しみ',' #Steam #ゲーム'),
+];
+const SHARE_HIGH=[
+  mkHigh('🎯 かなり自信あり。現時点のランキング'),mkHigh('もうほぼ確定。現在のランキング'),mkHigh('🏆 精度高め。これが今の答え'),mkHigh('自信を持って公開できるランキング'),mkHigh('🎮 かなり固まった。これが今の順位'),mkHigh('精度高いのでほぼ完成版'),mkHigh('🔥 これが俺のウィッシュリストランキング'),mkHigh('高精度になってきた。現時点の答え'),mkHigh('🎯 自信満々のランキングがこちら'),mkHigh('もうほぼ変わらないと思う'),mkHigh('かなり精度が上がったランキング',' #Steam'),mkHigh('🏆 これが今の正直な順位',' #ゲーム'),mkHigh('自信ありのランキングを公開',' #Steam'),mkHigh('🎮 ほぼ完成版のランキング',' #ゲーム'),mkHigh('高精度版のランキングがこちら',' #Steam'),mkHigh('🔥 これが俺の答えだ',' #ゲーム'),mkHigh('かなり固まったランキングを公開',' #Steam'),mkHigh('🎯 精度高め。自信あり',' #ゲーム'),mkHigh('ほぼ完成。これが今の順位',' #Steam'),mkHigh('高精度ランキングを公開します',' #ゲーム'),mkHigh('かなり自信のあるランキング'),mkHigh('🏆 これがほぼ完成版'),mkHigh('自信を持って言える今の順位'),mkHigh('🎮 ほぼ確定のランキング'),mkHigh('精度が上がって自信が出てきた'),mkHigh('これが今の正直な答え',' #Steam'),mkHigh('🎯 かなり固まった。ほぼ確定版',' #ゲーム'),mkHigh('高精度になってきた現在のランキング',' #Steam'),mkHigh('もうほぼ変わらないランキング',' #PCゲーム'),mkHigh('🔥 精度高め。これが俺の順位',' #Steam'),mkHigh('かなり本気のランキング',' #ゲーム'),mkHigh('🏆 自信満々版ランキング',' #Steam'),mkHigh('ほぼ完成版を公開します',' #ゲーム'),mkHigh('🎮 これが今の答えです',' #Steam'),mkHigh('精度高いのでほぼ確定',' #ゲーム'),mkHigh('かなり固まってきた。ほぼ完成',' #Steam'),mkHigh('🎯 自信ありのランキングを公開',' #ゲーム'),mkHigh('高精度ランキング。ほぼ完成版',' #Steam'),mkHigh('もう変わらないと思う順位',' #ゲーム'),mkHigh('🔥 これが今の俺の答えだ',' #Steam'),mkHigh('精度が高くなってきた現在地'),mkHigh('🏆 ほぼ完成版のランキング'),mkHigh('自信を持って公開できる'),mkHigh('🎮 かなり固まった現在のランキング'),mkHigh('高精度。これが今の順位'),mkHigh('ほぼ確定した現時点のランキング',' #Steam'),mkHigh('🎯 精度高め。自信あり',' #ゲーム'),mkHigh('これがほぼ完成版の答え',' #Steam'),mkHigh('かなり自信のある現時点の順位',' #ゲーム'),mkHigh('🔥 高精度ランキングを公開',' #Steam'),mkHigh('自信満々のランキングがこちら',' #ゲーム'),mkHigh('🏆 ほぼ完成版を公開',' #Steam'),mkHigh('かなり固まった。もうほぼ確定',' #ゲーム'),mkHigh('精度高め。これが俺の順位',' #Steam'),mkHigh('🎮 ほぼ決まりのランキング',' #ゲーム'),mkHigh('これが今の正直な気持ち',' #Steam'),mkHigh('🎯 高精度版ランキング公開',' #ゲーム'),mkHigh('自信があるから公開する',' #Steam'),mkHigh('ほぼ完成のランキング',' #ゲーム'),mkHigh('🔥 精度が上がって確信が持てた',' #Steam'),mkHigh('かなり自信のあるランキング',' #ゲーム'),mkHigh('もうほぼ確定した順位',' #Steam #ゲーム'),mkHigh('🏆 高精度ランキング',' #Steam #ゲーム'),mkHigh('かなり固まった現在のランキング',' #Steam #ゲーム'),mkHigh('🎮 自信満々版を公開',' #Steam #ゲーム'),mkHigh('精度高め。ほぼ完成版',' #Steam #ゲーム'),mkHigh('🎯 これが今の答えです',' #Steam #ゲーム'),mkHigh('ほぼ確定。高精度ランキング',' #Steam #ゲーム'),mkHigh('自信ありのランキング',' #Steam #ゲーム'),mkHigh('🔥 かなり固まってきた',' #Steam #ゲーム'),mkHigh('高精度版がこちら',' #Steam #ゲーム'),mkHigh('🏆 ほぼ完成した現在のランキング',' #Steam #ゲーム'),mkHigh('かなり自信あり。これが今の順位',' #Steam #ゲーム'),mkHigh('精度高め。もうほぼ決まり',' #Steam #ゲーム'),mkHigh('🎮 これが高精度版ランキング',' #Steam #ゲーム'),mkHigh('自信満々で公開する',' #Steam #ゲーム'),mkHigh('🎯 高精度ランキングを公開します',' #Steam #ゲーム'),mkHigh('ほぼ完成版を公開します',' #Steam #ゲーム'),mkHigh('かなり固まった高精度ランキング',' #Steam #ゲーム'),mkHigh('🔥 これが今の俺のランキング',' #Steam #ゲーム'),mkHigh('もう変わらないと思う高精度版',' #Steam #ゲーム'),mkHigh('🏆 自信ありの高精度ランキング',' #Steam #ゲーム'),mkHigh('精度高めでかなり自信あり',' #Steam #ゲーム'),mkHigh('🎮 高精度版。ほぼ完成',' #Steam #ゲーム'),mkHigh('これがほぼ完成版のランキング',' #Steam #ゲーム'),mkHigh('🎯 高精度でほぼ確定',' #Steam #ゲーム'),mkHigh('かなり本気のランキングがこちら',' #Steam #ゲーム'),mkHigh('自信持って公開できる高精度版',' #Steam #ゲーム'),mkHigh('🔥 ほぼ完成した高精度ランキング',' #Steam #ゲーム'),mkHigh('もうほぼ変わらない順位',' #Steam #ゲーム'),mkHigh('🏆 高精度版ランキング公開',' #Steam #ゲーム'),mkHigh('かなり固まった。自信あり',' #Steam #ゲーム'),mkHigh('精度高いのでほぼ完成版です',' #Steam #ゲーム'),mkHigh('🎮 ほぼ確定のランキングがこちら',' #Steam #ゲーム'),mkHigh('これが今の本気の順位',' #Steam #ゲーム'),mkHigh('🎯 自信満々。高精度版',' #Steam #ゲーム'),mkHigh('高精度ランキング。自信あり',' #Steam #ゲーム'),mkHigh('ほぼ完成。これが俺の答え',' #Steam #ゲーム'),
+];
+const SHARE_PFCT=[
+  mkPfct('🏆 完璧に整理した！これが最終ランキング'),mkPfct('✅ ウィッシュリスト完全整理完了！'),mkPfct('これが俺の最終答えだ。異論は認める'),mkPfct('🎮 完全版ランキング完成！'),mkPfct('完璧に決まった。これが最終版'),mkPfct('🔥 完全版！これが俺のウィッシュリストランキング'),mkPfct('迷いなし。これが最終決定'),mkPfct('🎯 完璧なランキングが完成した'),mkPfct('これ以上ない仕上がり。最終版'),mkPfct('🏆 完成！これが俺の答えだ'),mkPfct('完全版ランキングを公開します',' #Steam'),mkPfct('🎮 完璧に整理完了！最終版',' #ゲーム'),mkPfct('これが最終決定版のランキング',' #Steam'),mkPfct('迷いなし。完璧な仕上がり',' #ゲーム'),mkPfct('🔥 完成版！異論は認める',' #Steam'),mkPfct('完璧に決まった最終ランキング',' #ゲーム'),mkPfct('🏆 これが俺の最終答え',' #Steam'),mkPfct('完全版を公開します',' #ゲーム'),mkPfct('🎯 完成！これが最終版',' #Steam'),mkPfct('迷いなし。これが答えだ',' #ゲーム'),mkPfct('完全版ランキング完成！'),mkPfct('🏆 これが最終決定版'),mkPfct('完璧に整理できた'),mkPfct('🎮 最終版ランキングを公開'),mkPfct('これ以上ない仕上がり'),mkPfct('🔥 完成版。これが俺の答え',' #Steam'),mkPfct('迷いなし！最終決定版',' #ゲーム'),mkPfct('完璧なランキングが完成した',' #Steam'),mkPfct('🏆 これが完成版のランキング',' #ゲーム'),mkPfct('最終版を公開します',' #Steam'),mkPfct('🎯 完璧に整理した結果がこちら',' #ゲーム'),mkPfct('完全版！これが最終答え',' #Steam'),mkPfct('🎮 完成した！最終ランキング公開',' #ゲーム'),mkPfct('迷いなし。完璧な順位',' #Steam'),mkPfct('🔥 完成版ランキングがこちら',' #ゲーム'),mkPfct('完璧に決まった。これが俺の答え',' #Steam'),mkPfct('🏆 最終決定版を公開',' #ゲーム'),mkPfct('これが最終版のランキング',' #Steam'),mkPfct('🎯 完璧な仕上がり。最終版',' #ゲーム'),mkPfct('完全版完成！異論は認める',' #Steam'),mkPfct('完璧に整理した！',' #Steam #ゲーム'),mkPfct('🏆 最終版ランキング完成',' #Steam #ゲーム'),mkPfct('これが俺の最終決定',' #Steam #ゲーム'),mkPfct('🎮 完全版を公開します',' #Steam #ゲーム'),mkPfct('完璧な順位が決まった',' #Steam #ゲーム'),mkPfct('🔥 最終版。これが答えだ',' #Steam #ゲーム'),mkPfct('迷いなし。完璧な仕上がり',' #Steam #ゲーム'),mkPfct('🏆 完成版ランキング公開',' #Steam #ゲーム'),mkPfct('これが最終答えです',' #Steam #ゲーム'),mkPfct('🎯 完璧に整理完了！',' #Steam #ゲーム'),mkPfct('完全版！これが俺のランキング',' #Steam #ゲーム'),mkPfct('最終決定版を公開します',' #Steam #ゲーム'),mkPfct('🎮 完成した最終ランキング',' #Steam #ゲーム'),mkPfct('完璧に決まった！最終版',' #Steam #ゲーム'),mkPfct('🔥 これが完全版のランキング',' #Steam #ゲーム'),mkPfct('迷いなし！これが最終答え',' #Steam #ゲーム'),mkPfct('🏆 完璧な仕上がりのランキング',' #Steam #ゲーム'),mkPfct('完全版ランキングがこちら',' #Steam #ゲーム'),mkPfct('🎯 最終決定版！完璧に整理した',' #Steam #ゲーム'),mkPfct('これ以上ない完成度',' #Steam #ゲーム'),mkPfct('🎮 完成！これが俺の最終答え',' #Steam #ゲーム'),mkPfct('完璧に整理した最終ランキング',' #Steam #ゲーム'),mkPfct('🔥 完全版！異論は認める',' #Steam #ゲーム'),mkPfct('最終版。これが俺の答えだ',' #Steam #ゲーム'),mkPfct('🏆 完璧に決まった最終版',' #Steam #ゲーム'),mkPfct('これが完全版のランキングです',' #Steam #ゲーム'),mkPfct('🎯 完成版！迷いなし',' #Steam #ゲーム'),mkPfct('完全版ランキングを公開',' #Steam #ゲーム'),mkPfct('🎮 最終版！完璧な仕上がり',' #Steam #ゲーム'),mkPfct('完璧に整理した！これが答え',' #Steam #ゲーム'),mkPfct('🔥 最終決定！これが俺のランキング',' #Steam #ゲーム'),mkPfct('完成版。変える気はない',' #Steam #ゲーム'),mkPfct('🏆 これが完璧な仕上がり',' #Steam #ゲーム'),mkPfct('最終版ランキングがこちら',' #Steam #ゲーム'),mkPfct('🎯 完全版！これが最終答え',' #Steam #ゲーム'),mkPfct('完璧に整理できた最終版',' #Steam #ゲーム'),mkPfct('🎮 完成版のランキングを公開',' #Steam #ゲーム'),mkPfct('これが俺の完璧なランキング',' #Steam #ゲーム'),mkPfct('🔥 完全版！迷いなし',' #Steam #ゲーム'),mkPfct('最終答え。これが俺の順位',' #Steam #ゲーム'),mkPfct('🏆 完璧に決まった！最終版',' #Steam #ゲーム'),mkPfct('完成版ランキング！異論は認める',' #Steam #ゲーム'),mkPfct('🎯 最終決定版。完璧な仕上がり',' #Steam #ゲーム'),mkPfct('これが完成版の最終ランキング',' #Steam #ゲーム'),mkPfct('完全版！これが俺の答えだ',' #Steam #ゲーム'),mkPfct('🎮 完璧なランキングが完成した',' #Steam #ゲーム'),mkPfct('最終版を公開。変える気はない',' #Steam #ゲーム'),mkPfct('🔥 完成！これが最終決定版',' #Steam #ゲーム'),mkPfct('完璧に整理した！最終ランキング公開',' #Steam #ゲーム'),mkPfct('🏆 これが俺の完全版ランキング',' #Steam #ゲーム'),mkPfct('最終決定。完璧な仕上がりです',' #Steam #ゲーム'),mkPfct('🎯 完成版！これが最終版',' #Steam #ゲーム'),mkPfct('完全版ランキング。迷いなし',' #Steam #ゲーム'),mkPfct('🎮 完璧に整理した最終版',' #Steam #ゲーム'),mkPfct('これが最終決定版のランキングです',' #Steam #ゲーム'),mkPfct('🔥 完成版！完璧な仕上がり',' #Steam #ゲーム'),mkPfct('最終版。これが俺の最終答え',' #Steam #ゲーム'),mkPfct('🏆 完全版完成！これが答えだ',' #Steam #ゲーム'),
 ];
 
-const SHARE_MID = [
-  mkMid('だいたい決まってきた。現時点のランキング'),
-  mkMid('🎯 2ラウンド目終了。だいぶ固まってきた'),
-  mkMid('割と自信あり。現時点の順位'),
-  mkMid('🎮 だいたいこんな感じになってきた'),
-  mkMid('上位はほぼ確定。現時点のランキング'),
-  mkMid('🔥 精度が上がってきた。現在の順位'),
-  mkMid('ある程度固まってきた現時点のランキング'),
-  mkMid('もうだいたい決まってる気がする'),
-  mkMid('🎮 中間発表。上位は安定してきた'),
-  mkMid('割と本気のランキングになってきた'),
-  mkMid('上位は動かないと思う。現時点で', ' #Steam'),
-  mkMid('🎯 精度中。でも上位は確信あり', ' #ゲーム'),
-  mkMid('だいぶ整理されてきた', ' #Steam'),
-  mkMid('🔄 2周目終了。かなり見えてきた', ' #ゲーム'),
-  mkMid('現時点の答えがほぼ固まった', ' #Steam'),
-  mkMid('🎮 中間地点のランキング', ' #ゲーム'),
-  mkMid('上位の顔ぶれが安定してきた', ' #Steam'),
-  mkMid('🔥 だいたいこれで確定な気がする', ' #ゲーム'),
-  mkMid('割と自信のあるランキングになってきた', ' #Steam'),
-  mkMid('中間発表。上位は不動', ' #ゲーム'),
-  mkMid('🎯 現時点でかなり固まった'),
-  mkMid('2ラウンドやった結果がこちら'),
-  mkMid('だいぶ決まってきた。これが中間発表'),
-  mkMid('🎮 上位は安定。中間ランキング公開'),
-  mkMid('割と本気のランキングになってきた'),
-  mkMid('現時点の正直な順位', ' #Steam'),
-  mkMid('🔄 まだ続けるけど現時点はこれ', ' #ゲーム'),
-  mkMid('上位の顔ぶれが安定してきた', ' #PCゲーム'),
-  mkMid('だいたい見えてきた現在のランキング', ' #Steam'),
-  mkMid('🎯 中間発表。かなり自信あり', ' #ゲーム'),
-  mkMid('2周目終了。上位はほぼ確定', ' #Steam'),
-  mkMid('🎮 精度が上がってきた', ' #ゲーム'),
-  mkMid('割と決まってきた感じがある', ' #Steam'),
-  mkMid('現時点で自信のある順位', ' #ゲーム'),
-  mkMid('🔥 だいぶ固まってきたランキング', ' #Steam'),
-  mkMid('中間地点の答えがこちら', ' #ゲーム'),
-  mkMid('🎯 上位は揺るがない。中間発表', ' #Steam'),
-  mkMid('ある程度決まってきた', ' #ゲーム'),
-  mkMid('🎮 2ラウンド目の結果', ' #Steam'),
-  mkMid('現時点でかなり固まってきた', ' #ゲーム'),
-  mkMid('割と自信あり。でもまだ続ける', ' #Steam'),
-  mkMid('🔄 だいたいこんな感じになった', ' #ゲーム'),
-  mkMid('上位は安定。中間ランキング', ' #Steam'),
-  mkMid('🎮 まだ続けるけど現時点はこれ', ' #ゲーム'),
-  mkMid('だいたい決まった気がする', ' #Steam'),
-  mkMid('🎯 中間発表。自信あり', ' #ゲーム'),
-  mkMid('2周目でかなり整理できた', ' #Steam'),
-  mkMid('現時点でほぼ答えが出た', ' #ゲーム'),
-  mkMid('🔥 中間なのに上位は確信あり', ' #Steam'),
-  mkMid('だいぶ見えてきた現在地', ' #ゲーム'),
-  mkMid('割と本気になってきた現時点の順位'),
-  mkMid('🎮 2ラウンド終了。かなり固まった'),
-  mkMid('上位の顔ぶれが安定してきた'),
-  mkMid('中間発表。これが今の答え'),
-  mkMid('🎯 精度中でこれなら完成も近い'),
-  mkMid('だいたい決まってきた感じ', ' #Steam'),
-  mkMid('🔄 現時点の中間ランキング', ' #ゲーム'),
-  mkMid('上位はほぼ確定してきた', ' #PCゲーム'),
-  mkMid('中間地点の正直な順位', ' #Steam'),
-  mkMid('🎮 2周目の結果がこちら', ' #ゲーム'),
-  mkMid('だいぶ固まってきた', ' #Steam'),
-  mkMid('🎯 中間発表。上位は不動', ' #ゲーム'),
-  mkMid('割と決まった感じがする', ' #Steam'),
-  mkMid('現在地を公開します', ' #ゲーム'),
-  mkMid('🔥 2ラウンドでここまで固まった', ' #Steam'),
-  mkMid('だいぶ整理されてきたランキング', ' #ゲーム'),
-  mkMid('🎮 中間地点のランキング公開', ' #Steam'),
-  mkMid('割と自信のある中間結果', ' #ゲーム'),
-  mkMid('現時点でほぼ確信あり', ' #Steam'),
-  mkMid('🎯 上位は安定してきた', ' #ゲーム'),
-  mkMid('2周目終了報告', ' #Steam'),
-  mkMid('だいたいこれが答えかも', ' #ゲーム'),
-  mkMid('🔄 精度が上がってきた現時点の結果', ' #Steam'),
-  mkMid('中間にしては自信あり', ' #ゲーム'),
-  mkMid('🎮 現時点でかなり固まってきた', ' #Steam'),
-  mkMid('上位はもう動かない気がする', ' #ゲーム'),
-  mkMid('🎯 中間発表します', ' #Steam'),
-  mkMid('2ラウンドやってかなり見えてきた', ' #ゲーム'),
-  mkMid('割と本気の中間ランキング', ' #Steam'),
-  mkMid('🔥 だいぶ整理されてきた', ' #ゲーム'),
-  mkMid('現時点の中間結果を公開', ' #Steam'),
-  mkMid('だいたいこんな感じになってきた', ' #ゲーム'),
-  mkMid('🎮 中間なのに自信満々', ' #Steam #ゲーム'),
-  mkMid('割と決まってきた現在のランキング', ' #Steam #ゲーム'),
-  mkMid('🎯 現時点の答えを公開', ' #Steam #ゲーム'),
-  mkMid('2周目終了。かなりよくなった', ' #Steam #ゲーム'),
-  mkMid('上位は確定してきた感じ', ' #Steam #ゲーム'),
-  mkMid('🔄 中間発表。これが今の順位', ' #Steam #ゲーム'),
-  mkMid('だいぶ固まってきたランキング', ' #Steam #ゲーム'),
-  mkMid('🎮 中間地点での答え', ' #Steam #ゲーム'),
-  mkMid('現時点でかなり自信あり', ' #Steam #ゲーム'),
-  mkMid('🎯 割と本気の中間ランキング', ' #Steam #ゲーム'),
-  mkMid('2ラウンド目の結果がこちら', ' #Steam #ゲーム'),
-  mkMid('上位の顔ぶれが安定してきた', ' #Steam #ゲーム'),
-  mkMid('🔥 中間なのに上位は揺るがない', ' #Steam #ゲーム'),
-  mkMid('だいたい決まった現時点の順位', ' #Steam #ゲーム'),
-  mkMid('🎮 精度上がってきた。中間発表', ' #Steam #ゲーム'),
-  mkMid('現在地を報告します', ' #Steam #ゲーム'),
-  mkMid('中間でこれなら完成版も楽しみ', ' #Steam #ゲーム'),
-];
+// ========== 状態 ==========
+let state={games:[],scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],streak:0,lastWinnerId:null};
+let sortQueue=[],sortIdx=0,sortResults={};
 
-const SHARE_HIGH = [
-  mkHigh('🎯 かなり自信あり。現時点のランキング'),
-  mkHigh('もうほぼ確定。現在のランキング'),
-  mkHigh('🏆 精度高め。これが今の答え'),
-  mkHigh('自信を持って公開できるランキング'),
-  mkHigh('🎮 かなり固まった。これが今の順位'),
-  mkHigh('精度高いのでほぼ完成版'),
-  mkHigh('🔥 これが俺のウィッシュリストランキング'),
-  mkHigh('高精度になってきた。現時点の答え'),
-  mkHigh('🎯 自信満々のランキングがこちら'),
-  mkHigh('もうほぼ変わらないと思う'),
-  mkHigh('かなり精度が上がったランキング', ' #Steam'),
-  mkHigh('🏆 これが今の正直な順位', ' #ゲーム'),
-  mkHigh('自信ありのランキングを公開', ' #Steam'),
-  mkHigh('🎮 ほぼ完成版のランキング', ' #ゲーム'),
-  mkHigh('高精度版のランキングがこちら', ' #Steam'),
-  mkHigh('🔥 これが俺の答えだ', ' #ゲーム'),
-  mkHigh('かなり固まったランキングを公開', ' #Steam'),
-  mkHigh('🎯 精度高め。自信あり', ' #ゲーム'),
-  mkHigh('ほぼ完成。これが今の順位', ' #Steam'),
-  mkHigh('高精度ランキングを公開します', ' #ゲーム'),
-  mkHigh('かなり自信のあるランキング'),
-  mkHigh('🏆 これがほぼ完成版'),
-  mkHigh('自信を持って言える今の順位'),
-  mkHigh('🎮 ほぼ確定のランキング'),
-  mkHigh('精度が上がって自信が出てきた'),
-  mkHigh('これが今の正直な答え', ' #Steam'),
-  mkHigh('🎯 かなり固まった。ほぼ確定版', ' #ゲーム'),
-  mkHigh('高精度になってきた現在のランキング', ' #Steam'),
-  mkHigh('もうほぼ変わらないランキング', ' #PCゲーム'),
-  mkHigh('🔥 精度高め。これが俺の順位', ' #Steam'),
-  mkHigh('かなり本気のランキング', ' #ゲーム'),
-  mkHigh('🏆 自信満々版ランキング', ' #Steam'),
-  mkHigh('ほぼ完成版を公開します', ' #ゲーム'),
-  mkHigh('🎮 これが今の答えです', ' #Steam'),
-  mkHigh('精度高いのでほぼ確定', ' #ゲーム'),
-  mkHigh('かなり固まってきた。ほぼ完成', ' #Steam'),
-  mkHigh('🎯 自信ありのランキングを公開', ' #ゲーム'),
-  mkHigh('高精度ランキング。ほぼ完成版', ' #Steam'),
-  mkHigh('もう変わらないと思う順位', ' #ゲーム'),
-  mkHigh('🔥 これが今の俺の答えだ', ' #Steam'),
-  mkHigh('精度が高くなってきた現在地'),
-  mkHigh('🏆 ほぼ完成版のランキング'),
-  mkHigh('自信を持って公開できる'),
-  mkHigh('🎮 かなり固まった現在のランキング'),
-  mkHigh('高精度。これが今の順位'),
-  mkHigh('ほぼ確定した現時点のランキング', ' #Steam'),
-  mkHigh('🎯 精度高め。自信あり', ' #ゲーム'),
-  mkHigh('これがほぼ完成版の答え', ' #Steam'),
-  mkHigh('かなり自信のある現時点の順位', ' #ゲーム'),
-  mkHigh('🔥 高精度ランキングを公開', ' #Steam'),
-  mkHigh('自信満々のランキングがこちら', ' #ゲーム'),
-  mkHigh('🏆 ほぼ完成版を公開', ' #Steam'),
-  mkHigh('かなり固まった。もうほぼ確定', ' #ゲーム'),
-  mkHigh('精度高め。これが俺の順位', ' #Steam'),
-  mkHigh('🎮 ほぼ決まりのランキング', ' #ゲーム'),
-  mkHigh('これが今の正直な気持ち', ' #Steam'),
-  mkHigh('🎯 高精度版ランキング公開', ' #ゲーム'),
-  mkHigh('自信があるから公開する', ' #Steam'),
-  mkHigh('ほぼ完成のランキング', ' #ゲーム'),
-  mkHigh('🔥 精度が上がって確信が持てた', ' #Steam'),
-  mkHigh('かなり自信のあるランキング', ' #ゲーム'),
-  mkHigh('もうほぼ確定した順位', ' #Steam #ゲーム'),
-  mkHigh('🏆 高精度ランキング', ' #Steam #ゲーム'),
-  mkHigh('かなり固まった現在のランキング', ' #Steam #ゲーム'),
-  mkHigh('🎮 自信満々版を公開', ' #Steam #ゲーム'),
-  mkHigh('精度高め。ほぼ完成版', ' #Steam #ゲーム'),
-  mkHigh('🎯 これが今の答えです', ' #Steam #ゲーム'),
-  mkHigh('ほぼ確定。高精度ランキング', ' #Steam #ゲーム'),
-  mkHigh('自信ありのランキング', ' #Steam #ゲーム'),
-  mkHigh('🔥 かなり固まってきた', ' #Steam #ゲーム'),
-  mkHigh('高精度版がこちら', ' #Steam #ゲーム'),
-  mkHigh('🏆 ほぼ完成した現在のランキング', ' #Steam #ゲーム'),
-  mkHigh('かなり自信あり。これが今の順位', ' #Steam #ゲーム'),
-  mkHigh('精度高め。もうほぼ決まり', ' #Steam #ゲーム'),
-  mkHigh('🎮 これが高精度版ランキング', ' #Steam #ゲーム'),
-  mkHigh('自信満々で公開する', ' #Steam #ゲーム'),
-  mkHigh('🎯 高精度ランキングを公開します', ' #Steam #ゲーム'),
-  mkHigh('ほぼ完成版を公開します', ' #Steam #ゲーム'),
-  mkHigh('かなり固まった高精度ランキング', ' #Steam #ゲーム'),
-  mkHigh('🔥 これが今の俺のランキング', ' #Steam #ゲーム'),
-  mkHigh('もう変わらないと思う高精度版', ' #Steam #ゲーム'),
-  mkHigh('🏆 自信ありの高精度ランキング', ' #Steam #ゲーム'),
-  mkHigh('精度高めでかなり自信あり', ' #Steam #ゲーム'),
-  mkHigh('🎮 高精度版。ほぼ完成', ' #Steam #ゲーム'),
-  mkHigh('これがほぼ完成版のランキング', ' #Steam #ゲーム'),
-  mkHigh('🎯 高精度でほぼ確定', ' #Steam #ゲーム'),
-  mkHigh('かなり本気のランキングがこちら', ' #Steam #ゲーム'),
-  mkHigh('自信持って公開できる高精度版', ' #Steam #ゲーム'),
-  mkHigh('🔥 ほぼ完成した高精度ランキング', ' #Steam #ゲーム'),
-  mkHigh('もうほぼ変わらない順位', ' #Steam #ゲーム'),
-  mkHigh('🏆 高精度版ランキング公開', ' #Steam #ゲーム'),
-  mkHigh('かなり固まった。自信あり', ' #Steam #ゲーム'),
-  mkHigh('精度高いのでほぼ完成版です', ' #Steam #ゲーム'),
-  mkHigh('🎮 ほぼ確定のランキングがこちら', ' #Steam #ゲーム'),
-  mkHigh('これが今の本気の順位', ' #Steam #ゲーム'),
-  mkHigh('🎯 自信満々。高精度版', ' #Steam #ゲーム'),
-  mkHigh('高精度ランキング。自信あり', ' #Steam #ゲーム'),
-  mkHigh('ほぼ完成。これが俺の答え', ' #Steam #ゲーム'),
-];
-
-const SHARE_PFCT = [
-  mkPfct('🏆 完璧に整理した！これが最終ランキング'),
-  mkPfct('✅ ウィッシュリスト完全整理完了！'),
-  mkPfct('これが俺の最終答えだ。異論は認める'),
-  mkPfct('🎮 完全版ランキング完成！'),
-  mkPfct('完璧に決まった。これが最終版'),
-  mkPfct('🔥 完全版！これが俺のウィッシュリストランキング'),
-  mkPfct('迷いなし。これが最終決定'),
-  mkPfct('🎯 完璧なランキングが完成した'),
-  mkPfct('これ以上ない仕上がり。最終版'),
-  mkPfct('🏆 完成！これが俺の答えだ'),
-  mkPfct('完全版ランキングを公開します', ' #Steam'),
-  mkPfct('🎮 完璧に整理完了！最終版', ' #ゲーム'),
-  mkPfct('これが最終決定版のランキング', ' #Steam'),
-  mkPfct('迷いなし。完璧な仕上がり', ' #ゲーム'),
-  mkPfct('🔥 完成版！異論は認める', ' #Steam'),
-  mkPfct('完璧に決まった最終ランキング', ' #ゲーム'),
-  mkPfct('🏆 これが俺の最終答え', ' #Steam'),
-  mkPfct('完全版を公開します', ' #ゲーム'),
-  mkPfct('🎯 完成！これが最終版', ' #Steam'),
-  mkPfct('迷いなし。これが答えだ', ' #ゲーム'),
-  mkPfct('完全版ランキング完成！'),
-  mkPfct('🏆 これが最終決定版'),
-  mkPfct('完璧に整理できた'),
-  mkPfct('🎮 最終版ランキングを公開'),
-  mkPfct('これ以上ない仕上がり'),
-  mkPfct('🔥 完成版。これが俺の答え', ' #Steam'),
-  mkPfct('迷いなし！最終決定版', ' #ゲーム'),
-  mkPfct('完璧なランキングが完成した', ' #Steam'),
-  mkPfct('🏆 これが完成版のランキング', ' #ゲーム'),
-  mkPfct('最終版を公開します', ' #Steam'),
-  mkPfct('🎯 完璧に整理した結果がこちら', ' #ゲーム'),
-  mkPfct('完全版！これが最終答え', ' #Steam'),
-  mkPfct('🎮 完成した！最終ランキング公開', ' #ゲーム'),
-  mkPfct('迷いなし。完璧な順位', ' #Steam'),
-  mkPfct('🔥 完成版ランキングがこちら', ' #ゲーム'),
-  mkPfct('完璧に決まった。これが俺の答え', ' #Steam'),
-  mkPfct('🏆 最終決定版を公開', ' #ゲーム'),
-  mkPfct('これが最終版のランキング', ' #Steam'),
-  mkPfct('🎯 完璧な仕上がり。最終版', ' #ゲーム'),
-  mkPfct('完全版完成！異論は認める', ' #Steam'),
-  mkPfct('完璧に整理した！', ' #Steam #ゲーム'),
-  mkPfct('🏆 最終版ランキング完成', ' #Steam #ゲーム'),
-  mkPfct('これが俺の最終決定', ' #Steam #ゲーム'),
-  mkPfct('🎮 完全版を公開します', ' #Steam #ゲーム'),
-  mkPfct('完璧な順位が決まった', ' #Steam #ゲーム'),
-  mkPfct('🔥 最終版。これが答えだ', ' #Steam #ゲーム'),
-  mkPfct('迷いなし。完璧な仕上がり', ' #Steam #ゲーム'),
-  mkPfct('🏆 完成版ランキング公開', ' #Steam #ゲーム'),
-  mkPfct('これが最終答えです', ' #Steam #ゲーム'),
-  mkPfct('🎯 完璧に整理完了！', ' #Steam #ゲーム'),
-  mkPfct('完全版！これが俺のランキング', ' #Steam #ゲーム'),
-  mkPfct('最終決定版を公開します', ' #Steam #ゲーム'),
-  mkPfct('🎮 完成した最終ランキング', ' #Steam #ゲーム'),
-  mkPfct('完璧に決まった！最終版', ' #Steam #ゲーム'),
-  mkPfct('🔥 これが完全版のランキング', ' #Steam #ゲーム'),
-  mkPfct('迷いなし！これが最終答え', ' #Steam #ゲーム'),
-  mkPfct('🏆 完璧な仕上がりのランキング', ' #Steam #ゲーム'),
-  mkPfct('完全版ランキングがこちら', ' #Steam #ゲーム'),
-  mkPfct('🎯 最終決定版！完璧に整理した', ' #Steam #ゲーム'),
-  mkPfct('これ以上ない完成度', ' #Steam #ゲーム'),
-  mkPfct('🎮 完成！これが俺の最終答え', ' #Steam #ゲーム'),
-  mkPfct('完璧に整理した最終ランキング', ' #Steam #ゲーム'),
-  mkPfct('🔥 完全版！異論は認める', ' #Steam #ゲーム'),
-  mkPfct('最終版。これが俺の答えだ', ' #Steam #ゲーム'),
-  mkPfct('🏆 完璧に決まった最終版', ' #Steam #ゲーム'),
-  mkPfct('これが完全版のランキングです', ' #Steam #ゲーム'),
-  mkPfct('🎯 完成版！迷いなし', ' #Steam #ゲーム'),
-  mkPfct('完全版ランキングを公開', ' #Steam #ゲーム'),
-  mkPfct('🎮 最終版！完璧な仕上がり', ' #Steam #ゲーム'),
-  mkPfct('完璧に整理した！これが答え', ' #Steam #ゲーム'),
-  mkPfct('🔥 最終決定！これが俺のランキング', ' #Steam #ゲーム'),
-  mkPfct('完成版。変える気はない', ' #Steam #ゲーム'),
-  mkPfct('🏆 これが完璧な仕上がり', ' #Steam #ゲーム'),
-  mkPfct('最終版ランキングがこちら', ' #Steam #ゲーム'),
-  mkPfct('🎯 完全版！これが最終答え', ' #Steam #ゲーム'),
-  mkPfct('完璧に整理できた最終版', ' #Steam #ゲーム'),
-  mkPfct('🎮 完成版のランキングを公開', ' #Steam #ゲーム'),
-  mkPfct('これが俺の完璧なランキング', ' #Steam #ゲーム'),
-  mkPfct('🔥 完全版！迷いなし', ' #Steam #ゲーム'),
-  mkPfct('最終答え。これが俺の順位', ' #Steam #ゲーム'),
-  mkPfct('🏆 完璧に決まった！最終版', ' #Steam #ゲーム'),
-  mkPfct('完成版ランキング！異論は認める', ' #Steam #ゲーム'),
-  mkPfct('🎯 最終決定版。完璧な仕上がり', ' #Steam #ゲーム'),
-  mkPfct('これが完成版の最終ランキング', ' #Steam #ゲーム'),
-  mkPfct('完全版！これが俺の答えだ', ' #Steam #ゲーム'),
-  mkPfct('🎮 完璧なランキングが完成した', ' #Steam #ゲーム'),
-  mkPfct('最終版を公開。変える気はない', ' #Steam #ゲーム'),
-  mkPfct('🔥 完成！これが最終決定版', ' #Steam #ゲーム'),
-  mkPfct('完璧に整理した！最終ランキング公開', ' #Steam #ゲーム'),
-  mkPfct('🏆 これが俺の完全版ランキング', ' #Steam #ゲーム'),
-  mkPfct('最終決定。完璧な仕上がりです', ' #Steam #ゲーム'),
-  mkPfct('🎯 完成版！これが最終版', ' #Steam #ゲーム'),
-  mkPfct('完全版ランキング。迷いなし', ' #Steam #ゲーム'),
-  mkPfct('🎮 完璧に整理した最終版', ' #Steam #ゲーム'),
-  mkPfct('これが最終決定版のランキングです', ' #Steam #ゲーム'),
-  mkPfct('🔥 完成版！完璧な仕上がり', ' #Steam #ゲーム'),
-  mkPfct('最終版。これが俺の最終答え', ' #Steam #ゲーム'),
-  mkPfct('🏆 完全版完成！これが答えだ', ' #Steam #ゲーム'),
-];
-
-// =====================================================
-// 状態
-// =====================================================
-let state = {
-  games:[], scores:{}, queue:[], queueIdx:0,
-  roundNo:1, totalBattles:0, history:[],
-  unknownQueue:[], streak:0, lastWinnerId:null,
-};
-let sortQueue=[], sortIdx=0, sortResults={};
-
-// =====================================================
-// データ取得
-// =====================================================
-async function fetchWishlist() {
-  const steamId = document.getElementById('steam-id').value.trim();
-  const apiKey  = document.getElementById('api-key').value.trim();
-  if (!steamId) { setStatus('SteamID64を入力してください','red'); return; }
-  if (!/^\d+$/.test(steamId)) { setStatus('SteamID64は数字のみです','red'); return; }
-  if (!apiKey)  { setStatus('APIキーを入力してください','red'); return; }
-
-  const btn = document.getElementById('btn-fetch');
-  btn.disabled=true; showProgress(true); setProgress(0);
-
-  try {
+// ========== データ取得 ==========
+async function fetchWishlist(){
+  const steamId=document.getElementById('steam-id').value.trim();
+  const apiKey=document.getElementById('api-key').value.trim();
+  if(!steamId){setStatus('SteamID64を入力してください','red');return;}
+  if(!/^\d+$/.test(steamId)){setStatus('SteamID64は数字のみです','red');return;}
+  if(!apiKey){setStatus('APIキーを入力してください','red');return;}
+  const btn=document.getElementById('btn-fetch');
+  btn.disabled=true;showProgress(true);setProgress(0);
+  try{
     setStatus('📋 ウィッシュリストを取得中...','info');
-    const wrRes = await fetch(`${WORKER_URL}/wishlist?key=${encodeURIComponent(apiKey)}&steamid=${encodeURIComponent(steamId)}`);
-    if (!wrRes.ok) throw new Error(`取得失敗 (${wrRes.status})`);
-    const wrData    = await wrRes.json();
-    const wishItems = wrData?.response?.items ?? [];
-    if (!wishItems.length) throw new Error('ウィッシュリストが空か、APIキーまたはSteamIDが正しくありません');
-
+    const wrRes=await fetch(`${WORKER_URL}/wishlist?key=${encodeURIComponent(apiKey)}&steamid=${encodeURIComponent(steamId)}`);
+    if(!wrRes.ok)throw new Error(`取得失敗 (${wrRes.status})`);
+    const wrData=await wrRes.json();
+    const wishItems=wrData?.response?.items??[];
+    if(!wishItems.length)throw new Error('ウィッシュリストが空か、APIキーまたはSteamIDが正しくありません');
     setStatus('🎮 所持ゲームを確認中...','info');
-    const ownedRes  = await fetch(`${WORKER_URL}/owned?key=${encodeURIComponent(apiKey)}&steamid=${encodeURIComponent(steamId)}`);
-    const ownedData = await ownedRes.json();
-    const owned     = new Set((ownedData?.response?.games??[]).map(g=>String(g.appid)));
-
-    const filtered = wishItems
-      .filter(i=>!owned.has(String(i.appid)))
-      .sort((a,b)=>(a.priority??9999)-(b.priority??9999));
-    const appids = filtered.map(i=>String(i.appid));
+    const ownedRes=await fetch(`${WORKER_URL}/owned?key=${encodeURIComponent(apiKey)}&steamid=${encodeURIComponent(steamId)}`);
+    const ownedData=await ownedRes.json();
+    const owned=new Set((ownedData?.response?.games??[]).map(g=>String(g.appid)));
+    const filtered=wishItems.filter(i=>!owned.has(String(i.appid))).sort((a,b)=>(a.priority??9999)-(b.priority??9999));
+    const appids=filtered.map(i=>String(i.appid));
     setStatus(`✅ ${appids.length}件取得！ゲーム情報を読み込み中...`,'info');
-
-    const games=[], failed=[], BATCH=10; let done=0;
-    for (let i=0; i<appids.length; i+=BATCH) {
+    const games=[],failed=[],BATCH=10;let done=0;
+    for(let i=0;i<appids.length;i+=BATCH){
       const batch=appids.slice(i,i+BATCH);
       await Promise.allSettled(batch.map(async appid=>{
-        try {
+        try{
           const res=await fetch(`${WORKER_URL}/appdetails?appid=${encodeURIComponent(appid)}`);
           const data=await res.json();
           const info=data?.[appid];
-          if (info?.success&&info.data?.name) {
+          if(info?.success&&info.data?.name){
             const d=info.data;
             let price='無料';
-            if (!d.is_free&&d.price_overview) price=d.price_overview.final_formatted;
-            else if (!d.is_free) price='価格不明';
-            games.push({
-              appid:   String(appid),
-              name:    d.name,
-              capsule: d.header_image || `${IMG_BASE}${appid}/header.jpg`,
-              price,
-              release: d.release_date?.date ?? '',
-            });
-          } else { failed.push(appid); }
-        } catch(e) { failed.push(appid); }
+            if(!d.is_free&&d.price_overview)price=d.price_overview.final_formatted;
+            else if(!d.is_free)price='価格不明';
+            games.push({appid:String(appid),name:d.name,capsule:d.header_image||`${IMG_BASE}${appid}/header.jpg`,price,release:d.release_date?.date??''});
+          }else{failed.push(appid);}
+        }catch(e){failed.push(appid);}
         done++;
       }));
       setProgress(done/appids.length*80);
       setStatus(`🎮 ゲーム情報取得中... ${done} / ${appids.length}`,'info');
-      if (i+BATCH<appids.length) await sleep(1500);
+      if(i+BATCH<appids.length)await sleep(1500);
     }
-
-    if (failed.length>0) {
+    if(failed.length>0){
       setStatus(`🔄 再取得中... (${failed.length}件)`,'info');
       await sleep(8000);
-      for (let i=0; i<failed.length; i+=5) {
+      for(let i=0;i<failed.length;i+=5){
         const batch=failed.slice(i,i+5);
         await Promise.allSettled(batch.map(async appid=>{
-          try {
+          try{
             const res=await fetch(`${WORKER_URL}/appdetails?appid=${encodeURIComponent(appid)}`);
             const data=await res.json();
             const info=data?.[appid];
-            if (info?.success&&info.data?.name) {
+            if(info?.success&&info.data?.name){
               const d=info.data;
               let price='無料';
-              if (!d.is_free&&d.price_overview) price=d.price_overview.final_formatted;
-              else if (!d.is_free) price='価格不明';
-              games.push({
-                appid:   String(appid),
-                name:    d.name,
-                capsule: d.header_image || `${IMG_BASE}${appid}/header.jpg`,
-                price,
-                release: d.release_date?.date ?? '',
-              });
+              if(!d.is_free&&d.price_overview)price=d.price_overview.final_formatted;
+              else if(!d.is_free)price='価格不明';
+              games.push({appid:String(appid),name:d.name,capsule:d.header_image||`${IMG_BASE}${appid}/header.jpg`,price,release:d.release_date?.date??''});
             }
-          } catch(e) {}
+          }catch(e){}
         }));
         setProgress(80+(i/failed.length*20));
-        if (i+5<failed.length) await sleep(4000);
+        if(i+5<failed.length)await sleep(4000);
       }
     }
-
     setProgress(100);
     setStatus(`✅ ${games.length}件の読み込み完了！`,'green');
-    localStorage.setItem('swr_steamid', steamId);
-    localStorage.setItem('swr_apikey',  apiKey);
+    localStorage.setItem('swr_steamid',steamId);
+    localStorage.setItem('swr_apikey',apiKey);
     initState(games);
-    setTimeout(startBattle, 500);
-
-  } catch(e) {
+    setTimeout(startBattle,500);
+  }catch(e){
     setStatus('❌ '+e.message,'red');
     showProgress(false);
     btn.disabled=false;
   }
 }
 
-function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
-// =====================================================
-// デモ・続きから
-// =====================================================
-function loadDemo() {
+// ========== デモ・続きから ==========
+function loadDemo(){
   const demos=[
-    {appid:'1091500',name:'Cyberpunk 2077',          price:'¥7,590',release:'2020年12月10日'},
-    {appid:'1245620',name:'Elden Ring',               price:'¥7,900',release:'2022年2月25日'},
-    {appid:'1086940',name:"Baldur's Gate 3",          price:'¥8,700',release:'2023年8月3日'},
-    {appid:'814380', name:'Sekiro',                   price:'¥4,990',release:'2019年3月22日'},
-    {appid:'1145360',name:'Hades',                    price:'¥2,570',release:'2020年9月17日'},
-    {appid:'646570', name:'Slay the Spire',           price:'¥2,480',release:'2019年1月23日'},
-    {appid:'413150', name:'Stardew Valley',           price:'¥980',  release:'2016年2月26日'},
-    {appid:'1174180',name:'Red Dead Redemption 2',    price:'¥9,680',release:'2019年12月5日'},
-    {appid:'1203220',name:'DEATH STRANDING',          price:'¥6,490',release:'2020年7月14日'},
-    {appid:'230410', name:'Warframe',                 price:'無料',  release:'2013年3月25日'},
-    {appid:'1517290',name:'Battlefield 2042',         price:'¥8,778',release:'2021年11月19日'},
-    {appid:'271590', name:'Grand Theft Auto V',       price:'¥3,090',release:'2015年4月14日'},
-  ].map(g=>({...g, capsule:`${IMG_BASE}${g.appid}/header.jpg`}));
+    {appid:'1091500',name:'Cyberpunk 2077',price:'¥7,590',release:'2020年12月10日'},
+    {appid:'1245620',name:'Elden Ring',price:'¥7,900',release:'2022年2月25日'},
+    {appid:'1086940',name:"Baldur's Gate 3",price:'¥8,700',release:'2023年8月3日'},
+    {appid:'814380',name:'Sekiro',price:'¥4,990',release:'2019年3月22日'},
+    {appid:'1145360',name:'Hades',price:'¥2,570',release:'2020年9月17日'},
+    {appid:'646570',name:'Slay the Spire',price:'¥2,480',release:'2019年1月23日'},
+    {appid:'413150',name:'Stardew Valley',price:'¥980',release:'2016年2月26日'},
+    {appid:'1174180',name:'Red Dead Redemption 2',price:'¥9,680',release:'2019年12月5日'},
+    {appid:'1203220',name:'DEATH STRANDING',price:'¥6,490',release:'2020年7月14日'},
+    {appid:'230410',name:'Warframe',price:'無料',release:'2013年3月25日'},
+    {appid:'1517290',name:'Battlefield 2042',price:'¥8,778',release:'2021年11月19日'},
+    {appid:'271590',name:'Grand Theft Auto V',price:'¥3,090',release:'2015年4月14日'},
+  ].map(g=>({...g,capsule:`${IMG_BASE}${g.appid}/header.jpg`}));
   initState(demos);
   setStatus(`✅ デモデータ ${demos.length}件`,'green');
   setTimeout(startBattle,400);
 }
 
-function loadSaved() {
+function loadSaved(){
   const saved=localStorage.getItem(STORAGE_KEY);
-  if (!saved) { setStatus('保存データが見つかりません','red'); return; }
-  try {
+  if(!saved){setStatus('保存データが見つかりません','red');return;}
+  try{
     state=JSON.parse(saved);
     const sid=localStorage.getItem('swr_steamid');
     const key=localStorage.getItem('swr_apikey');
-    if (sid) document.getElementById('steam-id').value=sid;
-    if (key) document.getElementById('api-key').value=key;
+    if(sid)document.getElementById('steam-id').value=sid;
+    if(key)document.getElementById('api-key').value=key;
     setStatus(`✅ ${state.games.length}件・ラウンド${state.roundNo}から再開`,'green');
     setTimeout(startBattle,400);
-  } catch(e) { setStatus('❌ 保存データの読み込みに失敗しました','red'); }
+  }catch(e){setStatus('❌ 保存データの読み込みに失敗しました','red');}
 }
+
+// ========== UI ==========
+function setStatus(msg,type='info'){
+  const el=document.getElementById('load-status');
+  el.textContent=msg;
+  el.style.color=type==='red'?'var(--red)':type==='green'?'var(--green)':'var(--text2)';
+}
+function showProgress(show){document.getElementById('load-progress').classList.toggle('show',show);}
+function setProgress(pct){document.getElementById('load-progress-fill').style.width=pct+'%';}
+
+// ========== 状態・キュー ==========
+function initState(games){
+  state={games,scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],streak:0,lastWinnerId:null};
+  games.forEach(g=>{state.scores[g.appid]={wins:0,losses:0,draws:0,points:1500,battles:0,sorted:false};});
+  state.queue=buildQueue();
+}
+
+function buildQueue(){
+  const ordered=state.roundNo===1?[...state.games].sort(()=>Math.random()-.5):getRankedGames();
+  const q=[];
+  for(let i=0;i+1<ordered.length;i+=2)q.push([ordered[i].appid,ordered[i+1].appid]);
+  if(state.unknownQueue.length>=2){
+    const uq=[...state.unknownQueue].sort(()=>Math.random()-.5);
+    state.unknownQueue=[];
+    for(let i=0;i+1<uq.length;i+=2)q.push([uq[i],uq[i+1]]);
+  }
+  return q;
+}
+
+function getRankedGames(){
+  return[...state.games].sort((a,b)=>state.scores[b.appid].points-state.scores[a.appid].points);
+}
+
+// ========== バトル画面 ==========
+function startBattle(){saveState();showScreen('battle');renderPair();renderSidebar();}
+
+function renderPair(){
+  if(state.queueIdx>=state.queue.length){showRoundComplete();return;}
+  const[idA,idB]=state.queue[state.queueIdx];
+  const gA=state.games.find(g=>g.appid===idA);
+  const gB=state.games.find(g=>g.appid===idB);
+  if(!gA||!gB){state.queueIdx++;renderPair();return;}
+  fillCard('left',gA);fillCard('right',gB);
+  updateProgress();renderNextPreview();
+}
+
+function fillCard(side,game){
+  const img=document.getElementById('img-'+side);
+  const fb=document.getElementById('fb-'+side);
+  const fbt=document.getElementById('fb-title-'+side);
+  img.style.display='none';fb.style.display='none';
+  const tmp=new Image();
+  tmp.onload=()=>{img.src=tmp.src;img.style.display='';fb.style.display='none';};
+  tmp.onerror=()=>{img.style.display='none';fb.style.display='flex';fbt.textContent=game.name;};
+  tmp.src=game.capsule;
+  document.getElementById('title-'+side).textContent=game.name;
+  document.getElementById('price-'+side).textContent=game.price??'';
+  document.getElementById('release-'+side).textContent=game.release?'📅 '+game.release:'';
+  document.getElementById('link-'+side).href='https://store.steampowered.com/app/'+game.appid+'/';
+  document.getElementById('card-'+side)._game=game;
+}
+
+function renderNextPreview(){
+  const ni=state.queueIdx+1;
+  if(ni>=state.queue.length){document.getElementById('next-preview').style.display='none';return;}
+  const[idA]=state.queue[ni];
+  const g=state.games.find(g=>g.appid===idA);
+  if(!g){document.getElementById('next-preview').style.display='none';return;}
+  document.getElementById('next-preview').style.display='flex';
+  document.getElementById('next-thumb').src=g.capsule;
+  document.getElementById('next-title').textContent=g.name;
+}
+
+function updateProgress(){
+  const total=state.queue.length,done=state.queueIdx;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('progress-label').textContent=done+' / '+total+' 対戦';
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('round-badge').textContent='Round '+state.roundNo;
+  document.getElementById('accuracy-label').textContent='精度: '+accuracyLabel();
+  document.getElementById('header-info').textContent=state.games.length+'件 | 総対戦数 '+state.totalBattles+'回';
+  const badge=document.getElementById('streak-badge');
+  if(state.streak>=3){badge.textContent='🔥 '+state.streak+'連勝中';badge.classList.add('show');}
+  else badge.classList.remove('show');
+}
+
+function accuracyLabel(){
+  const r=state.roundNo;
+  if(r<=1)return '低（初回）';if(r<=2)return '中';if(r<=3)return '高';return '非常に高い';
+}
+
+function accuracyLevel(){
+  const r=state.roundNo;
+  if(r<=1)return 'low';if(r<=2)return 'mid';if(r<=3)return 'high';return 'perfect';
+}
+
+function showRoundComplete(){
+  saveState();
+  document.getElementById('round-complete-title').textContent='🏆 Round '+state.roundNo+' 完了！';
+  document.getElementById('round-complete-sub').textContent='総対戦数: '+state.totalBattles+'回 | '+state.games.length+'件';
+  document.getElementById('round-complete').classList.add('show');
+}
+function hideRoundComplete(){document.getElementById('round-complete').classList.remove('show');}
+
+// ========== 対戦ロジック ==========
+function choose(idx){
+  const[idA,idB]=state.queue[state.queueIdx];
+  const wId=idx===0?idA:idB,lId=idx===0?idB:idA;
+  const wCard=document.getElementById(idx===0?'card-left':'card-right');
+  state.history.push({type:'win',wId,lId,wPoints:state.scores[wId].points,lPoints:state.scores[lId].points,wWins:state.scores[wId].wins,lLosses:state.scores[lId].losses,wBattles:state.scores[wId].battles,lBattles:state.scores[lId].battles,queueIdx:state.queueIdx,streak:state.streak});
+  state.streak=(state.lastWinnerId===wId)?state.streak+1:1;
+  state.lastWinnerId=wId;
+  wCard.classList.add('winner');
+  updateElo(wId,lId,'win');
+  state.totalBattles++;state.queueIdx++;
+  setTimeout(()=>{wCard.classList.remove('winner');renderPair();renderSidebar();saveState();},380);
+}
+
+function chooseBoth(){
+  const[idA,idB]=state.queue[state.queueIdx];
+  state.history.push({type:'both',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
+  state.scores[idA].points+=16;state.scores[idA].battles++;
+  state.scores[idB].points+=16;state.scores[idB].battles++;
+  state.streak=0;state.lastWinnerId=null;
+  state.totalBattles++;state.queueIdx++;
+  renderPair();renderSidebar();saveState();
+}
+
+function chooseNeither(){
+  const[idA,idB]=state.queue[state.queueIdx];
+  state.history.push({type:'neither',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
+  state.scores[idA].points-=16;state.scores[idA].battles++;
+  state.scores[idB].points-=16;state.scores[idB].battles++;
+  state.streak=0;state.lastWinnerId=null;
+  state.totalBattles++;state.queueIdx++;
+  renderPair();renderSidebar();saveState();
+}
+
+function undoLast(){
+  if(!state.history.length||state.queueIdx===0)return;
+  const last=state.history.pop();
+  const ws=state.scores[last.wId],ls=state.scores[last.lId];
+  ws.points=last.wPoints;ls.points=last.lPoints;
+  ws.battles=last.wBattles;ls.battles=last.lBattles;
+  if(last.type==='win'){ws.wins--;ls.losses--;}
+  state.totalBattles--;state.queueIdx=last.queueIdx;state.streak=last.streak;
+  renderPair();renderSidebar();saveState();
+}
+
+function updateElo(wId,lId,result){
+  const K=32,ws=state.scores[wId],ls=state.scores[lId];
+  if(!ws||!ls)return;
+  const expW=1/(1+Math.pow(10,(ls.points-ws.points)/400));
+  if(result==='win'){ws.points+=K*(1-expW);ws.wins++;ls.points+=K*(0-(1-expW));ls.losses++;}
+  else{ws.points+=K*(.5-expW);ws.draws++;ls.points+=K*(.5-(1-expW));ls.draws++;}
+  ws.battles++;ls.battles++;
+}
+
+// ========== サイドバー ==========
+function renderSidebar(){
+  document.getElementById('sidebar-ranking').innerHTML=
+    getRankedGames().slice(0,30).map((g,i)=>
+      '<div class="rank-item">'+
+      '<span class="rank-no'+(i<3?' top3':'')+'">'+（i+1)+'</span>'+
+      '<img class="rank-thumb" src="'+g.capsule+'" alt="" onerror="this.style.opacity=0.2">'+
+      '<span class="rank-name">'+esc(g.name)+'</span>'+
+      '<span class="rank-score">'+Math.round(state.scores[g.appid].points)+'</span>'+
+      '</div>'
+    ).join('');
+}
+
+// ========== リザルト ==========
+function saveAndGoResult(){
+  hideRoundComplete();saveState();showScreen('result');
+  const ranked=getRankedGames();
+  document.getElementById('result-title').textContent='🏆 ランキング結果（ラウンド '+state.roundNo+' 完了）';
+  document.getElementById('result-subtitle').textContent='総対戦数: '+state.totalBattles+'回 | 精度: '+accuracyLabel()+' | '+state.games.length+'件';
+  renderPodium(ranked);renderResultTable(ranked);
+}
+
+function renderPodium(ranked){
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('podium').innerHTML=ranked.slice(0,3).map((g,i)=>
+    '<div class="podium-item p'+(i+1)+'">'+
+    '<img class="podium-img" src="'+g.capsule+'" alt="" onerror="this.style.opacity=0.3">'+
+    '<div class="podium-body"><div class="podium-rank">'+medals[i]+'</div><div class="podium-name">'+esc(g.name)+'</div></div>'+
+    '<div class="podium-base"></div></div>'
+  ).join('');
+}
+
+function renderResultTable(ranked){
+  document.getElementById('result-tbody').innerHTML=ranked.map((g,i)=>{
+    const sc=state.scores[g.appid],conf=getConf(sc);
+    const rank=i===0?'<span class="medal">🥇</span>':i===1?'<span class="medal">🥈</span>':i===2?'<span class="medal">🥉</span>':i+1;
+    return '<tr>'+
+      '<td class="rt-rank">'+rank+'</td>'+
+      '<td><img class="rt-thumb" src="'+g.capsule+'" alt="" onerror="this.style.opacity=0.2"></td>'+
+      '<td class="rt-title"><a href="https://store.steampowered.com/app/'+g.appid+'/" target="_blank" rel="noopener">'+esc(g.name)+'</a>'+
+      '<div class="rt-sub">'+(g.price??'')+'</div></td>'+
+      '<td style="font-size:.72rem;color:var(--text2);white-space:nowrap">'+(g.release??'')+'</td>'+
+      '<td class="rt-wins">'+sc.wins+'</td>'+
+      '<td class="rt-losses">'+sc.losses+'</td>'+
+      '<td><span class="rt-conf '+conf.cls+'">'+conf.label+'</span></td>'+
+      '</tr>';
+  }).join('');
+}
+
+function getConf(sc){
+  if(sc.battles>=6)return{cls:'conf-high',label:'高'};
+  if(sc.battles>=3)return{cls:'conf-mid',label:'中'};
+  return{cls:'conf-low',label:'低（対戦少）'};
+}
+
+// ========== 次ラウンド ==========
+function startNextRound(){
+  hideRoundComplete();
+  state.roundNo++;state.queue=buildQueue();state.queueIdx=0;
+  state.history=[];state.streak=0;state.lastWinnerId=null;
+  startBattle();
+}
+function backToBattle(){hideRoundComplete();showScreen('battle');renderPair();renderSidebar();}
+
+// ========== 仕分け ==========
+function startSort(){
+  const low=state.games.filter(g=>state.scores[g.appid].battles<3&&!state.scores[g.appid].sorted);
+  if(!low.length){alert('仕分けが必要なゲームはありません！');return;}
+  sortQueue=low.sort(()=>Math.random()-.5);sortIdx=0;sortResults={};
+  document.getElementById('sort-subtitle').textContent='対戦数が少ない '+sortQueue.length+'件 をまとめて仕分けします';
+  showScreen('sort');renderSortCard();
+}
+
+function renderSortCard(){
+  if(sortIdx>=sortQueue.length){applySortResults();return;}
+  const g=sortQueue[sortIdx];
+  const img=document.getElementById('sort-img');
+  img.src=g.capsule;img.alt=g.name;img.style.opacity='1';
+  document.getElementById('sort-title').textContent=g.name;
+  const meta=[];if(g.price)meta.push(g.price);if(g.release)meta.push('📅 '+g.release);
+  document.getElementById('sort-meta').textContent=meta.join('　');
+  document.getElementById('sort-progress').textContent=(sortIdx+1)+' / '+sortQueue.length;
+}
+
+function sortGame(cat){
+  if(sortIdx>=sortQueue.length)return;
+  sortResults[sortQueue[sortIdx].appid]=cat;
+  sortIdx++;renderSortCard();
+}
+
+function applySortResults(){
+  const pts={must:1800,want:1600,sale:1400,skip:1200};
+  for(const[appid,cat]of Object.entries(sortResults)){
+    if(state.scores[appid]){state.scores[appid].points=pts[cat];state.scores[appid].sorted=true;}
+  }
+  saveState();
+  alert('✅ '+Object.keys(sortResults).length+'件の仕分けが完了しました！');
+  saveAndGoResult();
+}
+
+function saveAndContinueLater(){
+  const pts={must:1800,want:1600,sale:1400,skip:1200};
+  for(const[appid,cat]of Object.entries(sortResults)){
+    if(state.scores[appid]){state.scores[appid].points=pts[cat];state.scores[appid].sorted=true;}
+  }
+  saveState();
+  alert('💾 '+Object.keys(sortResults).length+'件を保存しました。\n続きは「下位をまとめて仕分け」から再開できます。');
+  saveAndGoResult();
+}
+
+function cancelSort(){saveAndGoResult();}
+
+// ========== Steam反映 ==========
+async function syncToSteam(){
+  const ranked=getRankedGames();
+  const payload=ranked.map((g,i)=>({appid:parseInt(g.appid),priority:i+1}));
+  const code="fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction'},body:JSON.stringify({m:'Reorder',mp:["+JSON.stringify(payload)+"]})}).then(r=>r.json()).then(d=>alert(d.data?.result===1?'✅ 並び替え完了！ページをリロードしてください':'❌ 失敗: '+JSON.stringify(d))).catch(e=>alert('エラー: '+e.message));";
+  await navigator.clipboard.writeText(code);
+  const steamId=localStorage.getItem('swr_steamid');
+  const wishUrl=steamId?'https://store.steampowered.com/wishlist/profiles/'+steamId+'/':'https://store.steampowered.com/';
+  window.open(wishUrl,'_blank');
+  alert('✅ コードをクリップボードにコピーしました！\n\n開いたSteamページで\nF12 → Console → Ctrl+V → Enter\nで並び替えが完了します。');
+}
+
+// ========== Xシェア ==========
+async function shareToX(){
+  const ranked=getRankedGames();
+  const medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
+  const top5=ranked.slice(0,5).map((g,i)=>medals[i]+' '+g.name).join('\n');
+  const n=state.games.length,b=state.totalBattles;
+  const level=accuracyLevel();
+  const pool=level==='low'?SHARE_LOW:level==='mid'?SHARE_MID:level==='high'?SHARE_HIGH:SHARE_PFCT;
+  const tmpl=pool[Math.floor(Math.random()*pool.length)];
+  const text=tmpl(top5,SITE_URL,n,b);
+  try{
+    const target=document.getElementById('result-capture');
+    const canvas=await html2canvas(target,{backgroundColor:'#1b2838',scale:1.5,useCORS:true,allowTaint:false});
+    await new Promise((resolve,reject)=>{
+      canvas.toBlob(async blob=>{
+        try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);resolve();}
+        catch(e){reject(e);}
+      },'image/png');
+    });
+    alert('📸 画像をクリップボードにコピーしました！\nXの投稿画面が開くので、Ctrl+V で画像を貼り付けて投稿してください。');
+  }catch(e){
+    try{
+      const target=document.getElementById('result-capture');
+      const canvas=await html2canvas(target,{backgroundColor:'#1b2838',scale:1.5});
+      const a=document.createElement('a');
+      a.download='wishlist-ranking.png';a.href=canvas.toDataURL('image/png');a.click();
+      alert('📸 画像をダウンロードしました。\nXの投稿画面で画像を添付して投稿してください。');
+    }catch(e2){}
+  }
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text),'_blank','width=550,height=450');
+}
+
+function openKofi(){window.open(KOFI_URL,'_blank');}
+
+// ========== 保存・画面遷移・ユーティリティ ==========
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  window.scrollTo(0,0);
+}
+function backToStart(){saveState();showScreen('start');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 window.addEventListener('DOMContentLoaded',()=>{
   const sid=localStorage.getItem('swr_steamid');
   const key=localStorage.getItem('swr_apikey');
-  if (sid) document.getElementById('steam-id').value=sid;
-  if (key) document.getElementById('api-key').value=key;
+  if(sid)document.getElementById('steam-id').value=sid;
+  if(key)document.getElementById('api-key').value=key;
 });
 </script>
 </body>
