@@ -14,6 +14,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Steam Wishlist Ranker">
 <meta name="twitter:description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。">
+<meta name="google-site-verification" content="93eb8b39280edeaa">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
@@ -852,27 +853,28 @@ function shareToX(){
   var pool=level==='low'?SHARE_LOW:level==='mid'?SHARE_MID:level==='high'?SHARE_HIGH:SHARE_PFCT;
   var tmpl=pool[Math.floor(Math.random()*pool.length)];
   var text=tmpl(top5,SITE_URL,n,b);
+
+  // 先にX投稿画面を開く（ポップアップブロック対策）
+  var xWin=window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text),'_blank','width=550,height=450');
+
+  // その後キャプチャ
   (async function(){
     try{
+      alert('📸 画像を生成中です。少々お待ちください...');
       var target=document.getElementById('result-capture');
       var canvas=await html2canvas(target,{backgroundColor:'#1b2838',scale:1.5,useCORS:true,allowTaint:false});
       await new Promise(function(resolve,reject){
         canvas.toBlob(async function(blob){
-          try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);resolve();}
-          catch(e){reject(e);}
+          try{
+            await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+            resolve();
+          }catch(e){reject(e);}
         },'image/png');
       });
-      alert('📸 画像をクリップボードにコピーしました！\nXの投稿画面が開くので、Ctrl+V で画像を貼り付けて投稿してください。');
+      alert('✅ 画像をクリップボードにコピーしました！\nXの投稿画面で Ctrl+V で貼り付けてください。');
     }catch(e){
-      try{
-        var target2=document.getElementById('result-capture');
-        var canvas2=await html2canvas(target2,{backgroundColor:'#1b2838',scale:1.5});
-        var a=document.createElement('a');
-        a.download='wishlist-ranking.png';a.href=canvas2.toDataURL('image/png');a.click();
-        alert('📸 画像をダウンロードしました。\nXの投稿画面で画像を添付して投稿してください。');
-      }catch(e2){}
+      alert('⚠️ 画像のコピーに失敗しました。\nスクリーンショットを手動で撮って添付してください。');
     }
-    window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text),'_blank','width=550,height=450');
   })();
 }
 
