@@ -227,6 +227,7 @@ body.modal-open{overflow:hidden}
 .guide-note{font-size:.78rem;color:var(--text2);line-height:1.7;background:rgba(0,0,0,.25);border-left:2px solid var(--accent);border-radius:var(--radius);padding:8px 10px}
 .guide-note.warn{border-left-color:var(--orange);color:#e8c9a0}
 .guide-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.code-box{width:100%;height:84px;resize:vertical;background:#0a0f15;color:#9fd0f0;border:1px solid var(--border2);border-radius:var(--radius);font-family:monospace;font-size:.72rem;padding:8px;line-height:1.5}
 .sync-status{font-size:.85rem;font-weight:700;padding:8px 10px;border-radius:var(--radius);line-height:1.5}
 .sync-status.ok{background:rgba(91,163,43,.15);border:1px solid var(--green);color:#9bd96a}
 .sync-status.ng{background:rgba(201,64,64,.15);border:1px solid var(--red);color:#ff9a9a}
@@ -524,6 +525,15 @@ body.modal-open{overflow:hidden}
     <div class="guide-head"><h3 data-g="sTitle">🎮 Steamに反映する手順</h3><button type="button" class="guide-x" onclick="closeModal('sync-modal')" aria-label="close">&times;</button></div>
     <div class="guide-body">
       <div id="sync-status" class="sync-status ok"></div>
+      <div id="sync-mobile" class="guide-note warn" style="display:none" data-g="sMobile"></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:.78rem;color:var(--text2)" data-g="sCodeLabel"></div>
+        <textarea id="sync-code" class="code-box" readonly spellcheck="false" onclick="this.select()"></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn btn-gold btn-sm" onclick="copySyncCode()" data-g="sRecopy">📋 コードをもう一度コピー</button>
+          <button type="button" id="sync-share-btn" class="btn btn-dark btn-sm" style="display:none" onclick="shareSyncCode()" data-g="sShare">📤 共有</button>
+        </div>
+      </div>
 
       <div class="guide-step"><span class="guide-num">1</span><div class="guide-step-body">
         <p data-g="s1"></p>
@@ -552,7 +562,6 @@ body.modal-open{overflow:hidden}
 
     </div>
     <div class="guide-foot">
-      <button type="button" class="btn btn-gold" onclick="copySyncCode()" data-g="sRecopy">📋 コードをもう一度コピー</button>
       <button type="button" class="btn btn-dark" onclick="closeModal('sync-modal')" data-g="close">閉じる</button>
     </div>
   </div>
@@ -1057,7 +1066,10 @@ var GUIDE_TEXT = {
     s4: '下のような警告が出て貼り付けられない場合は、問題なければ「allow pasting」と、キーボードで手入力して Enter を押します。（コピーして貼るのではなく、打ち込んでください）',
     sWarnLabel: '↑ こういう警告が出ます',
     s5: 'もう一度 Ctrl+V で貼り付けて Enter を押します。「✅ Done!」というメッセージが出れば成功です。ページを再読み込みして確認してください。',
-    sNote: 'この警告は、知らない人から渡されたコードを貼らせる詐欺を防ぐためのものです。ここでコピーされるコードは、あなた自身のSteamログイン状態で、ウィッシュリストの並び順を変更するだけの内容です。パソコンのブラウザで行ってください（スマホでは実行できません）。'
+    sNote: 'この警告は、知らない人から渡されたコードを貼らせる詐欺を防ぐためのものです。ここでコピーされるコードは、あなた自身のSteamログイン状態で、ウィッシュリストの並び順を変更するだけの内容です。パソコンのブラウザで行ってください（スマホでは実行できません）。',
+    sCodeLabel: 'コピーされているコード（ウィッシュリストの並び順を送るだけの内容です）',
+    sShare: '📤 共有（LINE・メモなど）',
+    sMobile: '📱 スマホではコンソールが使えないため、このコードはパソコンで実行します。下の「共有」でLINEやメモなどに送っておけば、パソコンで開いてコピーできます。'
   },
   en: {
     btnOpenSteam: 'Open Steam',
@@ -1091,7 +1103,10 @@ var GUIDE_TEXT = {
     s4: 'If a warning like the one below appears and the paste is blocked, and you are fine with it, type "allow pasting" by hand on the keyboard and press Enter. (Type it; do not copy and paste it.)',
     sWarnLabel: '↑ This is the warning you will see',
     s5: 'Paste again with Ctrl+V and press Enter. If you see "✅ Done!", it worked; reload the page to check.',
-    sNote: 'This warning exists to stop scams that trick people into pasting code from strangers. The code copied here only changes the order of your wishlist using your own Steam login. Please do this on a desktop browser (it does not work on phones).'
+    sNote: 'This warning exists to stop scams that trick people into pasting code from strangers. The code copied here only changes the order of your wishlist using your own Steam login. Please do this on a desktop browser (it does not work on phones).',
+    sCodeLabel: 'Code that was copied (it only sends your wishlist order)',
+    sShare: '📤 Share (messaging, notes, etc.)',
+    sMobile: '📱 The console is not available on phones, so this code must be run on a computer. Use "Share" below to send it to a messaging app or notes, then open it on your computer and copy it.'
   },
   zh: {
     btnOpenSteam: '打开Steam',
@@ -1125,7 +1140,10 @@ var GUIDE_TEXT = {
     s4: '如果出现下图这样的警告而无法粘贴，确认没问题后，请用键盘手动输入“allow pasting”并按 Enter。（请手动输入，不要复制粘贴）',
     sWarnLabel: '↑ 会出现这样的警告',
     s5: '再次按 Ctrl+V 粘贴并按 Enter。出现“✅ Done!”就表示成功，请刷新页面确认。',
-    sNote: '这个警告是为了防止有人骗你粘贴陌生人给的代码。这里复制的代码只会用你自己的 Steam 登录状态来更改愿望单的顺序。请在电脑浏览器上操作（手机上无法执行）。'
+    sNote: '这个警告是为了防止有人骗你粘贴陌生人给的代码。这里复制的代码只会用你自己的 Steam 登录状态来更改愿望单的顺序。请在电脑浏览器上操作（手机上无法执行）。',
+    sCodeLabel: '已复制的代码（仅用于发送愿望单的排序）',
+    sShare: '📤 分享（聊天应用、备忘录等）',
+    sMobile: '📱 手机上无法使用控制台，需要在电脑上运行此代码。请用下方的“分享”发送到聊天应用或备忘录，再在电脑上打开并复制。'
   },
   ru: {
     btnOpenSteam: 'Открыть Steam',
@@ -1159,7 +1177,10 @@ var GUIDE_TEXT = {
     s4: 'Если появится предупреждение, как на рисунке ниже, и вставка заблокирована, то, если вы согласны, вручную наберите на клавиатуре «allow pasting» и нажмите Enter. (Именно наберите, а не копируйте.)',
     sWarnLabel: '↑ Такое предупреждение появится',
     s5: 'Снова вставьте код через Ctrl+V и нажмите Enter. Если появится «✅ Done!», всё получилось — обновите страницу, чтобы проверить.',
-    sNote: 'Это предупреждение защищает от мошенников, которые просят вставить чужой код. Скопированный здесь код лишь меняет порядок вашего списка желаемого от имени вашего же входа в Steam. Делайте это в браузере на компьютере (на телефоне не работает).'
+    sNote: 'Это предупреждение защищает от мошенников, которые просят вставить чужой код. Скопированный здесь код лишь меняет порядок вашего списка желаемого от имени вашего же входа в Steam. Делайте это в браузере на компьютере (на телефоне не работает).',
+    sCodeLabel: 'Скопированный код (он только отправляет порядок вашего списка желаемого)',
+    sShare: '📤 Поделиться (мессенджер, заметки и др.)',
+    sMobile: '📱 На телефоне консоль недоступна, поэтому этот код нужно запускать на компьютере. Отправьте его кнопкой «Поделиться» в мессенджер или заметки, затем откройте на компьютере и скопируйте.'
   },
   pt: {
     btnOpenSteam: 'Abrir a Steam',
@@ -1193,7 +1214,10 @@ var GUIDE_TEXT = {
     s4: 'Se aparecer um aviso como o abaixo e a colagem for bloqueada, e você estiver de acordo, digite "allow pasting" à mão no teclado e pressione Enter. (Digite; não copie e cole.)',
     sWarnLabel: '↑ Este é o aviso que vai aparecer',
     s5: 'Cole novamente com Ctrl+V e pressione Enter. Se aparecer "✅ Done!", deu certo; recarregue a página para conferir.',
-    sNote: 'Esse aviso existe para evitar golpes que fazem você colar códigos de desconhecidos. O código copiado aqui só altera a ordem da sua lista de desejos usando o seu próprio login na Steam. Faça isso em um navegador de computador (não funciona no celular).'
+    sNote: 'Esse aviso existe para evitar golpes que fazem você colar códigos de desconhecidos. O código copiado aqui só altera a ordem da sua lista de desejos usando o seu próprio login na Steam. Faça isso em um navegador de computador (não funciona no celular).',
+    sCodeLabel: 'Código copiado (ele apenas envia a ordem da sua lista de desejos)',
+    sShare: '📤 Compartilhar (mensagens, notas etc.)',
+    sMobile: '📱 O console não está disponível em celulares, então este código deve ser executado em um computador. Use "Compartilhar" abaixo para enviá-lo a um app de mensagens ou notas e depois abra-o no computador e copie.'
   },
   de: {
     btnOpenSteam: 'Steam öffnen',
@@ -1227,7 +1251,10 @@ var GUIDE_TEXT = {
     s4: 'Erscheint eine Warnung wie unten und das Einfügen wird blockiert, tippe – wenn du einverstanden bist – „allow pasting“ von Hand auf der Tastatur ein und drücke Enter. (Bitte tippen, nicht kopieren und einfügen.)',
     sWarnLabel: '↑ Diese Warnung erscheint',
     s5: 'Füge erneut mit Strg+V ein und drücke Enter. Erscheint „✅ Done!“, hat es geklappt; lade die Seite neu, um es zu prüfen.',
-    sNote: 'Diese Warnung soll vor Betrug schützen, bei dem man fremden Code einfügen soll. Der hier kopierte Code ändert nur die Reihenfolge deiner Wunschliste mit deinem eigenen Steam-Login. Bitte am Computer im Browser ausführen (auf dem Handy nicht möglich).'
+    sNote: 'Diese Warnung soll vor Betrug schützen, bei dem man fremden Code einfügen soll. Der hier kopierte Code ändert nur die Reihenfolge deiner Wunschliste mit deinem eigenen Steam-Login. Bitte am Computer im Browser ausführen (auf dem Handy nicht möglich).',
+    sCodeLabel: 'Kopierter Code (er sendet nur die Reihenfolge deiner Wunschliste)',
+    sShare: '📤 Teilen (Messenger, Notizen usw.)',
+    sMobile: '📱 Auf dem Smartphone gibt es keine Konsole, daher muss dieser Code an einem Computer ausgeführt werden. Sende ihn mit „Teilen“ unten an einen Messenger oder deine Notizen, öffne ihn am Computer und kopiere ihn.'
   }
 };
 
@@ -1240,6 +1267,11 @@ function renderGuideTexts(){
   var els=document.querySelectorAll('[data-g]');
   for(var i=0;i<els.length;i++){
     els[i].textContent=gt(els[i].getAttribute('data-g'));
+  }
+  var pids=['txt-privacy','txt-footer-privacy'];
+  for(var j=0;j<pids.length;j++){
+    var pa=document.getElementById(pids[j]);
+    if(pa) pa.setAttribute('href',currentLang==='ja'?'privacy.html':'privacy-en.html');
   }
   var st=document.getElementById('sync-status');
   if(st&&st.getAttribute('data-state')){
@@ -1314,6 +1346,26 @@ function copySyncCode(){
   }else{
     setSyncStatus(fallbackCopy(text));
   }
+}
+
+function isMobileDevice(){
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||'');
+}
+
+function updateSyncMobileUI(){
+  var mob=isMobileDevice();
+  var note=document.getElementById('sync-mobile');
+  var btn=document.getElementById('sync-share-btn');
+  if(note) note.style.display=mob?'block':'none';
+  if(btn) btn.style.display=(mob&&navigator.share)?'inline-block':'none';
+}
+
+function shareSyncCode(){
+  if(!lastSyncCode||!navigator.share) return;
+  try{
+    var pr=navigator.share({title:'Steam Wishlist Ranker',text:lastSyncCode});
+    if(pr&&pr.catch){ pr.catch(function(){}); }
+  }catch(e){}
 }
 
 function openWishlist(){
@@ -1832,10 +1884,13 @@ function cancelSort(){saveAndGoResult();}
 
 function syncToSteam(){
   var ranked=getRankedGames();
-  var payload=ranked.map(function(g,i){return {appid:parseInt(g.appid),priority:i+1};});
-  var code="fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction'},body:JSON.stringify({m:'Reorder',mp:["+JSON.stringify(payload)+"]})}).then(function(r){return r.json();}).then(function(d){alert(d.data&&d.data.result===1?'✅ Done! Please reload the page.':'❌ Failed: '+JSON.stringify(d));}).catch(function(e){alert('Error: '+e.message);});";
+  var ids=ranked.map(function(g){return parseInt(g.appid);});
+  var code="var swrIds="+JSON.stringify(ids)+";fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction'},body:JSON.stringify({m:'Reorder',mp:[swrIds.map(function(x,i){return {appid:x,priority:i+1};})]})}).then(function(r){return r.json();}).then(function(d){alert(d.data&&d.data.result===1?'✅ Done! Please reload the page.':'❌ Failed: '+JSON.stringify(d));}).catch(function(e){alert('Error: '+e.message);});";
   lastSyncCode=code;
+  var box=document.getElementById('sync-code');
+  if(box) box.value=code;
   showModal('sync-modal');
+  updateSyncMobileUI();
   copySyncCode();
 }
 
