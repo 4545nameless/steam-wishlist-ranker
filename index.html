@@ -256,7 +256,54 @@ body.modal-open{overflow:hidden}
 .mock-caret{display:inline-block;width:7px;height:1em;background:#fff;vertical-align:text-bottom;animation:mockblink 1s steps(1) infinite}
 @keyframes mockblink{50%{opacity:0}}
 
+
+/* ===== 仕分け先行・4枚バトル・演出 ===== */
+.sort-actions{flex-wrap:wrap}
+.combo-pop{position:fixed;top:78px;left:50%;transform:translateX(-50%) scale(.6);font-size:1.7rem;font-weight:900;color:var(--gold);text-shadow:0 0 14px rgba(246,201,14,.75),0 2px 0 #000;opacity:0;pointer-events:none;z-index:950;white-space:nowrap;letter-spacing:.06em;transition:opacity .2s}
+.combo-pop.show{opacity:1;transform:translateX(-50%) scale(1)}
+.combo-pop.pop{animation:comboPop .25s ease}
+@keyframes comboPop{0%{transform:translateX(-50%) scale(.7)}60%{transform:translateX(-50%) scale(1.3)}100%{transform:translateX(-50%) scale(1)}}
+.fx-toast{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%) scale(.8);font-size:1.7rem;font-weight:900;color:#fff;background:rgba(0,0,0,.65);padding:14px 28px;border-radius:12px;border:2px solid var(--gold);opacity:0;pointer-events:none;z-index:950;transition:opacity .25s,transform .25s;text-align:center;max-width:90vw}
+.fx-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.flash-gold{animation:flashGold .45s ease}
+@keyframes flashGold{0%{box-shadow:0 0 0 rgba(246,201,14,0);transform:scale(1)}35%{box-shadow:0 0 40px rgba(246,201,14,.95);transform:scale(1.03)}100%{box-shadow:0 4px 16px rgba(0,0,0,.4);transform:scale(1)}}
+.flash-soft{animation:flashSoft .3s ease}
+@keyframes flashSoft{0%{transform:scale(1)}40%{transform:scale(1.015)}100%{transform:scale(1)}}
+.flash-dim{animation:flashDim .3s ease}
+@keyframes flashDim{0%{opacity:1}40%{opacity:.6}100%{opacity:1}}
+#screen-quad{flex-direction:column}
+.quad-banner{font-size:1.05rem;font-weight:800;color:#fff;text-align:center;padding:8px 16px;border-radius:var(--radius);background:rgba(76,155,219,.15);border:1px solid var(--accent);min-height:24px;width:100%;max-width:680px;transition:background .2s,border-color .2s}
+.quad-banner.worst{background:rgba(201,64,64,.15);border-color:var(--red)}
+.quad-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:680px}
+.quad-card{position:relative;background:linear-gradient(to bottom,var(--panel2),var(--panel));border:2px solid var(--border);border-radius:var(--radius2);overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s,opacity .25s,filter .25s;display:flex;flex-direction:column;user-select:none;-webkit-user-select:none}
+.quad-card:hover{border-color:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(76,155,219,.25)}
+.quad-card.is-best{border-color:var(--gold);box-shadow:0 0 28px rgba(246,201,14,.55);transform:scale(1.03);cursor:default}
+.quad-card.is-worst{border-color:var(--red);opacity:.5;filter:grayscale(.7)}
+.quad-card.is-mid{opacity:.7}
+.quad-img{position:relative;width:100%;aspect-ratio:460/215;background:var(--bg2);overflow:hidden}
+.quad-img img{width:100%;height:100%;object-fit:cover;display:block}
+.quad-fb{position:absolute;top:0;left:0;right:0;bottom:0;display:none;align-items:center;justify-content:center;text-align:center;padding:8px;font-size:.8rem;color:var(--text2)}
+.quad-body{padding:8px 10px;display:flex;flex-direction:column;gap:3px}
+.quad-title{font-size:.85rem;font-weight:700;color:#fff;line-height:1.25}
+.quad-meta{font-size:.74rem;color:var(--accent2);font-weight:600;min-height:1em}
+.quad-tag{position:absolute;top:8px;left:8px;font-size:1rem;font-weight:800;padding:2px 9px;border-radius:12px;background:rgba(0,0,0,.7);color:#fff;display:none}
+.quad-card.is-best .quad-tag{display:block;background:var(--gold);color:#1b2838}
+.quad-card.is-worst .quad-tag{display:block;background:var(--red)}
+.quad-help{font-size:.72rem;color:var(--text2);text-align:center;max-width:680px}
+.rank-item.up{animation:rankUp 1s ease}
+.rank-item.down{animation:rankDown 1s ease}
+@keyframes rankUp{0%{background:rgba(91,163,43,.55)}100%{background:transparent}}
+@keyframes rankDown{0%{background:rgba(201,64,64,.45)}100%{background:transparent}}
+.rank-delta{font-size:.6rem;font-weight:700;flex-shrink:0}
+.rank-delta.up{color:#9bd96a}
+.rank-delta.down{color:#ff9a9a}
+
 @media(max-width:700px){
+  #quad-info{display:none}
+  .quad-grid{gap:8px}
+  .quad-title{font-size:.76rem}
+  .quad-body{padding:6px 8px}
+  .quad-banner{font-size:.92rem}
   .guide-overlay{padding:8px 6px}
   .guide-body{padding:12px}
   .ranking-sidebar{display:none}
@@ -404,6 +451,7 @@ body.modal-open{overflow:hidden}
     <div class="sort-card-body">
       <div class="sort-card-title" id="sort-title">-</div>
       <div class="sort-card-meta" id="sort-meta"></div>
+      <a id="sort-link" class="card-store-link" href="#" target="_blank" rel="noopener">🔗 ストアページ</a>
     </div>
   </div>
   <div class="sort-buttons">
@@ -414,8 +462,43 @@ body.modal-open{overflow:hidden}
   </div>
   <div class="sort-progress" id="sort-progress">0 / 0</div>
   <div class="sort-actions">
+    <button type="button" class="btn btn-dark btn-sm" id="sort-undo-btn" style="display:none" onclick="triageUndo()" data-g="tUndo">↩ 一つ戻る</button>
     <button class="btn btn-steam btn-sm" onclick="saveAndContinueLater()" id="txt-btn-later">💾 今日はここまで</button>
     <button class="btn btn-dark btn-sm" onclick="cancelSort()" id="txt-btn-cancel">キャンセル</button>
+    <button type="button" class="btn btn-dark btn-sm" id="sort-skip-btn" style="display:none" onclick="skipTriage()" data-g="tSkip">仕分けを飛ばして1対1だけで進める</button>
+  </div>
+</div>
+
+<div id="screen-quad" class="screen">
+  <nav class="navbar">
+    <div class="navbar-brand"><div class="si">S</div><span>Wishlist Ranker</span></div>
+    <div class="navbar-info" id="quad-info"></div>
+    <div class="navbar-actions">
+      <button class="btn btn-dark btn-sm" onclick="saveAndGoResult()" data-l="btnResult">📊 結果を見る</button>
+      <button class="btn btn-dark btn-sm" onclick="backToStart()" data-l="btnBack">⬅ 戻る</button>
+    </div>
+  </nav>
+  <div class="progress-bar-wrap">
+    <span class="round-badge" id="q-badge"></span>
+    <span class="progress-label" id="q-progress-label">0 / 0</span>
+    <div class="progress-track"><div class="progress-fill" id="q-progress-fill" style="width:0%"></div></div>
+    <span class="accuracy-badge" id="q-accuracy"></span>
+  </div>
+  <div class="battle-main">
+    <div class="battle-center">
+      <div class="quad-banner" id="quad-banner"></div>
+      <div class="quad-grid" id="quad-grid"></div>
+      <div class="battle-sub-actions">
+        <button class="btn btn-dark btn-sm" onclick="quadUndo()" data-g="tUndo">↩ 一つ戻る</button>
+        <button class="btn btn-dark btn-sm" onclick="quadUnknown()" data-g="qUnknown">❓ どれもよく分からない</button>
+      </div>
+      <div class="quad-help" data-g="qHelp"></div>
+      <div class="ad-battle-bottom"><!-- AdSense --></div>
+    </div>
+    <div class="ranking-sidebar">
+      <div class="sidebar-header" data-l="sidebarHeader">現在のランキング</div>
+      <div class="ranking-list" id="quad-sidebar"></div>
+    </div>
   </div>
 </div>
 
@@ -465,6 +548,17 @@ body.modal-open{overflow:hidden}
     <button class="btn btn-steam" onclick="hideRoundComplete();startNextRound()" id="txt-rc-next">🔄 次のラウンドへ</button>
     <button class="btn btn-dark" onclick="hideRoundComplete();backToBattle()" id="txt-rc-back">⬅ 対戦に戻る</button>
   </div>
+</div>
+
+<canvas id="fx-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:900"></canvas>
+<div id="combo-pop" class="combo-pop"></div>
+<div id="fx-toast" class="fx-toast"></div>
+<div class="round-complete-overlay" id="flow-overlay">
+  <div class="round-complete-content">
+    <h2 id="flow-title"></h2>
+    <p id="flow-sub"></p>
+  </div>
+  <div class="round-complete-actions" id="flow-actions"></div>
 </div>
 
 <!-- 入力手順ガイド -->
@@ -1258,6 +1352,159 @@ var GUIDE_TEXT = {
   }
 };
 
+var FLOW_ADD = {
+  ja: {
+    tTitle: '📋 まずざっくり仕分け',
+    tSub: '全{n}本を4択で仕分けします。「絶対買う」「いつか買いたい」に入れたゲームが、次の4枚バトルに進みます。',
+    tUndo: '↩ 一つ戻る',
+    tSkip: '仕分けを飛ばして1対1だけで進める',
+    tHalf: '🔥 半分まで来た！',
+    tAlmost: '✨ あと少し！',
+    combo: 'COMBO',
+    tDoneTitle: '🎉 仕分け完了！',
+    tDoneSub: '{p}本が予選に進出。ここからは4枚バトルです。',
+    tDoneSubFew: '進出ゲームが少ないので、予選は{p}本で行います。',
+    tDoneBtn: '予選スタート ▶',
+    qBadge: '予選 {r}周目',
+    qStep1: '👑 一番欲しいのはどれ？',
+    qStep2: '💤 では、残りで一番いらないのは？',
+    qUnknown: '❓ どれもよく分からない',
+    qHelp: '4枚から「一番欲しい」と「一番いらない」を選ぶと、順位がまとめて決まります。',
+    qInfo: '予選 {p}本 | {c}回選択',
+    oQuadTitle: '🏁 予選 {r}周目 完了！',
+    oQuadSub: '周回するほど順位が安定します。',
+    oQuadBtnMore: '🔄 もう1周',
+    oQuadBtnResult: '📊 結果を見る',
+    oQuadBtnDuel: '⚔ 1対1で仕上げる'
+  },
+  en: {
+    tTitle: '📋 Quick sort first',
+    tSub: 'Sort all {n} games into four groups. Games you put in "Must buy" or "Want someday" move on to the 4-card battles.',
+    tUndo: '↩ Undo',
+    tSkip: 'Skip sorting and use 1v1 only',
+    tHalf: '🔥 Halfway there!',
+    tAlmost: '✨ Almost done!',
+    combo: 'COMBO',
+    tDoneTitle: '🎉 Sorting complete!',
+    tDoneSub: '{p} games advance to the qualifier. Time for 4-card battles.',
+    tDoneSubFew: 'Few games advanced, so the qualifier uses {p} games.',
+    tDoneBtn: 'Start qualifier ▶',
+    qBadge: 'Qualifier round {r}',
+    qStep1: '👑 Which one do you want the most?',
+    qStep2: '💤 Now, which of the rest do you want the least?',
+    qUnknown: '❓ None of these are familiar',
+    qHelp: 'Pick your favorite and your least favorite among 4 cards, and the ranking updates all at once.',
+    qInfo: 'Qualifier: {p} games | {c} picks',
+    oQuadTitle: '🏁 Qualifier round {r} complete!',
+    oQuadSub: 'The more rounds you play, the more stable the ranking becomes.',
+    oQuadBtnMore: '🔄 One more round',
+    oQuadBtnResult: '📊 View results',
+    oQuadBtnDuel: '⚔ Finish with 1v1'
+  },
+  zh: {
+    tTitle: '📋 先快速分类',
+    tSub: '把全部 {n} 款游戏分成四类。放进“一定买”和“以后想买”的游戏，会进入四选一对决。',
+    tUndo: '↩ 撤销',
+    tSkip: '跳过分类，只用一对一',
+    tHalf: '🔥 已经过半！',
+    tAlmost: '✨ 马上完成！',
+    combo: 'COMBO',
+    tDoneTitle: '🎉 分类完成！',
+    tDoneSub: '{p} 款游戏进入预选。接下来是四选一对决。',
+    tDoneSubFew: '进入预选的游戏较少，因此预选使用 {p} 款。',
+    tDoneBtn: '开始预选 ▶',
+    qBadge: '预选 第 {r} 轮',
+    qStep1: '👑 最想要哪一个？',
+    qStep2: '💤 那么，剩下的里最不想要哪一个？',
+    qUnknown: '❓ 这些都不太了解',
+    qHelp: '在 4 张卡片中选出最想要和最不想要的，排名会一次性更新。',
+    qInfo: '预选 {p} 款 | 已选择 {c} 次',
+    oQuadTitle: '🏁 预选第 {r} 轮完成！',
+    oQuadSub: '轮数越多，排名越稳定。',
+    oQuadBtnMore: '🔄 再来一轮',
+    oQuadBtnResult: '📊 查看结果',
+    oQuadBtnDuel: '⚔ 用一对一收尾'
+  },
+  ru: {
+    tTitle: '📋 Сначала быстрая сортировка',
+    tSub: 'Разделите все {n} игр на четыре группы. Игры из «Куплю обязательно» и «Когда-нибудь» перейдут к боям на 4 карточки.',
+    tUndo: '↩ Назад',
+    tSkip: 'Пропустить сортировку и играть только 1 на 1',
+    tHalf: '🔥 Уже половина!',
+    tAlmost: '✨ Почти готово!',
+    combo: 'КОМБО',
+    tDoneTitle: '🎉 Сортировка завершена!',
+    tDoneSub: 'В отборочный этап проходит игр: {p}. Дальше — бои на 4 карточки.',
+    tDoneSubFew: 'Прошло мало игр, поэтому в отборе участвуют {p} игр.',
+    tDoneBtn: 'Начать отбор ▶',
+    qBadge: 'Отбор, круг {r}',
+    qStep1: '👑 Какую игру вы хотите больше всего?',
+    qStep2: '💤 А какую из оставшихся хотите меньше всего?',
+    qUnknown: '❓ Эти игры мне незнакомы',
+    qHelp: 'Выберите среди 4 карточек самую желанную и наименее желанную — рейтинг обновится сразу.',
+    qInfo: 'Отбор: {p} игр | выборов: {c}',
+    oQuadTitle: '🏁 Круг отбора {r} завершён!',
+    oQuadSub: 'Чем больше кругов, тем стабильнее рейтинг.',
+    oQuadBtnMore: '🔄 Ещё круг',
+    oQuadBtnResult: '📊 Посмотреть результаты',
+    oQuadBtnDuel: '⚔ Доработать боями 1 на 1'
+  },
+  pt: {
+    tTitle: '📋 Primeiro, uma triagem rápida',
+    tSub: 'Separe todos os {n} jogos em quatro grupos. Os jogos que você colocar em "Compro com certeza" ou "Quero um dia" seguem para as batalhas de 4 cartas.',
+    tUndo: '↩ Voltar',
+    tSkip: 'Pular a triagem e usar só duelos 1 contra 1',
+    tHalf: '🔥 Já na metade!',
+    tAlmost: '✨ Quase lá!',
+    combo: 'COMBO',
+    tDoneTitle: '🎉 Triagem concluída!',
+    tDoneSub: '{p} jogos avançam para a fase classificatória. Agora vêm as batalhas de 4 cartas.',
+    tDoneSubFew: 'Poucos jogos avançaram, então a fase usa {p} jogos.',
+    tDoneBtn: 'Começar a fase ▶',
+    qBadge: 'Classificatória, rodada {r}',
+    qStep1: '👑 Qual você quer mais?',
+    qStep2: '💤 Agora, qual dos restantes você quer menos?',
+    qUnknown: '❓ Não conheço nenhum destes',
+    qHelp: 'Escolha o que mais e o que menos quer entre 4 cartas, e o ranking é atualizado de uma vez.',
+    qInfo: 'Classificatória: {p} jogos | {c} escolhas',
+    oQuadTitle: '🏁 Rodada {r} concluída!',
+    oQuadSub: 'Quanto mais rodadas, mais estável fica o ranking.',
+    oQuadBtnMore: '🔄 Mais uma rodada',
+    oQuadBtnResult: '📊 Ver resultados',
+    oQuadBtnDuel: '⚔ Finalizar com duelos 1 contra 1'
+  },
+  de: {
+    tTitle: '📋 Erst grob sortieren',
+    tSub: 'Sortiere alle {n} Spiele in vier Gruppen. Spiele in „Kaufe ich sicher“ und „Irgendwann“ kommen in die 4-Karten-Duelle.',
+    tUndo: '↩ Zurück',
+    tSkip: 'Sortieren überspringen und nur 1-gegen-1 spielen',
+    tHalf: '🔥 Schon die Hälfte!',
+    tAlmost: '✨ Fast geschafft!',
+    combo: 'COMBO',
+    tDoneTitle: '🎉 Sortierung abgeschlossen!',
+    tDoneSub: '{p} Spiele kommen in die Qualifikation. Jetzt folgen die 4-Karten-Duelle.',
+    tDoneSubFew: 'Es sind nur wenige Spiele weitergekommen, daher nutzt die Qualifikation {p} Spiele.',
+    tDoneBtn: 'Qualifikation starten ▶',
+    qBadge: 'Qualifikation, Runde {r}',
+    qStep1: '👑 Welches willst du am meisten?',
+    qStep2: '💤 Und welches der übrigen willst du am wenigsten?',
+    qUnknown: '❓ Die kenne ich alle nicht',
+    qHelp: 'Wähle aus 4 Karten das gewünschteste und das unerwünschteste – die Rangliste wird auf einmal aktualisiert.',
+    qInfo: 'Qualifikation: {p} Spiele | {c} Auswahlen',
+    oQuadTitle: '🏁 Qualifikationsrunde {r} abgeschlossen!',
+    oQuadSub: 'Je mehr Runden, desto stabiler wird die Rangliste.',
+    oQuadBtnMore: '🔄 Noch eine Runde',
+    oQuadBtnResult: '📊 Ergebnisse ansehen',
+    oQuadBtnDuel: '⚔ Mit 1-gegen-1 abschließen'
+  }
+};
+(function(){
+  for (var lg in FLOW_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -1273,6 +1520,11 @@ function renderGuideTexts(){
     var pa=document.getElementById(pids[j]);
     if(pa) pa.setAttribute('href',currentLang==='ja'?'privacy.html':'privacy-en.html');
   }
+  var ls=document.querySelectorAll('[data-l]');
+  for(var m=0;m<ls.length;m++){
+    ls[m].textContent=t(ls[m].getAttribute('data-l'));
+  }
+  if(typeof triageActive!=='undefined'&&triageActive) prepareTriageUI(true);
   var st=document.getElementById('sync-status');
   if(st&&st.getAttribute('data-state')){
     st.textContent=gt(st.getAttribute('data-state')==='ng'?'sCopyFail':'sCopied');
@@ -1446,7 +1698,7 @@ function applyLang() {
   setText('txt-rc-result', l.rcResult);
   setText('txt-rc-next', l.rcNext);
   setText('txt-rc-back', l.rcBack);
-var storeLinks = ['link-left','link-right'];
+var storeLinks = ['link-left','link-right','sort-link'];
 storeLinks.forEach(function(id){ 
   var el=document.getElementById(id);
   if(el) el.textContent=l.storeLink;
@@ -1477,7 +1729,7 @@ var SHARE_PFCT=[
   mkPfct('🏆 完璧に整理した！これが最終ランキング'),mkPfct('✅ ウィッシュリスト完全整理完了！'),mkPfct('これが俺の最終答えだ。異論は認める'),mkPfct('🎮 完全版ランキング完成！'),mkPfct('完璧に決まった。これが最終版'),mkPfct('🔥 完全版！これが俺のウィッシュリストランキング'),mkPfct('迷いなし。これが最終決定'),mkPfct('🎯 完璧なランキングが完成した'),mkPfct('これ以上ない仕上がり。最終版'),mkPfct('🏆 完成！これが俺の答えだ'),mkPfct('完全版ランキングを公開します',' #Steam'),mkPfct('🎮 完璧に整理完了！最終版',' #ゲーム'),mkPfct('これが最終決定版のランキング',' #Steam'),mkPfct('迷いなし。完璧な仕上がり',' #ゲーム'),mkPfct('🔥 完成版！異論は認める',' #Steam'),mkPfct('完璧に決まった最終ランキング',' #ゲーム'),mkPfct('🏆 これが俺の最終答え',' #Steam'),mkPfct('完全版を公開します',' #ゲーム'),mkPfct('🎯 完成！これが最終版',' #Steam'),mkPfct('迷いなし。これが答えだ',' #ゲーム'),mkPfct('完全版ランキング完成！'),mkPfct('🏆 これが最終決定版'),mkPfct('完璧に整理できた'),mkPfct('🎮 最終版ランキングを公開'),mkPfct('これ以上ない仕上がり'),mkPfct('🔥 完成版。これが俺の答え',' #Steam'),mkPfct('迷いなし！最終決定版',' #ゲーム'),mkPfct('完璧なランキングが完成した',' #Steam'),mkPfct('🏆 これが完成版のランキング',' #ゲーム'),mkPfct('最終版を公開します',' #Steam'),mkPfct('🎯 完璧に整理した結果がこちら',' #ゲーム'),mkPfct('完全版！これが最終答え',' #Steam'),mkPfct('🎮 完成した！最終ランキング公開',' #ゲーム'),mkPfct('迷いなし。完璧な順位',' #Steam'),mkPfct('🔥 完成版ランキングがこちら',' #ゲーム'),mkPfct('完璧に決まった。これが俺の答え',' #Steam'),mkPfct('🏆 最終決定版を公開',' #ゲーム'),mkPfct('これが最終版のランキング',' #Steam'),mkPfct('🎯 完璧な仕上がり。最終版',' #ゲーム'),mkPfct('完全版完成！異論は認める',' #Steam'),mkPfct('完璧に整理した！',' #Steam #ゲーム'),mkPfct('🏆 最終版ランキング完成',' #Steam #ゲーム'),mkPfct('これが俺の最終決定',' #Steam #ゲーム'),mkPfct('🎮 完全版を公開します',' #Steam #ゲーム'),mkPfct('完璧な順位が決まった',' #Steam #ゲーム'),mkPfct('🔥 最終版。これが答えだ',' #Steam #ゲーム'),mkPfct('迷いなし。完璧な仕上がり',' #Steam #ゲーム'),mkPfct('🏆 完成版ランキング公開',' #Steam #ゲーム'),mkPfct('これが最終答えです',' #Steam #ゲーム'),mkPfct('🎯 完璧に整理完了！',' #Steam #ゲーム'),mkPfct('完全版！これが俺のランキング',' #Steam #ゲーム'),mkPfct('最終決定版を公開します',' #Steam #ゲーム'),mkPfct('🎮 完成した最終ランキング',' #Steam #ゲーム'),mkPfct('完璧に決まった！最終版',' #Steam #ゲーム'),mkPfct('🔥 これが完全版のランキング',' #Steam #ゲーム'),mkPfct('迷いなし！これが最終答え',' #Steam #ゲーム'),mkPfct('🏆 完璧な仕上がりのランキング',' #Steam #ゲーム'),mkPfct('完全版ランキングがこちら',' #Steam #ゲーム'),mkPfct('🎯 最終決定版！完璧に整理した',' #Steam #ゲーム'),mkPfct('これ以上ない完成度',' #Steam #ゲーム'),mkPfct('🎮 完成！これが俺の最終答え',' #Steam #ゲーム'),mkPfct('完璧に整理した最終ランキング',' #Steam #ゲーム'),mkPfct('🔥 完全版！異論は認める',' #Steam #ゲーム'),mkPfct('最終版。これが俺の答えだ',' #Steam #ゲーム'),mkPfct('🏆 完璧に決まった最終版',' #Steam #ゲーム'),mkPfct('これが完全版のランキングです',' #Steam #ゲーム'),mkPfct('🎯 完成版！迷いなし',' #Steam #ゲーム'),mkPfct('完全版ランキングを公開',' #Steam #ゲーム'),mkPfct('🎮 最終版！完璧な仕上がり',' #Steam #ゲーム'),mkPfct('完璧に整理した！これが答え',' #Steam #ゲーム'),mkPfct('🔥 最終決定！これが俺のランキング',' #Steam #ゲーム'),mkPfct('完成版。変える気はない',' #Steam #ゲーム'),mkPfct('🏆 これが完璧な仕上がり',' #Steam #ゲーム'),mkPfct('最終版ランキングがこちら',' #Steam #ゲーム'),mkPfct('🎯 完全版！これが最終答え',' #Steam #ゲーム'),mkPfct('完璧に整理できた最終版',' #Steam #ゲーム'),mkPfct('🎮 完成版のランキングを公開',' #Steam #ゲーム'),mkPfct('これが俺の完璧なランキング',' #Steam #ゲーム'),mkPfct('🔥 完全版！迷いなし',' #Steam #ゲーム'),mkPfct('最終答え。これが俺の順位',' #Steam #ゲーム'),mkPfct('🏆 完璧に決まった！最終版',' #Steam #ゲーム'),mkPfct('完成版ランキング！異論は認める',' #Steam #ゲーム'),mkPfct('🎯 最終決定版。完璧な仕上がり',' #Steam #ゲーム'),mkPfct('これが完成版の最終ランキング',' #Steam #ゲーム'),mkPfct('完全版！これが俺の答えだ',' #Steam #ゲーム'),mkPfct('🎮 完璧なランキングが完成した',' #Steam #ゲーム'),mkPfct('最終版を公開。変える気はない',' #Steam #ゲーム'),mkPfct('🔥 完成！これが最終決定版',' #Steam #ゲーム'),mkPfct('完璧に整理した！最終ランキング公開',' #Steam #ゲーム'),mkPfct('🏆 これが俺の完全版ランキング',' #Steam #ゲーム'),mkPfct('最終決定。完璧な仕上がりです',' #Steam #ゲーム'),mkPfct('🎯 完成版！これが最終版',' #Steam #ゲーム'),mkPfct('完全版ランキング。迷いなし',' #Steam #ゲーム'),mkPfct('🎮 完璧に整理した最終版',' #Steam #ゲーム'),mkPfct('これが最終決定版のランキングです',' #Steam #ゲーム'),mkPfct('🔥 完成版！完璧な仕上がり',' #Steam #ゲーム'),mkPfct('最終版。これが俺の最終答え',' #Steam #ゲーム'),mkPfct('🏆 完全版完成！これが答えだ',' #Steam #ゲーム')
 ];
 
-var state={games:[],scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],streak:0,lastWinnerId:null};
+var state={games:[],scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],pairHist:{},streak:0,lastWinnerId:null};
 var sortQueue=[],sortIdx=0,sortResults={};
 
 function fetchWishlist(){
@@ -1555,7 +1807,7 @@ function fetchWishlist(){
       localStorage.setItem('swr_steamid',steamId);
       localStorage.setItem('swr_apikey',apiKey);
       initState(games);
-      setTimeout(startBattle,500);
+      setTimeout(beginFlow,500);
     }catch(e){
       setStatus('❌ '+e.message,'red');
       showProgress(false);
@@ -1583,7 +1835,7 @@ function loadDemo(){
   ].map(function(g){g.capsule=IMG_BASE+g.appid+'/header.jpg';return g;});
   initState(demos);
   setStatus(fmt('demoLoaded',{n:demos.length}),'green');
-  setTimeout(startBattle,400);
+  setTimeout(beginFlow,400);
 }
 
 function loadSaved(){
@@ -1596,7 +1848,7 @@ function loadSaved(){
     if(sid)document.getElementById('steam-id').value=sid;
     if(key)document.getElementById('api-key').value=key;
     setStatus(fmt('savedResume',{n:state.games.length,r:state.roundNo}),'green');
-    setTimeout(startBattle,400);
+    setTimeout(resumeFlow,400);
   }catch(e){setStatus(t('savedFail'),'red');}
 }
 
@@ -1609,23 +1861,612 @@ function showProgress(show){document.getElementById('load-progress').classList.t
 function setProgress(pct){document.getElementById('load-progress-fill').style.width=pct+'%';}
 
 function initState(games){
-  state={games:games,scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],streak:0,lastWinnerId:null};
+  state={games:games,scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],pairHist:{},streak:0,lastWinnerId:null};
   games.forEach(function(g){state.scores[g.appid]={wins:0,losses:0,draws:0,points:1500,battles:0,sorted:false};});
   state.queue=buildQueue();
 }
 
+function shuffleArr(arr){
+  var a=arr.slice();
+  for(var i=a.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var tmp=a[i];a[i]=a[j];a[j]=tmp;
+  }
+  return a;
+}
+
+function pairKey(a,b){return a<b?a+'_'+b:b+'_'+a;}
+
+function pairCount(a,b){
+  if(!state.pairHist)state.pairHist={};
+  return state.pairHist[pairKey(a,b)]||0;
+}
+
+function addPair(a,b,d){
+  if(!state.pairHist)state.pairHist={};
+  var k=pairKey(a,b);
+  var v=(state.pairHist[k]||0)+d;
+  if(v<=0)delete state.pairHist[k];else state.pairHist[k]=v;
+}
+
+// 順位順に並べる（同点・近い点数はランダムに入れ替えて、毎回同じ組み合わせになるのを防ぐ）
+function getRankedWithJitter(){
+  var jit={};
+  state.games.forEach(function(g){jit[g.appid]=(Math.random()-.5)*16;});
+  return state.games.slice().sort(function(a,b){
+    return (state.scores[b.appid].points+jit[b.appid])-(state.scores[a.appid].points+jit[a.appid]);
+  });
+}
+
+// 近い順位同士で組む。ただし過去に対戦済みの組み合わせは避ける
+function pairUp(ordered){
+  var n=ordered.length,used={},q=[],i,j;
+  for(i=0;i<n;i++){
+    var a=ordered[i];
+    if(used[a.appid])continue;
+    var best=-1,bestCost=1e9;
+    for(j=i+1;j<n;j++){
+      var b=ordered[j];
+      if(used[b.appid])continue;
+      var rep=pairCount(a.appid,b.appid);
+      if(rep===0){best=j;break;}
+      var cost=rep*1000+(j-i);
+      if(cost<bestCost){bestCost=cost;best=j;}
+    }
+    if(best>=0){
+      used[a.appid]=1;used[ordered[best].appid]=1;
+      q.push([a.appid,ordered[best].appid]);
+    }
+  }
+  // 奇数のとき余る1本は、近い順位の相手と組ませて、ラウンドで必ず1回は出す
+  if(n%2===1){
+    var left=null,li=-1;
+    for(i=0;i<n;i++){if(!used[ordered[i].appid]){left=ordered[i];li=i;break;}}
+    if(left){
+      var bo=-1,bc=1e9;
+      for(j=0;j<n;j++){
+        if(j===li)continue;
+        var c=pairCount(left.appid,ordered[j].appid)*1000+Math.abs(j-li);
+        if(c<bc){bc=c;bo=j;}
+      }
+      if(bo>=0)q.push([left.appid,ordered[bo].appid]);
+    }
+  }
+  return q;
+}
+
 function buildQueue(){
   var ordered;
-  if(state.roundNo===1){ordered=state.games.slice().sort(function(){return Math.random()-.5;});}
-  else{ordered=getRankedGames();}
-  var q=[];
-  for(var i=0;i+1<ordered.length;i+=2)q.push([ordered[i].appid,ordered[i+1].appid]);
+  if(state.roundNo===1){ordered=shuffleArr(state.games);}
+  else{ordered=getRankedWithJitter();}
+  var q=pairUp(ordered);
   if(state.unknownQueue.length>=2){
-    var uq=state.unknownQueue.slice().sort(function(){return Math.random()-.5;});
+    var uq=shuffleArr(state.unknownQueue);
     state.unknownQueue=[];
     for(var j=0;j+1<uq.length;j+=2)q.push([uq[j],uq[j+1]]);
   }
   return q;
+}
+
+// =====================================================
+// 仕分け先行 → 4枚バトル（予選）フロー と 演出(FX)
+// =====================================================
+function gf(key,obj){
+  var s=gt(key);
+  for(var k in obj){ s=s.split('{'+k+'}').join(obj[k]); }
+  return s;
+}
+
+function gameById(id){
+  var g=state.games;
+  for(var i=0;i<g.length;i++){ if(String(g[i].appid)===String(id)) return g[i]; }
+  return null;
+}
+
+// ---------- 演出 ----------
+var fxParticles=[],fxRunning=false,fxComboCount=0,fxComboLast=0,fxComboTimer=null,fxToastTimer=null;
+
+function fxReduced(){
+  try{ return !!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  catch(e){ return false; }
+}
+
+function fxVibrate(ms){
+  try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){}
+}
+
+function fxStart(){
+  if(fxRunning) return;
+  var c=document.getElementById('fx-canvas');
+  if(!c) return;
+  c.width=window.innerWidth; c.height=window.innerHeight;
+  fxRunning=true;
+  requestAnimationFrame(fxLoop);
+}
+
+function fxLoop(){
+  var c=document.getElementById('fx-canvas');
+  var ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  var alive=[];
+  for(var i=0;i<fxParticles.length;i++){
+    var p=fxParticles[i];
+    p.life++; p.vy+=p.g; p.vx*=0.99; p.x+=p.vx; p.y+=p.vy; p.r+=p.vr;
+    if(p.life<p.max&&p.y<c.height+30){
+      ctx.save();
+      ctx.globalAlpha=Math.max(0,1-p.life/p.max);
+      ctx.translate(p.x,p.y); ctx.rotate(p.r);
+      ctx.fillStyle=p.c;
+      ctx.fillRect(-p.s/2,-p.s/3,p.s,p.s*0.6);
+      ctx.restore();
+      alive.push(p);
+    }
+  }
+  fxParticles=alive;
+  if(fxParticles.length){ requestAnimationFrame(fxLoop); }
+  else{ fxRunning=false; ctx.clearRect(0,0,c.width,c.height); }
+}
+
+var FX_COLORS=['#f6c90e','#4c9bdb','#5ba32b','#e8832a','#ff5e5b','#ffffff'];
+
+function fxBurst(x,y,n,power){
+  if(fxReduced()) return;
+  for(var i=0;i<n;i++){
+    var ang=Math.random()*Math.PI*2;
+    var sp=(Math.random()*0.6+0.4)*(power||9);
+    fxParticles.push({x:x,y:y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp-4,g:0.28,
+      s:Math.random()*6+4,c:FX_COLORS[Math.floor(Math.random()*FX_COLORS.length)],
+      r:Math.random()*6.28,vr:(Math.random()-0.5)*0.4,life:0,max:60+Math.random()*40});
+  }
+  fxStart();
+}
+
+function fxBurstEl(el,n,power){
+  if(!el) return;
+  var r=el.getBoundingClientRect();
+  fxBurst(r.left+r.width/2,r.top+r.height/2,n||30,power);
+}
+
+function fxRain(n){
+  if(fxReduced()) return;
+  var w=window.innerWidth;
+  for(var i=0;i<n;i++){
+    fxParticles.push({x:Math.random()*w,y:-10-Math.random()*window.innerHeight*0.4,vx:(Math.random()-0.5)*3,vy:Math.random()*3+2,g:0.08,
+      s:Math.random()*7+4,c:FX_COLORS[Math.floor(Math.random()*FX_COLORS.length)],
+      r:Math.random()*6.28,vr:(Math.random()-0.5)*0.3,life:0,max:140+Math.random()*60});
+  }
+  fxStart();
+}
+
+function fxToast(msg){
+  var el=document.getElementById('fx-toast');
+  if(!el) return;
+  el.textContent=msg;
+  el.className='fx-toast show';
+  if(fxToastTimer) clearTimeout(fxToastTimer);
+  fxToastTimer=setTimeout(function(){ el.className='fx-toast'; },1300);
+}
+
+function fxFlash(el,cls){
+  if(!el) return;
+  el.classList.remove(cls);
+  void el.offsetWidth;
+  el.classList.add(cls);
+}
+
+function fxCombo(){
+  var now=Date.now();
+  if(now-fxComboLast<2500) fxComboCount++; else fxComboCount=1;
+  fxComboLast=now;
+  var el=document.getElementById('combo-pop');
+  if(!el) return;
+  if(fxComboCount>=3){
+    el.textContent=gt('combo')+' ×'+fxComboCount;
+    el.classList.add('show');
+    el.classList.remove('pop');
+    void el.offsetWidth;
+    el.classList.add('pop');
+    if(fxComboCount%10===0){
+      fxBurst(window.innerWidth/2,110,50,10);
+      fxVibrate(30);
+    }
+  }
+  if(fxComboTimer) clearTimeout(fxComboTimer);
+  fxComboTimer=setTimeout(fxComboReset,2500);
+}
+
+function fxComboReset(){
+  fxComboCount=0;
+  if(fxComboTimer){ clearTimeout(fxComboTimer); fxComboTimer=null; }
+  var el=document.getElementById('combo-pop');
+  if(el){ el.classList.remove('show'); el.classList.remove('pop'); }
+}
+
+// ---------- 汎用オーバーレイ ----------
+function showFlowOverlay(title,sub,btns){
+  document.getElementById('flow-title').textContent=title;
+  document.getElementById('flow-sub').textContent=sub;
+  var box=document.getElementById('flow-actions');
+  box.innerHTML='';
+  for(var i=0;i<btns.length;i++){
+    (function(b){
+      var el=document.createElement('button');
+      el.type='button';
+      el.className='btn '+(b.cls||'btn-steam');
+      el.textContent=b.label;
+      el.onclick=b.fn;
+      box.appendChild(el);
+    })(btns[i]);
+  }
+  document.getElementById('flow-overlay').classList.add('show');
+}
+
+function hideFlowOverlay(){
+  document.getElementById('flow-overlay').classList.remove('show');
+}
+
+// ---------- フロー開始・再開 ----------
+function beginFlow(){
+  state.flow={phase:'triage',triageOrder:shuffleArr(state.games).map(function(g){return g.appid;}),
+    triageIdx:0,triageRes:{},triageHist:[],pool:[],quadDone:0,quadQueue:[],quadIdx:0,quadHist:[]};
+  saveState();
+  startTriage();
+}
+
+function resumeFlow(){
+  var f=state.flow;
+  if(!f||f.phase==='duel'){ startBattle(); return; }
+  if(f.phase==='triage'){ startTriage(); return; }
+  startQuadRound();
+}
+
+// ---------- 仕分け（全ゲーム） ----------
+var triageActive=false;
+
+function prepareTriageUI(on){
+  var undo=document.getElementById('sort-undo-btn');
+  var skip=document.getElementById('sort-skip-btn');
+  var cancel=document.getElementById('txt-btn-cancel');
+  if(undo) undo.style.display=on?'':'none';
+  if(skip) skip.style.display=on?'':'none';
+  if(cancel) cancel.style.display=on?'none':'';
+  if(on){
+    document.getElementById('txt-sort-title').textContent=gt('tTitle');
+    document.getElementById('sort-subtitle').textContent=gf('tSub',{n:state.games.length});
+  }else{
+    document.getElementById('txt-sort-title').textContent=t('sortTitle');
+  }
+}
+
+function startTriage(){
+  triageActive=true;
+  var f=state.flow;
+  var q=[];
+  for(var i=0;i<f.triageOrder.length;i++){
+    var g=gameById(f.triageOrder[i]);
+    if(g) q.push(g);
+  }
+  sortQueue=q;
+  sortIdx=Math.min(f.triageIdx||0,q.length);
+  prepareTriageUI(true);
+  showScreen('sort');
+  renderSortCard();
+}
+
+function triageGame(cat){
+  var f=state.flow;
+  var g=sortQueue[sortIdx];
+  if(!g) return;
+  f.triageRes[g.appid]=cat;
+  f.triageHist.push(g.appid);
+  sortIdx++;
+  f.triageIdx=sortIdx;
+  fxCombo();
+  fxVibrate(8);
+  var card=document.querySelector('#screen-sort .sort-card');
+  if(cat==='must'){ fxFlash(card,'flash-gold'); fxBurstEl(card,14,6); }
+  else if(cat==='skip'){ fxFlash(card,'flash-dim'); }
+  else{ fxFlash(card,'flash-soft'); }
+  var total=sortQueue.length;
+  if(total>=10&&sortIdx===Math.floor(total/2)) fxToast(gt('tHalf'));
+  else if(total>=30&&sortIdx===Math.floor(total*0.9)) fxToast(gt('tAlmost'));
+  if(sortIdx%10===0) saveState();
+  renderSortCard();
+}
+
+function triageUndo(){
+  var f=state.flow;
+  if(!triageActive||!f||!f.triageHist.length) return;
+  var id=f.triageHist.pop();
+  delete f.triageRes[id];
+  sortIdx=Math.max(0,sortIdx-1);
+  f.triageIdx=sortIdx;
+  fxComboReset();
+  renderSortCard();
+}
+
+function skipTriage(){
+  triageActive=false;
+  prepareTriageUI(false);
+  state.flow={phase:'duel',skipped:true};
+  saveState();
+  startBattle();
+}
+
+function finishTriage(){
+  triageActive=false;
+  prepareTriageUI(false);
+  var f=state.flow;
+  var pts={must:1800,want:1600,sale:1400,skip:1200};
+  var i,g,c;
+  for(i=0;i<state.games.length;i++){
+    g=state.games[i]; c=f.triageRes[g.appid];
+    if(c&&state.scores[g.appid]){ state.scores[g.appid].points=pts[c]; state.scores[g.appid].sorted=true; }
+  }
+  var pool=[],sale=[],skip=[];
+  for(i=0;i<state.games.length;i++){
+    g=state.games[i]; c=f.triageRes[g.appid];
+    if(c==='must'||c==='want') pool.push(g);
+    else if(c==='sale') sale.push(g);
+    else skip.push(g);
+  }
+  var expanded=false;
+  if(pool.length<12){
+    var more=shuffleArr(sale).concat(shuffleArr(skip));
+    for(i=0;i<more.length&&pool.length<12;i++) pool.push(more[i]);
+    expanded=true;
+  }
+  if(pool.length<4) pool=state.games.slice();
+  f.pool=pool.map(function(x){return x.appid;});
+  f.phase='quad'; f.quadDone=0; f.quadQueue=[]; f.quadIdx=0; f.quadHist=[];
+  state.roundNo=1;
+  saveState();
+  fxRain(110);
+  fxVibrate([20,40,20]);
+  var sub=gf(expanded?'tDoneSubFew':'tDoneSub',{p:f.pool.length});
+  if(state.games.length<4){
+    showFlowOverlay(gt('tDoneTitle'),sub,[{label:gt('oQuadBtnResult'),cls:'btn-gold',fn:function(){hideFlowOverlay();saveAndGoResult();}}]);
+    return;
+  }
+  showFlowOverlay(gt('tDoneTitle'),sub,[{label:gt('tDoneBtn'),cls:'btn-gold',fn:startQuadRound}]);
+}
+
+// ---------- 4枚バトル（予選） ----------
+var quadStep=0,quadBest=null,quadLock=false,quadPrevRank={};
+
+function quadBuildQueue(){
+  var f=state.flow;
+  var pool=[];
+  for(var i=0;i<f.pool.length;i++){ var g=gameById(f.pool[i]); if(g) pool.push(g); }
+  var jit={};
+  pool.forEach(function(g){ jit[g.appid]=(Math.random()-0.5)*120; });
+  var ordered=pool.slice().sort(function(a,b){
+    return (state.scores[b.appid].points+jit[b.appid])-(state.scores[a.appid].points+jit[a.appid]);
+  });
+  var q=[],j;
+  for(j=0;j+3<ordered.length;j+=4){
+    q.push([ordered[j].appid,ordered[j+1].appid,ordered[j+2].appid,ordered[j+3].appid]);
+  }
+  var rem=ordered.length%4;
+  if(rem){
+    var extra=ordered.slice(ordered.length-rem);
+    var others=shuffleArr(ordered.slice(0,ordered.length-rem));
+    var four=extra.concat(others.slice(0,4-rem));
+    q.push(four.map(function(g){return g.appid;}));
+  }
+  return shuffleArr(q);
+}
+
+function startQuadRound(){
+  hideFlowOverlay();
+  var f=state.flow;
+  f.phase='quad';
+  if(!f.quadQueue||!f.quadQueue.length||f.quadIdx>=f.quadQueue.length){
+    f.quadQueue=quadBuildQueue(); f.quadIdx=0; f.quadHist=[];
+  }
+  quadStep=0; quadBest=null; quadLock=false;
+  saveState();
+  showScreen('quad');
+  renderQuad();
+  renderQuadSidebar();
+}
+
+function quadQuadElo(w,l){
+  var ws=state.scores[w],ls=state.scores[l];
+  var e=1/(1+Math.pow(10,(ls.points-ws.points)/400));
+  ws.points+=16*(1-e); ls.points-=16*(1-e);
+}
+
+function applyQuad(best,m1,m2,worst){
+  quadQuadElo(best,m1); quadQuadElo(best,m2); quadQuadElo(best,worst);
+  quadQuadElo(m1,worst); quadQuadElo(m2,worst);
+  var S=state.scores;
+  S[best].wins+=3; S[worst].losses+=3;
+  S[m1].wins+=1; S[m1].losses+=1; S[m2].wins+=1; S[m2].losses+=1;
+  var ids=[best,m1,m2,worst];
+  for(var i=0;i<ids.length;i++) S[ids[i]].battles+=2;
+  state.totalBattles++;
+}
+
+function renderQuad(){
+  var f=state.flow;
+  if(f.quadIdx>=f.quadQueue.length){ quadRoundComplete(); return; }
+  var ids=f.quadQueue[f.quadIdx];
+  quadStep=0; quadBest=null; quadLock=false;
+  var grid=document.getElementById('quad-grid');
+  grid.innerHTML='';
+  for(var i=0;i<ids.length;i++){
+    var g=gameById(ids[i]);
+    if(!g){ f.quadIdx++; renderQuad(); return; }
+    var card=document.createElement('div');
+    card.className='quad-card';
+    card.setAttribute('data-id',g.appid);
+    card.onclick=(function(id){ return function(){ quadPick(id); }; })(g.appid);
+    card.innerHTML='<div class="quad-img"><img src="'+esc(g.capsule)+'" alt="" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'"><div class="quad-fb">'+esc(g.name)+'</div></div>'
+      +'<div class="quad-body"><div class="quad-title">'+esc(g.name)+'</div><div class="quad-meta">'+esc(g.price||'')+'</div>'
+      +'<a class="card-store-link" href="https://store.steampowered.com/app/'+esc(g.appid)+'/" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+esc(t('storeLink'))+'</a></div>'
+      +'<div class="quad-tag"></div>';
+    grid.appendChild(card);
+  }
+  var banner=document.getElementById('quad-banner');
+  banner.className='quad-banner';
+  banner.textContent=gt('qStep1');
+  updateQuadProgress();
+}
+
+function updateQuadProgress(){
+  var f=state.flow;
+  var total=f.quadQueue.length,done=f.quadIdx;
+  document.getElementById('q-badge').textContent=gf('qBadge',{r:f.quadDone+1});
+  document.getElementById('q-progress-label').textContent=done+' / '+total;
+  document.getElementById('q-progress-fill').style.width=(total?Math.round(done/total*100):0)+'%';
+  document.getElementById('quad-info').textContent=gf('qInfo',{p:f.pool.length,c:state.totalBattles});
+  var r=Math.max(1,f.quadDone+1);
+  var aText=r<=1?t('accuracyLow'):r<=2?t('accuracyMid'):r<=3?t('accuracyHigh'):t('accuracyPerfect');
+  document.getElementById('q-accuracy').textContent=t('accuracy')+aText;
+}
+
+function quadCards(){ return document.querySelectorAll('#quad-grid .quad-card'); }
+
+function quadPick(id){
+  if(quadLock) return;
+  var f=state.flow;
+  var ids=f.quadQueue[f.quadIdx];
+  if(!ids) return;
+  var cards=quadCards(),i;
+  if(quadStep===0){
+    quadBest=id; quadStep=1;
+    for(i=0;i<cards.length;i++){
+      if(cards[i].getAttribute('data-id')===String(id)){
+        cards[i].classList.add('is-best');
+        var tag=cards[i].querySelector('.quad-tag'); if(tag) tag.textContent='👑';
+        fxBurstEl(cards[i],22,7);
+      }
+    }
+    fxVibrate(10);
+    var banner=document.getElementById('quad-banner');
+    banner.className='quad-banner worst';
+    banner.textContent=gt('qStep2');
+    return;
+  }
+  if(String(id)===String(quadBest)) return;
+  quadLock=true;
+  var mids=[];
+  for(i=0;i<ids.length;i++){
+    if(String(ids[i])!==String(quadBest)&&String(ids[i])!==String(id)) mids.push(ids[i]);
+  }
+  var snap={};
+  for(i=0;i<ids.length;i++){
+    var sc=state.scores[ids[i]];
+    snap[ids[i]]={points:sc.points,wins:sc.wins,losses:sc.losses,battles:sc.battles};
+  }
+  f.quadHist.push({idx:f.quadIdx,snap:snap});
+  applyQuad(quadBest,mids[0],mids[1],id);
+  for(i=0;i<cards.length;i++){
+    var cid=cards[i].getAttribute('data-id');
+    if(cid===String(id)){
+      cards[i].classList.add('is-worst');
+      var t2=cards[i].querySelector('.quad-tag'); if(t2) t2.textContent='💤';
+    }else if(cid!==String(quadBest)){
+      cards[i].classList.add('is-mid');
+    }
+  }
+  fxCombo();
+  fxVibrate(12);
+  f.quadIdx++;
+  saveState();
+  renderQuadSidebar();
+  setTimeout(function(){ renderQuad(); },420);
+}
+
+function quadUndo(){
+  var f=state.flow;
+  if(!f||f.phase!=='quad'||quadLock) return;
+  if(quadStep===1){
+    quadStep=0; quadBest=null;
+    var cards=quadCards();
+    for(var i=0;i<cards.length;i++){
+      cards[i].classList.remove('is-best');
+      var tg=cards[i].querySelector('.quad-tag'); if(tg) tg.textContent='';
+    }
+    var banner=document.getElementById('quad-banner');
+    banner.className='quad-banner';
+    banner.textContent=gt('qStep1');
+    return;
+  }
+  if(!f.quadHist.length) return;
+  var last=f.quadHist.pop();
+  for(var id in last.snap){
+    var s=state.scores[id];
+    s.points=last.snap[id].points; s.wins=last.snap[id].wins;
+    s.losses=last.snap[id].losses; s.battles=last.snap[id].battles;
+  }
+  if(!last.skipped) state.totalBattles=Math.max(0,state.totalBattles-1);
+  f.quadIdx=last.idx;
+  fxComboReset();
+  saveState();
+  renderQuad();
+  renderQuadSidebar();
+}
+
+function quadUnknown(){
+  if(quadLock) return;
+  var f=state.flow;
+  if(!f||f.quadIdx>=f.quadQueue.length) return;
+  f.quadHist.push({idx:f.quadIdx,snap:{},skipped:true});
+  f.quadIdx++;
+  fxComboReset();
+  saveState();
+  renderQuad();
+}
+
+function quadRoundComplete(){
+  var f=state.flow;
+  f.quadDone++;
+  state.roundNo=Math.max(1,f.quadDone);
+  f.quadQueue=[]; f.quadIdx=0; f.quadHist=[];
+  saveState();
+  fxRain(130);
+  fxVibrate([20,40,20]);
+  showFlowOverlay(gf('oQuadTitle',{r:f.quadDone}),gt('oQuadSub'),[
+    {label:gt('oQuadBtnMore'),cls:'btn-steam',fn:startQuadRound},
+    {label:gt('oQuadBtnResult'),cls:'btn-gold',fn:function(){hideFlowOverlay();saveAndGoResult();}},
+    {label:gt('oQuadBtnDuel'),cls:'btn-dark',fn:switchToDuel}
+  ]);
+}
+
+function switchToDuel(){
+  hideFlowOverlay();
+  state.flow.phase='duel';
+  state.roundNo=Math.max(1,state.flow.quadDone)+1;
+  state.queue=buildQueue(); state.queueIdx=0;
+  state.history=[]; state.streak=0; state.lastWinnerId=null;
+  startBattle();
+}
+
+function renderQuadSidebar(){
+  var f=state.flow;
+  if(!f||!f.pool) return;
+  var pool=[];
+  for(var i=0;i<f.pool.length;i++){ var g=gameById(f.pool[i]); if(g) pool.push(g); }
+  pool.sort(function(a,b){ return state.scores[b.appid].points-state.scores[a.appid].points; });
+  var top=pool.slice(0,30),html='',newRank={};
+  for(var r=0;r<top.length;r++){
+    var gg=top[r],id=gg.appid;
+    newRank[id]=r+1;
+    var prev=quadPrevRank[id];
+    var cls='rank-item',delta='';
+    if(prev&&prev!==r+1){
+      if(prev>r+1){ cls+=' up'; delta='<span class="rank-delta up">▲'+(prev-(r+1))+'</span>'; }
+      else{ cls+=' down'; delta='<span class="rank-delta down">▼'+((r+1)-prev)+'</span>'; }
+    }
+    var top3=r<3?' top3':'';
+    html+='<div class="'+cls+'"><span class="rank-no'+top3+'">'+(r+1)+'</span>'
+      +'<img class="rank-thumb" src="'+esc(gg.capsule)+'" alt="" onerror="this.style.opacity=0.2">'
+      +'<span class="rank-name">'+esc(gg.name)+'</span>'+delta+'</div>';
+  }
+  quadPrevRank=newRank;
+  document.getElementById('quad-sidebar').innerHTML=html;
 }
 
 function getRankedGames(){
@@ -1710,6 +2551,7 @@ function choose(idx){
   var lId=idx===0?ids[1]:ids[0];
   var wCard=document.getElementById(idx===0?'card-left':'card-right');
   state.history.push({type:'win',wId:wId,lId:lId,wPoints:state.scores[wId].points,lPoints:state.scores[lId].points,wWins:state.scores[wId].wins,lLosses:state.scores[lId].losses,wBattles:state.scores[wId].battles,lBattles:state.scores[lId].battles,queueIdx:state.queueIdx,streak:state.streak});
+  addPair(wId,lId,1);
   state.streak=(state.lastWinnerId===wId)?state.streak+1:1;
   state.lastWinnerId=wId;
   wCard.classList.add('winner');
@@ -1722,6 +2564,7 @@ function chooseBoth(){
   var ids=state.queue[state.queueIdx];
   var idA=ids[0],idB=ids[1];
   state.history.push({type:'both',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
+  addPair(idA,idB,1);
   state.scores[idA].points+=16;state.scores[idA].battles++;
   state.scores[idB].points+=16;state.scores[idB].battles++;
   state.streak=0;state.lastWinnerId=null;
@@ -1733,6 +2576,7 @@ function chooseNeither(){
   var ids=state.queue[state.queueIdx];
   var idA=ids[0],idB=ids[1];
   state.history.push({type:'neither',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
+  addPair(idA,idB,1);
   state.scores[idA].points-=16;state.scores[idA].battles++;
   state.scores[idB].points-=16;state.scores[idB].battles++;
   state.streak=0;state.lastWinnerId=null;
@@ -1743,6 +2587,7 @@ function chooseNeither(){
 function undoLast(){
   if(!state.history.length||state.queueIdx===0)return;
   var last=state.history.pop();
+  addPair(last.wId,last.lId,-1);
   var ws=state.scores[last.wId],ls=state.scores[last.lId];
   ws.points=last.wPoints;ls.points=last.lPoints;
   ws.battles=last.wBattles;ls.battles=last.lBattles;
@@ -1777,7 +2622,9 @@ function renderSidebar(){
 }
 
 function saveAndGoResult(){
-  hideRoundComplete();saveState();showScreen('result');
+  hideRoundComplete();hideFlowOverlay();saveState();showScreen('result');
+  var sb=document.getElementById('txt-btn-sort');
+  if(sb)sb.style.display=(state.flow&&!state.flow.skipped)?'none':'';
   var ranked=getRankedGames();
   document.getElementById('result-title').textContent=fmt('resultTitle',{r:state.roundNo});
   document.getElementById('result-subtitle').textContent=fmt('resultSub',{b:state.totalBattles,a:accuracyLabel(),n:state.games.length});
@@ -1825,13 +2672,22 @@ function getConf(sc){
 
 function startNextRound(){
   hideRoundComplete();
+  if(state.flow&&state.flow.phase==='quad'){startQuadRound();return;}
+  if(state.flow&&state.flow.phase==='triage'){startTriage();return;}
   state.roundNo++;state.queue=buildQueue();state.queueIdx=0;
   state.history=[];state.streak=0;state.lastWinnerId=null;
   startBattle();
 }
-function backToBattle(){hideRoundComplete();showScreen('battle');renderPair();renderSidebar();}
+function backToBattle(){
+  hideRoundComplete();
+  if(state.flow&&state.flow.phase==='quad'){startQuadRound();return;}
+  if(state.flow&&state.flow.phase==='triage'){startTriage();return;}
+  showScreen('battle');renderPair();renderSidebar();
+}
 
 function startSort(){
+  if(triageActive){triageActive=false;prepareTriageUI(false);}
+  else{prepareTriageUI(false);}
   var low=state.games.filter(function(g){return state.scores[g.appid].battles<3&&!state.scores[g.appid].sorted;});
   if(!low.length){alert(t('sortNone'));return;}
   sortQueue=low.sort(function(){return Math.random()-.5;});sortIdx=0;sortResults={};
@@ -1840,18 +2696,20 @@ function startSort(){
 }
 
 function renderSortCard(){
-  if(sortIdx>=sortQueue.length){applySortResults();return;}
+  if(sortIdx>=sortQueue.length){if(triageActive){finishTriage();}else{applySortResults();}return;}
   var g=sortQueue[sortIdx];
   var img=document.getElementById('sort-img');
   img.src=g.capsule;img.alt=g.name;img.style.opacity='1';
   document.getElementById('sort-title').textContent=g.name;
   var meta=[];if(g.price)meta.push(g.price);if(g.release)meta.push('📅 '+g.release);
   document.getElementById('sort-meta').textContent=meta.join('　');
+  document.getElementById('sort-link').href='https://store.steampowered.com/app/'+g.appid+'/';
   document.getElementById('sort-progress').textContent=(sortIdx+1)+' / '+sortQueue.length;
 }
 
 function sortGame(cat){
   if(sortIdx>=sortQueue.length)return;
+  if(triageActive){triageGame(cat);return;}
   sortResults[sortQueue[sortIdx].appid]=cat;
   sortIdx++;renderSortCard();
 }
@@ -1869,6 +2727,7 @@ function applySortResults(){
 }
 
 function saveAndContinueLater(){
+  if(triageActive){saveState();showScreen('start');return;}
   var pts={must:1800,want:1600,sale:1400,skip:1200};
   var keys=Object.keys(sortResults);
   for(var i=0;i<keys.length;i++){
@@ -1932,6 +2791,7 @@ function openKofi(){window.open(KOFI_URL,'_blank');}
 function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
 
 function showScreen(name){
+  fxComboReset();
   var screens=document.querySelectorAll('.screen');
   for(var i=0;i<screens.length;i++)screens[i].classList.remove('active');
   document.getElementById('screen-'+name).classList.add('active');
