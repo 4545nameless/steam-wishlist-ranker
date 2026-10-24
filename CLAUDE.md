@@ -57,10 +57,13 @@ Steam のウィッシュリストを、ゲーム感覚の選択で「次に買�
 - ユーザーの希望: ブックマークを押したら即反映。2回目以降は作り直しでよい。
 
 ## テストのやり方
-- コンテナでは Playwright（Chromium）で `file://` から index.html を開き、外部通信は route で abort。Steam は `store.steampowered.com` を route で偽ページに置き換え、`/wishlist/action/` の POST 内容を確認する。
-- ダミーゲームを `initState(games)` → `beginFlow()` などで作り、`quadPick` / `choose` / `elimPick` を直接呼んで通しプレイ。`choose` は 380ms 後に描画するので待つ。
-- 構文: script 部分を抜き出して `node --check`、`=>` やバッククォートが 0 件かも確認。
-- スマホ幅（390px）で横スクロールが出ないこと。
+- 環境: Windows のローカルフォルダで Claude Code（デスクトップアプリ）から作業。Node.js / Python は未インストール。
+- 動作確認は Claude Code のブラウザペインで index.html を開いて行う。
+  - ダミーゲームを JS 実行で `initState(games)` → `beginFlow()` などで作り、`quadPick` / `choose` / `elimPick` を直接呼んで通しプレイ。`choose` は 380ms 後に描画するので待つ。
+  - Worker の CORS は本番ドメインと localhost のみなので、`file://` で開くと実データは取れない。実データの確認は本番 URL か localhost で。
+- 構文: ブラウザペインで読み込んでコンソールにエラーが出ないこと。script 内に `=>`・バッククォート・`let`/`const` が 0 件かを検索で確認。
+- スマホ幅（390px）で横スクロールが出ないこと（ブラウザペインの mobile 表示）。
+- 本物の Steam への反映（ブックマークレット）はこちらでは試せないので、ユーザーに確認してもらう。
 
 ## 未確認・今後の候補
 - 本物の Steam でランキング入りブックマークの反映（偽ページでは確認済み）。
