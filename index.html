@@ -314,7 +314,8 @@ details.bm-card .bm-once+*{}
 .combo-pop.show{opacity:1;transform:translateX(-50%) scale(1)}
 .combo-pop.pop{animation:comboPop .25s ease}
 @keyframes comboPop{0%{transform:translateX(-50%) scale(.7)}60%{transform:translateX(-50%) scale(1.3)}100%{transform:translateX(-50%) scale(1)}}
-.fx-toast{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%) scale(.8);font-size:1.7rem;font-weight:900;color:#fff;background:rgba(0,0,0,.65);padding:14px 28px;border-radius:12px;border:2px solid var(--gold);opacity:0;pointer-events:none;z-index:950;transition:opacity .25s,transform .25s;text-align:center;max-width:90vw}
+.fx-toast{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%) scale(.8);font-size:1.7rem;font-weight:900;color:#fff;background:rgba(0,0,0,.65);padding:14px 28px;border-radius:12px;border:2px solid var(--gold);opacity:0;pointer-events:none;z-index:950;transition:opacity .25s,transform .25s;text-align:center;width:max-content;max-width:90vw;box-sizing:border-box}
+@media(max-width:700px){.fx-toast{font-size:1.15rem;padding:12px 18px}}
 .fx-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
 .flash-gold{animation:flashGold .45s ease}
 @keyframes flashGold{0%{box-shadow:0 0 0 rgba(246,201,14,0);transform:scale(1)}35%{box-shadow:0 0 40px rgba(246,201,14,.95);transform:scale(1.03)}100%{box-shadow:0 4px 16px rgba(0,0,0,.4);transform:scale(1)}}
@@ -387,6 +388,24 @@ details.bm-card .bm-once+*{}
 .grid-sale{position:absolute;top:6px;left:6px;background:#4c6b22;color:#beee11;font-weight:800;font-size:.72rem;padding:1px 6px;border-radius:3px;z-index:2}
 .quad-num{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:1px solid var(--border2);z-index:2}
 .raid-tag{position:absolute;top:8px;left:8px;background:var(--orange);color:#fff;font-weight:800;font-size:.85rem;padding:3px 10px;border-radius:12px;z-index:3;box-shadow:0 0 14px rgba(232,131,42,.7)}
+.raid-tag.throne{background:var(--gold);color:#1b2838;box-shadow:0 0 18px rgba(246,201,14,.8)}
+.next-raid{color:var(--orange);font-weight:800}
+#screen-elim.low .quad-banner{background:rgba(201,64,64,.15);border-color:var(--red)}
+#screen-elim.final .quad-banner{background:rgba(246,201,14,.15);border-color:var(--gold);font-size:1.2rem}
+#screen-elim.low.final .quad-banner{background:rgba(201,64,64,.25);border-color:var(--red)}
+.quad-card.is-doom{border-color:var(--red);box-shadow:0 0 28px rgba(201,64,64,.6);transform:scale(1.03);cursor:default}
+.quad-card.is-doom .quad-tag{display:block;background:var(--red)}
+.quad-card.is-out{opacity:.45;filter:grayscale(.6)}
+.tier-lab{display:inline-block;font-size:.66rem;font-weight:800;border-radius:9px;padding:1px 8px;margin-right:6px;vertical-align:middle;color:#1b2838}
+.tier-lab.tier-top{background:var(--gold)}
+.tier-lab.tier-mid{background:var(--accent2)}
+.tier-lab.tier-low{background:#8ba2b5}
+.tier-lab.tier-bottom{background:var(--red);color:#fff}
+tr.tr-tier-top td:first-child{box-shadow:inset 3px 0 0 var(--gold)}
+tr.tr-tier-mid td:first-child{box-shadow:inset 3px 0 0 var(--accent2)}
+tr.tr-tier-low td:first-child{box-shadow:inset 3px 0 0 #55606d}
+tr.tr-tier-bottom td:first-child{box-shadow:inset 3px 0 0 var(--red)}
+tr.tier-first td{border-top:2px solid var(--border2)}
 .raid-in{animation:raidIn .5s ease}
 @keyframes raidIn{0%{transform:translateX(60px) scale(.9);opacity:.2}100%{transform:none;opacity:1}}
 tr.sale td.rt-title{border-left:3px solid #7bb51d}
@@ -616,6 +635,35 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
     <div class="ranking-sidebar">
       <div class="sidebar-header" data-l="sidebarHeader">現在のランキング</div>
       <div class="ranking-list" id="quad-sidebar"></div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-elim" class="screen">
+  <nav class="navbar">
+    <div class="navbar-brand"><div class="si">S</div><span>Wishlist Ranker</span></div>
+    <div class="navbar-info" id="elim-info"></div>
+    <div class="navbar-actions">
+      <button class="btn btn-dark btn-sm" onclick="saveAndGoResult()" data-l="btnResult">📊 結果を見る</button>
+      <button class="btn btn-dark btn-sm" onclick="backToStart()" data-l="btnBack">⬅ 戻る</button>
+    </div>
+  </nav>
+  <div class="progress-bar-wrap">
+    <span class="round-badge" id="e-badge"></span>
+    <span class="progress-label" id="e-progress-label">0 / 0</span>
+    <div class="progress-track"><div class="progress-fill" id="e-progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="battle-main">
+    <div class="battle-center">
+      <div class="quad-banner" id="elim-banner"></div>
+      <div class="quad-grid" id="elim-grid"></div>
+      <div class="battle-sub-actions">
+        <button class="btn btn-dark btn-sm" onclick="elimUndo()" data-g="tUndo">↩ 一つ戻る</button>
+        <button class="btn btn-dark btn-sm" onclick="elimQuit()" data-g="eQuit">⏹ ここまでで反映</button>
+      </div>
+      <div class="quad-help" id="elim-help"></div>
+      <div class="key-hint" data-g="kHintElim"></div>
+      <div class="ad-battle-bottom"><!-- AdSense --></div>
     </div>
   </div>
 </div>
@@ -2295,6 +2343,321 @@ var FLOW6_ADD = {
   }
 })();
 
+var FLOW7_ADD = {
+  ja: {
+    raidAppear: '⚡ 乱入者が現れた！ 右が挑戦者',
+    raidAgain: '🔥 勝ち上がった乱入者が、さらに上へ挑戦！',
+    raidThroneAsk: '👑 王座戦！ 乱入者が1位に挑む！',
+    raidIn: '⚡ 乱入！',
+    raidIn2: '🔥 連戦！',
+    raidThroneTag: '👑 王座戦',
+    raidThrone: '👑 王座奪取！「{name}」が1位に！',
+    raidJoin: '🎉「{name}」が上位入り！',
+    raidWin2: '🔥「{name}」がさらに勝ち上がった！',
+    raidLose: '「{name}」の乱入は失敗…',
+    raidStop: '「{name}」の快進撃はここまで。上位入りはキープ！',
+    raidRoundSum: '⚡ 乱入 {n}本中 {j}本が上位入り。',
+    raidNext: '⚡ 乱入者？',
+    tourBtnFinish: '🧹 仕上げへ',
+    finTitle: '🧹 仕上げメニュー',
+    finSub: '上位は決まりました！残りも整えると、Steamのリストがもっと見やすくなります。どれからでもOK。途中でやめても、そこまでの結果が反映されます。',
+    finSubDone: '仕上げは全部終わりました！結果を見て、気になるところはドラッグで微調整できます。',
+    finMid: '📊 中位を整える（約{s}画面）',
+    finLow: '💀 最弱決定戦（約{s}画面）',
+    finMore: '⚔ 上位をもう1ラウンド',
+    finDoneSfx: ' ✓済',
+    eMidTitle: '📊 中位整理',
+    eLowTitle: '💀 最弱決定戦',
+    eMidIntro: '上位に入らなかった{n}本を、4本ずつ比べて並べます。一番欲しいものをタップ。勝ち残るほど上に来ます。（約{s}画面）',
+    eLowIntro: '最初に選ばなかった{n}本から「最弱」を決めます。一番いらないものをタップ。勝ち残る（＝いらない）ほど下に行きます。（約{s}画面）',
+    eBack: '⬅ メニューに戻る',
+    eLevel: '{l}回戦',
+    eFinal: '決勝',
+    eMidFinal: '👑 決勝！',
+    eLowFinal: '💀 最弱決定戦 決勝！',
+    eMidAsk: 'この中で一番欲しいのは？',
+    eLowAsk: 'この中で一番いらないのは？',
+    eMidHelp: '迷ったら直感でOK。選んだものが次の回戦に進みます。',
+    eLowHelp: '選んだものが「最弱候補」として次の回戦に進みます。迷ったら直感でOK。',
+    eProg: '{d} / {t} 画面',
+    eInfo: '{n}本',
+    eLevelUp: '🔥 {l}へ！ 残り{n}本',
+    eMidChamp: '👑 中位の王者！',
+    eMidChampSub: '「{name}」が中位のトップに！ 中位の順位を反映しました。',
+    eLowChamp: '💀 最弱決定！',
+    eLowChampSub: '「{name}」が最弱に決まりました… 下位の順位を反映しました。',
+    eToMenu: '🧹 仕上げメニューへ',
+    eQuit: '⏹ ここまでで反映',
+    eQuitDone: '✅ ここまでの結果を反映しました',
+    kHintElim: '⌨ 1〜4（テンキー可）: カードを選ぶ　Backspace: 戻る',
+    tier_top: '上位',
+    tier_mid: '中位',
+    tier_low: '下位',
+    tier_bottom: '最下位'
+  },
+  en: {
+    raidAppear: '⚡ A raider appears! The challenger is on the right',
+    raidAgain: '🔥 The raider won and climbs higher!',
+    raidThroneAsk: '👑 Throne match! The raider challenges #1!',
+    raidIn: '⚡ Raid!',
+    raidIn2: '🔥 Next fight!',
+    raidThroneTag: '👑 Throne match',
+    raidThrone: '👑 Throne taken! "{name}" is now #1!',
+    raidJoin: '🎉 "{name}" broke into the top!',
+    raidWin2: '🔥 "{name}" keeps climbing!',
+    raidLose: '"{name}" failed to break in...',
+    raidStop: '"{name}" stops here, but keeps its top spot!',
+    raidRoundSum: '⚡ {j} of {n} raiders broke into the top.',
+    raidNext: '⚡ Raider?',
+    tourBtnFinish: '🧹 Finishing touches',
+    finTitle: '🧹 Finishing menu',
+    finSub: 'Your top games are set! Tidying up the rest makes your Steam list easier to read. Do them in any order. If you stop midway, what you did so far still counts.',
+    finSubDone: 'All finishing steps are done! Check the results and drag to fine-tune anything you like.',
+    finMid: '📊 Sort the middle (~{s} screens)',
+    finLow: '💀 Find the weakest (~{s} screens)',
+    finMore: '⚔ One more top round',
+    finDoneSfx: ' ✓ done',
+    eMidTitle: '📊 Middle sort',
+    eLowTitle: '💀 Weakest showdown',
+    eMidIntro: 'The {n} games that missed the top are compared 4 at a time. Tap the one you want most. The further a game advances, the higher it ranks. (~{s} screens)',
+    eLowIntro: 'Find the "weakest" among the {n} games you did not pick at the start. Tap the one you want least. The further it advances, the lower it ranks. (~{s} screens)',
+    eBack: '⬅ Back to menu',
+    eLevel: 'Round {l}',
+    eFinal: 'Final',
+    eMidFinal: '👑 Final!',
+    eLowFinal: '💀 Weakest final!',
+    eMidAsk: 'Which one do you want most?',
+    eLowAsk: 'Which one do you want least?',
+    eMidHelp: 'Go with your gut. The one you pick moves on to the next round.',
+    eLowHelp: 'The one you pick moves on as a "weakest" candidate. Go with your gut.',
+    eProg: '{d} / {t} screens',
+    eInfo: '{n} games',
+    eLevelUp: '🔥 On to {l}! {n} left',
+    eMidChamp: '👑 Middle champion!',
+    eMidChampSub: '"{name}" tops the middle group! The middle ranking has been updated.',
+    eLowChamp: '💀 Weakest found!',
+    eLowChampSub: '"{name}" is the weakest... The lower ranking has been updated.',
+    eToMenu: '🧹 Back to finishing menu',
+    eQuit: '⏹ Apply up to here',
+    eQuitDone: '✅ Applied the results so far',
+    kHintElim: '⌨ 1-4 (numpad OK): pick a card   Backspace: undo',
+    tier_top: 'Top',
+    tier_mid: 'Middle',
+    tier_low: 'Lower',
+    tier_bottom: 'Bottom'
+  },
+  zh: {
+    raidAppear: '⚡ 乱入者出现！右边是挑战者',
+    raidAgain: '🔥 获胜的乱入者继续向上挑战！',
+    raidThroneAsk: '👑 王座战！乱入者挑战第1名！',
+    raidIn: '⚡ 乱入！',
+    raidIn2: '🔥 连战！',
+    raidThroneTag: '👑 王座战',
+    raidThrone: '👑 夺取王座！「{name}」成为第1名！',
+    raidJoin: '🎉「{name}」挤进了上位！',
+    raidWin2: '🔥「{name}」继续晋级！',
+    raidLose: '「{name}」乱入失败…',
+    raidStop: '「{name}」的连胜到此为止，但保住了上位！',
+    raidRoundSum: '⚡ {n} 个乱入者中有 {j} 个进入上位。',
+    raidNext: '⚡ 乱入者？',
+    tourBtnFinish: '🧹 进入收尾',
+    finTitle: '🧹 收尾菜单',
+    finSub: '上位已经确定！把剩下的也整理好，Steam 列表会更清晰。顺序随意，中途停止也会应用已完成的结果。',
+    finSubDone: '收尾全部完成！查看结果，可以拖动进行微调。',
+    finMid: '📊 整理中位（约{s}个画面）',
+    finLow: '💀 最弱决定战（约{s}个画面）',
+    finMore: '⚔ 上位再来一轮',
+    finDoneSfx: ' ✓已完成',
+    eMidTitle: '📊 中位整理',
+    eLowTitle: '💀 最弱决定战',
+    eMidIntro: '把没进入上位的 {n} 款游戏每 4 款比较一次。点击最想要的，晋级越远排名越高。（约{s}个画面）',
+    eLowIntro: '从一开始没选的 {n} 款游戏中决出「最弱」。点击最不想要的，晋级越远排名越低。（约{s}个画面）',
+    eBack: '⬅ 返回菜单',
+    eLevel: '第{l}轮',
+    eFinal: '决赛',
+    eMidFinal: '👑 决赛！',
+    eLowFinal: '💀 最弱决赛！',
+    eMidAsk: '这里面最想要哪个？',
+    eLowAsk: '这里面最不想要哪个？',
+    eMidHelp: '凭直觉就好。选中的会进入下一轮。',
+    eLowHelp: '选中的会作为「最弱候补」进入下一轮。凭直觉就好。',
+    eProg: '{d} / {t} 个画面',
+    eInfo: '{n} 款',
+    eLevelUp: '🔥 进入{l}！剩余 {n} 款',
+    eMidChamp: '👑 中位之王！',
+    eMidChampSub: '「{name}」成为中位第一！已应用中位排名。',
+    eLowChamp: '💀 最弱决定！',
+    eLowChampSub: '「{name}」被认定为最弱… 已应用下位排名。',
+    eToMenu: '🧹 返回收尾菜单',
+    eQuit: '⏹ 应用到这里',
+    eQuitDone: '✅ 已应用目前的结果',
+    kHintElim: '⌨ 1-4（可用小键盘）：选择卡片　Backspace：撤销',
+    tier_top: '上位',
+    tier_mid: '中位',
+    tier_low: '下位',
+    tier_bottom: '最下位'
+  },
+  ru: {
+    raidAppear: '⚡ Появился претендент! Он справа',
+    raidAgain: '🔥 Претендент победил и идёт выше!',
+    raidThroneAsk: '👑 Бой за трон! Претендент бросает вызов №1!',
+    raidIn: '⚡ Вторжение!',
+    raidIn2: '🔥 Следующий бой!',
+    raidThroneTag: '👑 Бой за трон',
+    raidThrone: '👑 Трон захвачен! «{name}» теперь №1!',
+    raidJoin: '🎉 «{name}» ворвалась в топ!',
+    raidWin2: '🔥 «{name}» поднимается дальше!',
+    raidLose: '«{name}» не смогла ворваться…',
+    raidStop: '«{name}» останавливается, но остаётся в топе!',
+    raidRoundSum: '⚡ {j} из {n} претендентов попали в топ.',
+    raidNext: '⚡ Претендент?',
+    tourBtnFinish: '🧹 К доводке',
+    finTitle: '🧹 Меню доводки',
+    finSub: 'Топ определён! Если упорядочить остальное, список в Steam станет нагляднее. Порядок любой. Если остановиться на полпути, сделанное всё равно сохранится.',
+    finSubDone: 'Доводка завершена! Посмотрите результат и при желании подправьте его перетаскиванием.',
+    finMid: '📊 Упорядочить середину (~{s} экранов)',
+    finLow: '💀 Найти самую слабую (~{s} экранов)',
+    finMore: '⚔ Ещё раунд для топа',
+    finDoneSfx: ' ✓ готово',
+    eMidTitle: '📊 Середина',
+    eLowTitle: '💀 Битва слабейших',
+    eMidIntro: '{n} игр, не попавших в топ, сравниваются по 4. Выберите самую желанную. Чем дальше игра проходит, тем выше она в рейтинге. (~{s} экранов)',
+    eLowIntro: 'Ищем «самую слабую» среди {n} игр, которые вы не выбрали в начале. Выберите наименее желанную. Чем дальше она проходит, тем ниже в рейтинге. (~{s} экранов)',
+    eBack: '⬅ В меню',
+    eLevel: 'Раунд {l}',
+    eFinal: 'Финал',
+    eMidFinal: '👑 Финал!',
+    eLowFinal: '💀 Финал слабейших!',
+    eMidAsk: 'Какую из них вы хотите больше всего?',
+    eLowAsk: 'Какую из них вы хотите меньше всего?',
+    eMidHelp: 'Доверьтесь интуиции. Выбранная игра проходит в следующий раунд.',
+    eLowHelp: 'Выбранная игра проходит дальше как кандидат в «слабейшие». Доверьтесь интуиции.',
+    eProg: '{d} / {t} экранов',
+    eInfo: '{n} игр',
+    eLevelUp: '🔥 Дальше: {l}! Осталось {n}',
+    eMidChamp: '👑 Лучшая в середине!',
+    eMidChampSub: '«{name}» — лучшая в середине! Порядок середины обновлён.',
+    eLowChamp: '💀 Слабейшая найдена!',
+    eLowChampSub: '«{name}» оказалась самой слабой… Порядок нижней части обновлён.',
+    eToMenu: '🧹 В меню доводки',
+    eQuit: '⏹ Применить на этом',
+    eQuitDone: '✅ Текущие результаты применены',
+    kHintElim: '⌨ 1-4 (можно цифровой блок): выбрать карточку   Backspace: назад',
+    tier_top: 'Топ',
+    tier_mid: 'Середина',
+    tier_low: 'Ниже',
+    tier_bottom: 'Дно'
+  },
+  pt: {
+    raidAppear: '⚡ Um invasor apareceu! O desafiante está à direita',
+    raidAgain: '🔥 O invasor venceu e sobe mais!',
+    raidThroneAsk: '👑 Luta pelo trono! O invasor desafia o nº 1!',
+    raidIn: '⚡ Invasão!',
+    raidIn2: '🔥 Próxima luta!',
+    raidThroneTag: '👑 Luta pelo trono',
+    raidThrone: '👑 Trono conquistado! "{name}" agora é o nº 1!',
+    raidJoin: '🎉 "{name}" entrou no topo!',
+    raidWin2: '🔥 "{name}" continua subindo!',
+    raidLose: '"{name}" não conseguiu entrar...',
+    raidStop: '"{name}" para aqui, mas segue no topo!',
+    raidRoundSum: '⚡ {j} de {n} invasores entraram no topo.',
+    raidNext: '⚡ Invasor?',
+    tourBtnFinish: '🧹 Acabamento',
+    finTitle: '🧹 Menu de acabamento',
+    finSub: 'O topo está definido! Organizar o resto deixa sua lista da Steam mais clara. Faça na ordem que quiser. Se parar no meio, o que já fez continua valendo.',
+    finSubDone: 'Todo o acabamento está pronto! Veja o resultado e ajuste o que quiser arrastando.',
+    finMid: '📊 Organizar o meio (~{s} telas)',
+    finLow: '💀 Achar o mais fraco (~{s} telas)',
+    finMore: '⚔ Mais uma rodada do topo',
+    finDoneSfx: ' ✓ feito',
+    eMidTitle: '📊 Organizar o meio',
+    eLowTitle: '💀 Duelo dos mais fracos',
+    eMidIntro: 'Os {n} jogos que ficaram fora do topo são comparados de 4 em 4. Toque no que você mais quer. Quanto mais longe ele chega, mais alto fica. (~{s} telas)',
+    eLowIntro: 'Vamos achar o "mais fraco" entre os {n} jogos que você não escolheu no início. Toque no que você menos quer. Quanto mais longe ele chega, mais baixo fica. (~{s} telas)',
+    eBack: '⬅ Voltar ao menu',
+    eLevel: 'Rodada {l}',
+    eFinal: 'Final',
+    eMidFinal: '👑 Final!',
+    eLowFinal: '💀 Final dos mais fracos!',
+    eMidAsk: 'Qual destes você mais quer?',
+    eLowAsk: 'Qual destes você menos quer?',
+    eMidHelp: 'Vá no instinto. O escolhido passa para a próxima rodada.',
+    eLowHelp: 'O escolhido avança como candidato a "mais fraco". Vá no instinto.',
+    eProg: '{d} / {t} telas',
+    eInfo: '{n} jogos',
+    eLevelUp: '🔥 Rumo à {l}! Restam {n}',
+    eMidChamp: '👑 Campeão do meio!',
+    eMidChampSub: '"{name}" lidera o grupo do meio! A ordem do meio foi atualizada.',
+    eLowChamp: '💀 O mais fraco!',
+    eLowChampSub: '"{name}" ficou como o mais fraco... A ordem da parte de baixo foi atualizada.',
+    eToMenu: '🧹 Voltar ao acabamento',
+    eQuit: '⏹ Aplicar até aqui',
+    eQuitDone: '✅ Resultados até aqui aplicados',
+    kHintElim: '⌨ 1-4 (teclado numérico OK): escolher carta   Backspace: voltar',
+    tier_top: 'Topo',
+    tier_mid: 'Meio',
+    tier_low: 'Baixo',
+    tier_bottom: 'Fundo'
+  },
+  de: {
+    raidAppear: '⚡ Ein Herausforderer erscheint! Er steht rechts',
+    raidAgain: '🔥 Der Herausforderer hat gewonnen und klettert weiter!',
+    raidThroneAsk: '👑 Thronkampf! Der Herausforderer fordert Platz 1!',
+    raidIn: '⚡ Herausforderer!',
+    raidIn2: '🔥 Nächster Kampf!',
+    raidThroneTag: '👑 Thronkampf',
+    raidThrone: '👑 Thron erobert! „{name}“ ist jetzt Platz 1!',
+    raidJoin: '🎉 „{name}“ ist in die Spitze vorgestoßen!',
+    raidWin2: '🔥 „{name}“ klettert weiter!',
+    raidLose: '„{name}“ hat es nicht geschafft…',
+    raidStop: '„{name}“ stoppt hier, bleibt aber in der Spitze!',
+    raidRoundSum: '⚡ {j} von {n} Herausforderern sind in die Spitze gekommen.',
+    raidNext: '⚡ Herausforderer?',
+    tourBtnFinish: '🧹 Zum Feinschliff',
+    finTitle: '🧹 Feinschliff-Menü',
+    finSub: 'Die Spitze steht! Wenn du den Rest auch ordnest, wird deine Steam-Liste übersichtlicher. Reihenfolge egal. Hörst du mittendrin auf, zählt das bisher Erledigte trotzdem.',
+    finSubDone: 'Der Feinschliff ist fertig! Sieh dir das Ergebnis an und passe es bei Bedarf per Ziehen an.',
+    finMid: '📊 Mittelfeld ordnen (~{s} Bildschirme)',
+    finLow: '💀 Das Schwächste finden (~{s} Bildschirme)',
+    finMore: '⚔ Noch eine Runde für die Spitze',
+    finDoneSfx: ' ✓ erledigt',
+    eMidTitle: '📊 Mittelfeld',
+    eLowTitle: '💀 Duell der Schwächsten',
+    eMidIntro: 'Die {n} Spiele, die es nicht in die Spitze geschafft haben, werden zu viert verglichen. Tippe auf das, das du am meisten willst. Je weiter es kommt, desto höher steht es. (~{s} Bildschirme)',
+    eLowIntro: 'Wir suchen das „schwächste“ unter den {n} Spielen, die du am Anfang nicht gewählt hast. Tippe auf das, das du am wenigsten willst. Je weiter es kommt, desto tiefer steht es. (~{s} Bildschirme)',
+    eBack: '⬅ Zurück zum Menü',
+    eLevel: 'Runde {l}',
+    eFinal: 'Finale',
+    eMidFinal: '👑 Finale!',
+    eLowFinal: '💀 Finale der Schwächsten!',
+    eMidAsk: 'Welches willst du am meisten?',
+    eLowAsk: 'Welches willst du am wenigsten?',
+    eMidHelp: 'Entscheide aus dem Bauch. Das gewählte Spiel kommt in die nächste Runde.',
+    eLowHelp: 'Das gewählte Spiel kommt als „Schwächsten“-Kandidat weiter. Entscheide aus dem Bauch.',
+    eProg: '{d} / {t} Bildschirme',
+    eInfo: '{n} Spiele',
+    eLevelUp: '🔥 Weiter zu {l}! Noch {n}',
+    eMidChamp: '👑 Bestes im Mittelfeld!',
+    eMidChampSub: '„{name}“ führt das Mittelfeld an! Die Reihenfolge des Mittelfelds wurde übernommen.',
+    eLowChamp: '💀 Das Schwächste steht fest!',
+    eLowChampSub: '„{name}“ ist das schwächste… Die Reihenfolge unten wurde übernommen.',
+    eToMenu: '🧹 Zum Feinschliff-Menü',
+    eQuit: '⏹ Bis hier übernehmen',
+    eQuitDone: '✅ Bisherige Ergebnisse übernommen',
+    kHintElim: '⌨ 1-4 (Ziffernblock OK): Karte wählen   Backspace: zurück',
+    tier_top: 'Spitze',
+    tier_mid: 'Mitte',
+    tier_low: 'Unten',
+    tier_bottom: 'Ganz unten'
+  }
+};
+(function(){
+  for (var lg in FLOW7_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW7_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW7_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -2543,6 +2906,8 @@ function fetchWishlist(){
       var filtered=wishItems.slice();
       filtered.sort(function(a,b){return (a.priority||9999)-(b.priority||9999);});
       var appids=filtered.map(function(i){return String(i.appid);});
+      var wmeta={};
+      filtered.forEach(function(i){ wmeta[String(i.appid)]={p:i.priority||0,d:i.date_added||0}; });
       setStatus(fmt('fetchGot',{n:appids.length}),'info');
       var games=[],failed=[],BATCH=10,done=0;
       for(var i=0;i<appids.length;i+=BATCH){
@@ -2585,6 +2950,7 @@ function fetchWishlist(){
           if(j+5<failed.length)await sleep(4000);
         }
       }
+      games.forEach(function(g){ var m=wmeta[g.appid]; if(m){ g.wp=m.p; g.wd=m.d; } });
       setProgress(100);
       setStatus(fmt('fetchDone',{n:games.length}),'green');
       localStorage.setItem('swr_steamid',steamId);
@@ -2906,6 +3272,7 @@ function resumeFlow(){
   if(f.phase==='triage'){ startTriage(); return; }
   if(f.phase==='quad'){ startQuadRound(); return; }
   if(f.phase==='raid'){ resumeRaid(); return; }
+  if(f.phase==='elim'){ resumeElim(); return; }
   if(f.phase==='tour'){ resumeTour(); return; }
   if(f.phase==='done'){ saveAndGoResult(); return; }
   setTourMode(false,false);
@@ -3431,7 +3798,7 @@ function startTopDuel(){
   f.phase='duel'; f.topN=topDuelN(); f.duelRound=(f.duelRound||0)+1;
   if(!f.prevTop10) f.prevTop10=top10Ids();
   state.roundNo=Math.max(1,f.quadDone||0)+f.duelRound;
-  state.queue=buildTopQueue(); state.queueIdx=0;
+  state.queue=raidInject(buildTopQueue()); state.queueIdx=0;
   state.history=[]; state.streak=0; state.lastWinnerId=null;
   setTourMode(false,false);
   startBattle();
@@ -3454,8 +3821,9 @@ function topDuelComplete(){
   var bMore={label:gt('dBtnMore'),cls:stable?'btn-dark':'btn-steam',fn:startTopDuel};
   var bRes={label:gt('oQuadBtnResult'),cls:'btn-dark',fn:function(){hideFlowOverlay();saveAndGoResult();}};
   var arr=stable?[bTour,bMore,bRes]:[bMore,bTour,bRes];
-  if(raidCandidates().length>0) arr.splice(stable?1:2,0,{label:gt('raidBtn'),cls:'btn-steam',fn:startRaid});
-  showFlowOverlay(gf('dRoundTitle',{r:f.duelRound}),gt(stable?'dStable':'dUnstable'),arr);
+  var sub=gt(stable?'dStable':'dUnstable');
+  if(f.raidLog&&f.raidLog.n>0) sub=gf('raidRoundSum',{n:f.raidLog.n,j:f.raidLog.j})+' '+sub;
+  showFlowOverlay(gf('dRoundTitle',{r:f.duelRound}),sub,arr);
 }
 
 // ---------- 決勝トーナメント ----------
@@ -3572,8 +3940,10 @@ function tourFinish(champ){
   fxBurst(window.innerWidth/2,window.innerHeight/3,90,12);
   fxVibrate([30,50,30,50,60]);
   var g=gameById(champ);
-  showFlowOverlay(gt('tourChamp'),gf('tourChampSub',{name:g?g.name:''}),
-    [{label:gt('tourBtnResult'),cls:'btn-gold',fn:function(){hideFlowOverlay();saveAndGoResult();}}],g?g.capsule:'');
+  var tb=[{label:gt('tourBtnResult'),cls:'btn-dark',fn:function(){hideFlowOverlay();saveAndGoResult();}}];
+  if(finMidIds().length>=3||finLowIds().length>=3) tb.unshift({label:gt('tourBtnFinish'),cls:'btn-gold',fn:showFinMenu});
+  else tb[0].cls='btn-gold';
+  showFlowOverlay(gt('tourChamp'),gf('tourChampSub',{name:g?g.name:''}),tb,g?g.capsule:'');
 }
 
 // ---------- 結果画面：手動ドラッグ並び替え ----------
@@ -3853,151 +4223,491 @@ function setBattleMode(mode,spot){
   var undo=document.getElementById('txt-btn-undo');
   if(both) both.style.display=(tour||raid)?'none':'';
   if(neither) neither.style.display=(tour||raid)?'none':'';
-  if(undo) undo.style.display=raid?'none':'';
+  if(undo) undo.style.display='';
   var sp=document.getElementById('spot');
-  if(sp) sp.className=(tour&&spot)?'spot on':'spot';
+  if(sp) sp.className=((tour||raid)&&spot)?'spot on':'spot';
 }
 
-// ---------- 乱入戦（見落とし救済） ----------
+// ---------- 乱入戦 v2（上位ラウンドに自動で混ざる） ----------
+function topIdsMap(n){
+  var m={},r=getRankedGames().slice(0,n);
+  for(var i=0;i<r.length;i++) m[r[i].appid]=1;
+  return m;
+}
+
 function raidCandidates(){
-  var f=state.flow,inPool={},used=f.raidUsed||{};
-  (f.pool||[]).forEach(function(id){ inPool[id]=1; });
-  return state.games.filter(function(g){ return !inPool[g.appid]&&!used[g.appid]; });
+  var f=state.flow,used=f.raidUsed||{},top=topIdsMap(f.topN||topDuelN());
+  return state.games.filter(function(g){ return !top[g.appid]&&!used[g.appid]; });
 }
 
-function raidK(){
-  return Math.max(6,Math.min(12,Math.round(state.games.length*0.03)));
+function raidPerRound(){
+  var n=state.games.length;
+  if(n<40) return 2;
+  if(n<300) return 3;
+  return 4;
+}
+
+// Steamの元の並びが「追加した順のまま（＝並べ替えていない）」なら未整理とみなす
+function wishlistUnorganized(){
+  var arr=state.games.filter(function(g){ return g.wp>0&&g.wd>0; });
+  if(arr.length<5) return true;
+  arr.sort(function(a,b){ return a.wp-b.wp; });
+  var up=0,down=0;
+  for(var i=1;i<arr.length;i++){
+    if(arr[i].wd>=arr[i-1].wd) up++;
+    if(arr[i].wd<=arr[i-1].wd) down++;
+  }
+  return Math.max(up,down)/(arr.length-1)>=0.9;
+}
+
+// 乱入者の候補を4つの枠に分ける
+// A: Steamで元々上の方にあった / B: 買い時・セール中 / C: 最近追加した / R: ランダム
+function raidPools(cands){
+  var A=[];
+  if(!wishlistUnorganized()){
+    A=cands.filter(function(g){ return g.wp>0; }).sort(function(a,b){ return a.wp-b.wp; });
+  }
+  var B=cands.filter(function(g){ return buyNow(g)||g.disc>0; }).sort(function(a,b){
+    var ba=buyNow(a)?1:0,bb=buyNow(b)?1:0;
+    if(ba!==bb) return bb-ba;
+    return (b.disc||0)-(a.disc||0);
+  });
+  var C=cands.filter(function(g){ return g.wd>0; }).sort(function(a,b){ return b.wd-a.wd; });
+  return {A:A,B:B,C:C,R:shuffleArr(cands)};
 }
 
 function pickRaiders(cands,k){
-  var good=shuffleArr(cands.filter(function(g){return buyNow(g);}));
-  var rest=shuffleArr(cands.filter(function(g){return !buyNow(g);}));
-  var out=good.slice(0,Math.ceil(k/2));
-  out=out.concat(rest.slice(0,k-out.length));
-  if(out.length<k) out=out.concat(good.slice(Math.ceil(k/2),Math.ceil(k/2)+(k-out.length)));
-  return out.slice(0,k);
-}
-
-function startRaid(){
-  hideFlowOverlay();
-  var f=state.flow;
-  var cands=raidCandidates();
-  if(!cands.length){ fxToast(gt('raidNone')); return; }
-  var raiders=pickRaiders(cands,raidK()).map(function(g){return g.appid;});
-  var size=Math.max(f.topN||topDuelN(),10);
-  var inPool={};
-  (f.pool||[]).forEach(function(id){ inPool[id]=1; });
-  var list=getRankedGames().filter(function(g){return inPool[g.appid];}).slice(0,size).map(function(g){return g.appid;});
-  f.phase='raid';
-  f.raid={list:list,raiders:raiders,ri:0,lo:0,hi:list.length,placed:[]};
-  saveState();
-  setBattleMode('raid',false);
-  showFlowOverlay(gt('raidTitle'),gf('raidSub',{n:raiders.length}),[{label:gt('tourStart'),cls:'btn-gold',fn:raidBegin}]);
-  fxVibrate(15);
-}
-
-function raidPair(){
-  var R=state.flow.raid;
-  if(!R||R.ri>=R.raiders.length) return null;
-  var mid=Math.floor((R.lo+R.hi)/2);
-  var ch=R.raiders[R.ri],op=R.list[mid];
-  if(op===undefined) return null;
-  return (Math.random()<0.5)?[ch,op]:[op,ch];
-}
-
-function raidBegin(){
-  hideFlowOverlay();
-  var R=state.flow.raid;
-  R.lo=0; R.hi=R.list.length;
-  var nxt=raidPair();
-  if(!nxt){ raidComplete(); return; }
-  state.queue=[nxt]; state.queueIdx=0;
-  state.history=[]; state.streak=0; state.lastWinnerId=null;
-  setBattleMode('raid',false);
-  saveState();
-  startBattle();
-}
-
-function resumeRaid(){
-  var R=state.flow.raid;
-  if(!R){ state.flow.phase='duel'; saveAndGoResult(); return; }
-  setBattleMode('raid',false);
-  var nxt=raidPair();
-  if(!nxt){ raidComplete(); return; }
-  state.queue=[nxt]; state.queueIdx=0; state.history=[];
-  startBattle();
-}
-
-function raidRecord(w,l){
-  var R=state.flow.raid;
-  var ch=R.raiders[R.ri];
-  var mid=Math.floor((R.lo+R.hi)/2);
-  var chWon=(w===ch);
-  if(chWon) R.hi=mid; else R.lo=mid+1;
-  var g=gameById(ch);
-  if(chWon&&mid<R.list.length/2) fxToast(gt('raidUp'));
-  if(R.lo>=R.hi){
-    var pos=R.lo;
-    if(pos<R.list.length){
-      R.list.splice(pos,0,ch);
-      R.placed.push({id:ch,pos:pos+1});
-      if(pos===0){ fxToast(gf('raidThrone',{name:g?g.name:''})); fxRain(140); fxVibrate([30,50,30]); }
-      else{ fxToast(gf('raidPlaced',{name:g?g.name:'',pos:pos+1})); fxBurst(window.innerWidth/2,window.innerHeight/2,40,9); }
-    }else{
-      R.placed.push({id:ch,pos:0});
-      fxToast(gf('raidMiss',{name:g?g.name:''}));
-    }
-    R.ri++; R.lo=0; R.hi=R.list.length;
+  var P=raidPools(cands),out=[],taken={};
+  var W={A:3,B:3,C:3,R:1};
+  if(!P.A.length){ W.C+=W.A; W.A=0; }
+  function take(list){
+    var avail=[];
+    for(var i=0;i<list.length&&avail.length<3;i++){ if(!taken[list[i].appid]) avail.push(list[i]); }
+    if(!avail.length) return null;
+    return avail[Math.floor(Math.random()*avail.length)];
   }
-  var nxt=raidPair();
-  if(nxt) state.queue.push(nxt);
-  saveState();
+  var guard=0;
+  while(out.length<k&&guard<60){
+    guard++;
+    var keys=[],tot=0,c;
+    for(c in W){ if(W[c]>0&&P[c].length){ keys.push(c); tot+=W[c]; } }
+    if(!keys.length) break;
+    var r=Math.random()*tot,pick=keys[0];
+    for(var j=0;j<keys.length;j++){ r-=W[keys[j]]; if(r<0){ pick=keys[j]; break; } }
+    var g=take(P[pick]);
+    if(!g){ W[pick]=0; continue; }
+    taken[g.appid]=1;
+    out.push(g);
+  }
+  return out;
+}
+
+// 対戦相手：1戦目は上位の下の方、2戦目は真ん中〜上、3戦目は1位（王座戦）
+function raidOpponent(ch,step){
+  var f=state.flow,ranked=getRankedGames(),N=f.topN||topDuelN(),top=[];
+  for(var i=0;i<ranked.length&&top.length<N;i++){ if(ranked[i].appid!==ch) top.push(ranked[i].appid); }
+  if(!top.length) return null;
+  if(step>=3) return top[0];
+  var n=top.length,lo,hi;
+  if(step===1){ lo=Math.floor(n*0.6); hi=n; }
+  else{ lo=Math.min(n-1,Math.max(1,Math.floor(n*0.15))); hi=Math.max(lo+1,Math.floor(n*0.6)); }
+  var fresh=[],all=[];
+  for(var j=lo;j<hi&&j<n;j++){
+    all.push(top[j]);
+    if(pairCount(ch,top[j])===0) fresh.push(top[j]);
+  }
+  var list=fresh.length?fresh:all;
+  if(!list.length) return top[n-1];
+  return list[Math.floor(Math.random()*list.length)];
+}
+
+function raidInject(q){
+  var f=state.flow;
+  f.raidLog={n:0,j:0};
+  if(!q.length) return q;
+  var cands=raidCandidates();
+  if(!cands.length) return q;
+  var rs=pickRaiders(cands,raidPerRound());
+  if(!f.raidUsed) f.raidUsed={};
+  var adds=[],i;
+  for(i=0;i<rs.length;i++){
+    var ch=rs[i].appid,op=raidOpponent(ch,1);
+    if(!op) continue;
+    f.raidUsed[ch]=1;
+    adds.push([op,ch,{r:1}]);
+  }
+  f.raidLog.n=adds.length;
+  // ラウンドの中にばらけて入れる（先頭には置かない）
+  var out=q.slice(),len=q.length;
+  for(i=adds.length-1;i>=0;i--){
+    var base=Math.floor((i+1)*len/(adds.length+1));
+    var pos=Math.max(1,Math.min(out.length,base+Math.floor(Math.random()*3)-1));
+    out.splice(pos,0,adds[i]);
+  }
+  return out;
+}
+
+function raidAfter(ids,wId,hist){
+  var f=state.flow,meta=ids[2],ch=ids[1],step=meta.r||1;
+  var g=gameById(ch),name=g?g.name:'';
+  if(!hist) hist={};
+  if(wId===ch){
+    // 倒した相手のすぐ上に入る
+    var target=hist.lPoints+0.5;
+    if(state.scores[ch].points<target) state.scores[ch].points=target;
+    if(!f.raidJoined) f.raidJoined={};
+    if(!f.raidJoined[ch]){
+      f.raidJoined[ch]=1; hist.rj=ch;
+      if(f.raidLog) f.raidLog.j++;
+    }
+    if(step>=3){
+      fxToast(gf('raidThrone',{name:name}));
+      fxRain(160);
+      fxBurst(window.innerWidth/2,window.innerHeight/3,70,11);
+      fxVibrate([30,50,30,50,60]);
+      return;
+    }
+    var op=raidOpponent(ch,step+1);
+    if(op){
+      state.queue.splice(state.queueIdx+1,0,[op,ch,{r:step+1}]);
+      hist.ins=1;
+    }
+    fxToast(gf(step===1?'raidJoin':'raidWin2',{name:name}));
+    fxBurst(window.innerWidth*0.72,window.innerHeight/2,40,9);
+    fxVibrate([20,30,20]);
+  }else{
+    fxToast(gf(step===1?'raidLose':'raidStop',{name:name}));
+  }
+}
+
+function raidUnjoin(id){
+  var f=state.flow;
+  if(f&&f.raidJoined&&f.raidJoined[id]){
+    delete f.raidJoined[id];
+    if(f.raidLog&&f.raidLog.j>0) f.raidLog.j--;
+  }
 }
 
 function raidDecorate(ids){
-  var R=state.flow.raid;
-  var ch=R.raiders[R.ri];
+  var meta=ids&&ids[2];
   var sides=['left','right'];
   for(var i=0;i<2;i++){
     var card=document.getElementById('card-'+sides[i]);
+    if(!card) continue;
     var old=card.querySelector('.raid-tag');
     if(old) old.parentNode.removeChild(old);
-    if(ids[i]===ch){
+    if(meta&&i===1){
       var tag=document.createElement('div');
-      tag.className='raid-tag';
-      tag.textContent=gt('raidIn');
+      tag.className='raid-tag'+(meta.r>=3?' throne':'');
+      tag.textContent=gt(meta.r>=3?'raidThroneTag':(meta.r===2?'raidIn2':'raidIn'));
       card.appendChild(tag);
       fxFlash(card,'raid-in');
     }
   }
-  var lab=document.getElementById('progress-label');
-  if(lab) lab.textContent='⚡ '+Math.min(R.ri+1,R.raiders.length)+' / '+R.raiders.length;
-  var fill=document.getElementById('progress-fill');
-  if(fill) fill.style.width=Math.round(R.ri/R.raiders.length*100)+'%';
+  if(meta){
+    fxToast(gt(meta.r>=3?'raidThroneAsk':(meta.r===2?'raidAgain':'raidAppear')));
+    fxVibrate(meta.r>=3?[20,40,20]:12);
+  }
 }
 
-function raidComplete(){
-  var f=state.flow,R=f.raid;
-  // 上位リスト（食い込んだ乱入者を含む）を先頭に、残りは今の順位のまま並べて、点数を割り当て直す
-  var inList={},restIds=[];
-  R.list.forEach(function(id){ inList[id]=1; });
-  getRankedGames().forEach(function(g){ if(!inList[g.appid]) restIds.push(g.appid); });
-  applyManualOrder(R.list.concat(restIds));
-  var used=f.raidUsed||{};
-  R.raiders.forEach(function(id){ used[id]=1; });
-  f.raidUsed=used;
-  var up=0;
-  for(var i=0;i<R.placed.length;i++){ if(R.placed[i].pos>0) up++; }
-  f.phase='duel';
+// 以前の保存データ（手動の乱入戦の途中）は、上位ラウンドから続ける
+function resumeRaid(){
+  var f=state.flow;
+  if(f){ f.phase='duel'; delete f.raid; }
   setBattleMode('normal',false);
+  if(f&&f.topN) startTopDuel(); else saveAndGoResult();
+}
+
+// ---------- 仕上げメニュー（中位整理 / 最弱決定戦） ----------
+function finMidIds(){
+  var f=state.flow;
+  if(!f||!f.pool) return [];
+  var top=topIdsMap(f.topN||topDuelN()),seen={},out=[],i,id;
+  var src=f.pool.slice();
+  if(f.raidJoined){ for(id in f.raidJoined) src.push(id); }
+  for(i=0;i<src.length;i++){
+    id=src[i];
+    if(!seen[id]&&!top[id]&&state.scores[id]){ seen[id]=1; out.push(id); }
+  }
+  return out;
+}
+
+function finLowIds(){
+  var f=state.flow;
+  if(!f||!f.pool) return [];
+  var top=topIdsMap(f.topN||topDuelN()),mid={},i;
+  var m=finMidIds();
+  for(i=0;i<m.length;i++) mid[m[i]]=1;
+  return state.games.filter(function(g){ return !top[g.appid]&&!mid[g.appid]; }).map(function(g){ return g.appid; });
+}
+
+// n本を4本ずつ（端数は3本・2本）のグループに分ける
+function groupSizes(n){
+  var out=[],k,i;
+  if(n<=1) return out;
+  if(n<=4) return [n];
+  if(n===5) return [3,2];
+  k=Math.floor(n/4);
+  var r=n%4,fours=k,extra=[];
+  if(r===3){ extra=[3]; }
+  else if(r===2){ fours=k-1; extra=[3,3]; }
+  else if(r===1){ fours=k-2; extra=[3,3,3]; }
+  for(i=0;i<fours;i++) out.push(4);
+  return out.concat(extra);
+}
+
+function elimScreens(n){
+  var tot=0;
+  while(n>1){ var g=groupSizes(n).length; tot+=g; n=g; }
+  return tot;
+}
+
+function spotOn(on){
+  var sp=document.getElementById('spot');
+  if(sp) sp.className=on?'spot on':'spot';
+}
+
+function showFinMenu(){
+  hideFlowOverlay();
+  var f=state.flow;
+  if(!f.fin) f.fin={};
+  f.phase='done';
+  f.elim=null;
+  setTourMode(false,false);
+  spotOn(false);
   saveState();
-  fxRain(130);
-  fxVibrate([20,40,20]);
-  var btns=[{label:gt('dBtnTour'),cls:'btn-gold',fn:startTournament}];
-  if(raidCandidates().length>0) btns.push({label:gt('raidBtn'),cls:'btn-steam',fn:startRaid});
-  btns.push({label:gt('dBtnMore'),cls:'btn-dark',fn:startTopDuel});
-  btns.push({label:gt('oQuadBtnResult'),cls:'btn-dark',fn:function(){hideFlowOverlay();saveAndGoResult();}});
-  showFlowOverlay(gt('raidDoneTitle'),gf('raidDoneSub',{n:up}),btns);
+  var mid=finMidIds(),low=finLowIds(),todo=[],done=[];
+  if(mid.length>=3){
+    var bm={label:gf('finMid',{s:elimScreens(mid.length)})+(f.fin.mid?gt('finDoneSfx'):''),cls:f.fin.mid?'btn-dark':'btn-gold',fn:function(){ startElim('mid'); }};
+    (f.fin.mid?done:todo).push(bm);
+  }
+  if(low.length>=3){
+    var bl={label:gf('finLow',{s:elimScreens(low.length)})+(f.fin.low?gt('finDoneSfx'):''),cls:f.fin.low?'btn-dark':'btn-steam',fn:function(){ startElim('low'); }};
+    (f.fin.low?done:todo).push(bl);
+  }
+  var bRes={label:gt('oQuadBtnResult'),cls:todo.length?'btn-dark':'btn-gold',fn:function(){ hideFlowOverlay(); saveAndGoResult(); }};
+  var bMore={label:gt('finMore'),cls:'btn-dark',fn:startTopDuel};
+  var btns=todo.length?todo.concat([bRes]).concat(done).concat([bMore]):[bRes].concat(done).concat([bMore]);
+  showFlowOverlay(gt('finTitle'),gt(todo.length?'finSub':'finSubDone'),btns);
+}
+
+// ---------- 4本から1本を選ぶ勝ち抜き（中位整理 / 最弱決定戦） ----------
+var elimLock=false;
+
+function elimMakeLevel(ids){
+  var sh=shuffleArr(ids),sizes=groupSizes(sh.length),groups=[],p=0;
+  for(var i=0;i<sizes.length;i++){ groups.push(sh.slice(p,p+sizes[i])); p+=sizes[i]; }
+  return {groups:groups,picks:[]};
+}
+
+function startElim(mode){
+  hideFlowOverlay();
+  var f=state.flow;
+  var ids=mode==='mid'?finMidIds():finLowIds();
+  if(ids.length<2){ showFinMenu(); return; }
+  f.elim={mode:mode,ids:ids,levels:[elimMakeLevel(ids)],li:0,gi:0};
+  f.phase='elim';
+  saveState();
+  var mid=(mode==='mid');
+  showFlowOverlay(gt(mid?'eMidTitle':'eLowTitle'),gf(mid?'eMidIntro':'eLowIntro',{n:ids.length,s:elimScreens(ids.length)}),[
+    {label:gt('tourStart'),cls:'btn-gold',fn:elimShow},
+    {label:gt('eBack'),cls:'btn-dark',fn:showFinMenu}
+  ]);
+  fxVibrate(15);
+}
+
+function resumeElim(){
+  var f=state.flow;
+  if(!f||!f.elim){ showFinMenu(); return; }
+  elimShow();
+}
+
+function elimShow(){
+  hideFlowOverlay();
+  setTourMode(false,false);
+  showScreen('elim');
+  elimRender();
+}
+
+function elimLevelName(E,li){
+  var L=E.levels[li];
+  if(L&&L.groups.length===1) return gt('eFinal');
+  return gf('eLevel',{l:li+1});
+}
+
+function elimRender(){
+  var f=state.flow,E=f&&f.elim;
+  if(!E) return;
+  var L=E.levels[E.li];
+  if(E.gi>=L.groups.length){ elimNextLevel(); return; }
+  var ids=L.groups[E.gi],mid=(E.mode==='mid'),fin=(L.groups.length===1);
+  elimLock=false;
+  var scr=document.getElementById('screen-elim');
+  if(scr) scr.className='screen active'+(mid?'':' low')+(fin?' final':'');
+  spotOn(fin);
+  var grid=document.getElementById('elim-grid');
+  grid.innerHTML='';
+  for(var i=0;i<ids.length;i++){
+    var g=gameById(ids[i]);
+    if(!g) continue;
+    var card=document.createElement('div');
+    card.className='quad-card';
+    card.setAttribute('data-id',g.appid);
+    card.onclick=(function(id){ return function(){ elimPick(id); }; })(g.appid);
+    card.innerHTML='<div class="quad-img"><img src="'+esc(g.capsule)+'" alt="" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'"><div class="quad-fb">'+esc(g.name)+'</div></div>'
+      +'<div class="quad-num">'+(i+1)+'</div>'
+      +'<div class="quad-body"><div class="quad-title">'+esc(g.name)+'</div><div class="quad-meta" data-pl="'+esc(g.appid)+'">'+priceInfoHtml(g)+'</div>'
+      +'<a class="card-store-link" href="https://store.steampowered.com/app/'+esc(g.appid)+'/" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+esc(t('storeLink'))+'</a></div>'
+      +'<div class="quad-tag"></div>';
+    grid.appendChild(card);
+  }
+  var banner=document.getElementById('elim-banner');
+  banner.className='quad-banner';
+  banner.textContent=(fin?gt(mid?'eMidFinal':'eLowFinal')+' ':'')+gt(mid?'eMidAsk':'eLowAsk');
+  var help=document.getElementById('elim-help');
+  if(help) help.textContent=gt(mid?'eMidHelp':'eLowHelp');
+  // 進み具合
+  var done=0,j;
+  for(j=0;j<E.li;j++) done+=E.levels[j].groups.length;
+  var total=done+L.groups.length+elimScreens(L.groups.length);
+  done+=E.gi;
+  document.getElementById('e-badge').textContent=gt(mid?'eMidTitle':'eLowTitle')+' · '+elimLevelName(E,E.li);
+  document.getElementById('e-progress-label').textContent=gf('eProg',{d:done,t:total});
+  document.getElementById('e-progress-fill').style.width=(total?Math.round(done/total*100):0)+'%';
+  document.getElementById('elim-info').textContent=gf('eInfo',{n:E.ids.length});
+}
+
+function elimPick(id){
+  if(elimLock) return;
+  var f=state.flow,E=f&&f.elim;
+  if(!E) return;
+  var L=E.levels[E.li],ids=L.groups[E.gi];
+  if(!ids) return;
+  var ok=false,i;
+  for(i=0;i<ids.length;i++){ if(String(ids[i])===String(id)) ok=true; }
+  if(!ok) return;
+  elimLock=true;
+  L.picks.push(String(id));
+  var mid=(E.mode==='mid');
+  var cards=document.querySelectorAll('#elim-grid .quad-card');
+  for(i=0;i<cards.length;i++){
+    if(cards[i].getAttribute('data-id')===String(id)){
+      cards[i].classList.add(mid?'is-best':'is-doom');
+      var tg=cards[i].querySelector('.quad-tag'); if(tg) tg.textContent=mid?'👑':'💀';
+      if(mid) fxBurstEl(cards[i],18,7);
+    }else{
+      cards[i].classList.add('is-out');
+    }
+  }
+  fxCombo();
+  fxVibrate(10);
+  E.gi++;
+  saveState();
+  setTimeout(elimRender,380);
+}
+
+function elimNextLevel(){
+  var f=state.flow,E=f.elim,L=E.levels[E.li];
+  var next=L.picks.slice();
+  if(next.length<=1){ elimFinish(next[0]); return; }
+  E.levels.push(elimMakeLevel(next));
+  E.li++; E.gi=0;
+  saveState();
+  fxToast(gf('eLevelUp',{l:elimLevelName(E,E.li),n:next.length}));
+  fxRain(60);
+  elimRender();
+}
+
+function elimUndo(){
+  if(elimLock) return;
+  var f=state.flow,E=f&&f.elim;
+  if(!E) return;
+  var L=E.levels[E.li];
+  if(E.gi>0){
+    E.gi--; L.picks.pop();
+  }else if(E.li>0){
+    E.levels.pop(); E.li--;
+    L=E.levels[E.li];
+    E.gi=L.groups.length-1; L.picks.pop();
+  }else{
+    return;
+  }
+  fxComboReset();
+  saveState();
+  elimRender();
+}
+
+// どこまで勝ち残ったか（深さ）を数える。途中でやめた場合も、そこまでの結果で決まる
+function elimDepths(E){
+  var d={},i,j,k;
+  for(i=0;i<E.ids.length;i++) d[E.ids[i]]=0;
+  for(i=0;i<E.levels.length;i++){
+    var L=E.levels[i];
+    for(j=0;j<L.groups.length;j++){
+      for(k=0;k<L.groups[j].length;k++) d[L.groups[j][k]]=i;
+    }
+    for(j=0;j<L.picks.length;j++) d[L.picks[j]]=i+1;
+  }
+  return d;
+}
+
+function elimApply(E){
+  var f=state.flow,d=elimDepths(E),mid=(E.mode==='mid');
+  var order=E.ids.filter(function(id){ return !!state.scores[id]; }).sort(function(a,b){
+    if(d[a]!==d[b]) return mid?d[b]-d[a]:d[a]-d[b];
+    return state.scores[b].points-state.scores[a].points;
+  });
+  reassignPoints(order);
+  if(!mid){
+    var w=0;
+    for(var id in d){ if(d[id]>=1) w++; }
+    f.lowW=w;
+  }
+}
+
+function elimFinish(champ){
+  var f=state.flow,E=f.elim,mid=(E.mode==='mid');
+  elimApply(E);
+  if(!f.fin) f.fin={};
+  f.fin[E.mode]=true;
+  f.elim=null;
+  f.phase='done';
+  saveState();
+  spotOn(true);
+  fxRain(mid?200:120);
+  if(mid) fxBurst(window.innerWidth/2,window.innerHeight/3,80,12);
+  fxVibrate([30,50,30,50,60]);
+  var g=gameById(champ);
+  showFlowOverlay(gt(mid?'eMidChamp':'eLowChamp'),gf(mid?'eMidChampSub':'eLowChampSub',{name:g?g.name:''}),[
+    {label:gt('eToMenu'),cls:'btn-gold',fn:showFinMenu},
+    {label:gt('oQuadBtnResult'),cls:'btn-dark',fn:function(){ spotOn(false); hideFlowOverlay(); saveAndGoResult(); }}
+  ],g?g.capsule:'');
+}
+
+function elimQuit(){
+  if(elimLock) return;
+  var f=state.flow,E=f&&f.elim;
+  if(!E) return;
+  elimApply(E);
+  if(!f.fin) f.fin={};
+  f.fin[E.mode]=true;
+  fxToast(gt('eQuitDone'));
+  showFinMenu();
+}
+
+// ---------- 結果表のティア（上位 / 中位 / 下位 / 最下位） ----------
+function resultTiers(n){
+  var f=state.flow;
+  if(!f||f.skipped||!f.pool||!f.topN) return null;
+  var T=Math.min(f.topN,n);
+  var P=T+finMidIds().length;
+  var W=f.fin&&f.fin.low?(f.lowW||0):0;
+  return function(i){
+    if(i<T) return 'top';
+    if(i<P) return 'mid';
+    if(W>0&&i>=n-W) return 'bottom';
+    return 'low';
+  };
 }
 
 // ---------- キーボード操作（テンキー対応） ----------
@@ -4035,6 +4745,13 @@ function handleKey(e){
       if(cards[n-1]){ quadPick(cards[n-1].getAttribute('data-id')); e.preventDefault(); }
     }else if(undoKey){ quadUndo(); e.preventDefault(); }
     else if(n===0||code==='KeyX'){ quadUnknown(); e.preventDefault(); }
+    return;
+  }
+  if(id==='screen-elim'){
+    if(n&&n>=1&&n<=4){
+      var ec=document.querySelectorAll('#elim-grid .quad-card');
+      if(ec[n-1]){ elimPick(ec[n-1].getAttribute('data-id')); e.preventDefault(); }
+    }else if(undoKey){ elimUndo(); e.preventDefault(); }
     return;
   }
   if(id==='screen-battle'){
@@ -4078,7 +4795,11 @@ function renderPair(){
   if(!gA||!gB){state.queueIdx++;renderPair();return;}
   fillCard('left',gA);fillCard('right',gB);
   updateProgress();renderNextPreview();
-  if(state.flow&&state.flow.phase==='raid'&&state.flow.raid){raidDecorate(ids);}
+  if(state.flow&&state.flow.phase==='duel'&&state.flow.topN){
+    var rm=ids[2]||null;
+    setBattleMode(rm?'raid':'normal',!!(rm&&rm.r>=3));
+    raidDecorate(ids);
+  }
 }
 
 function fillCard(side,game){
@@ -4105,8 +4826,11 @@ function renderNextPreview(){
   var g=state.games.filter(function(g){return g.appid===state.queue[ni][0];})[0];
   if(!g){document.getElementById('next-preview').style.display='none';return;}
   document.getElementById('next-preview').style.display='flex';
-  document.getElementById('next-thumb').src=g.capsule;
-  document.getElementById('next-title').textContent=g.name;
+  var nt=document.getElementById('next-thumb'),nn=document.getElementById('next-title');
+  if(state.queue[ni][2]){nt.style.display='none';nn.className='next-raid';nn.textContent=gt('raidNext');return;}
+  nt.style.display='';nn.className='';
+  nt.src=g.capsule;
+  nn.textContent=g.name;
 }
 
 function updateProgress(){
@@ -4138,7 +4862,6 @@ function accuracyLevel(){
 function showRoundComplete(){
   saveState();
   if(state.flow&&state.flow.phase==='tour'&&state.flow.tour){tourRoundComplete();return;}
-  if(state.flow&&state.flow.phase==='raid'&&state.flow.raid){raidComplete();return;}
   if(state.flow&&state.flow.phase==='duel'&&state.flow.topN){topDuelComplete();return;}
   document.getElementById('round-complete-title').textContent=fmt('roundComplete',{r:state.roundNo});
   document.getElementById('round-complete-sub').textContent=fmt('roundCompleteSub',{b:state.totalBattles,n:state.games.length});
@@ -4148,6 +4871,7 @@ function hideRoundComplete(){document.getElementById('round-complete').classList
 
 function choose(idx){
   var ids=state.queue[state.queueIdx];
+  if(!ids)return;
   var wId=idx===0?ids[0]:ids[1];
   var lId=idx===0?ids[1]:ids[0];
   var wCard=document.getElementById(idx===0?'card-left':'card-right');
@@ -4158,7 +4882,7 @@ function choose(idx){
   wCard.classList.add('winner');
   updateElo(wId,lId,'win');
   if(state.flow&&state.flow.phase==='tour'&&state.flow.tour){state.flow.tour.rec.push({w:wId,l:lId});}
-  if(state.flow&&state.flow.phase==='raid'&&state.flow.raid){raidRecord(wId,lId);}
+  if(ids[2]&&state.flow&&state.flow.phase==='duel'){raidAfter(ids,wId,state.history[state.history.length-1]);}
   state.totalBattles++;state.queueIdx++;
   setTimeout(function(){wCard.classList.remove('winner');renderPair();renderSidebar();saveState();},380);
 }
@@ -4166,6 +4890,7 @@ function choose(idx){
 function chooseBoth(){
   if(state.flow&&(state.flow.phase==='tour'||state.flow.phase==='raid'))return;
   var ids=state.queue[state.queueIdx];
+  if(!ids||ids[2])return;
   var idA=ids[0],idB=ids[1];
   state.history.push({type:'both',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
   addPair(idA,idB,1);
@@ -4179,6 +4904,7 @@ function chooseBoth(){
 function chooseNeither(){
   if(state.flow&&(state.flow.phase==='tour'||state.flow.phase==='raid'))return;
   var ids=state.queue[state.queueIdx];
+  if(!ids||ids[2])return;
   var idA=ids[0],idB=ids[1];
   state.history.push({type:'neither',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
   addPair(idA,idB,1);
@@ -4190,9 +4916,10 @@ function chooseNeither(){
 }
 
 function undoLast(){
-  if(state.flow&&state.flow.phase==='raid')return;
   if(!state.history.length||state.queueIdx===0)return;
   var last=state.history.pop();
+  if(last.ins)state.queue.splice(last.queueIdx+1,1);
+  if(last.rj)raidUnjoin(last.rj);
   addPair(last.wId,last.lId,-1);
   if(state.flow&&state.flow.phase==='tour'&&state.flow.tour&&state.flow.tour.rec.length)state.flow.tour.rec.pop();
   var ws=state.scores[last.wId],ls=state.scores[last.lId];
@@ -4254,17 +4981,21 @@ function renderPodium(ranked){
 }
 
 function renderResultTable(ranked){
-  var html='';
+  var html='',tiers=resultTiers(ranked.length),prevTier='';
   for(var i=0;i<ranked.length;i++){
     var g=ranked[i];
+    var tier=tiers?tiers(i):'',tlab='';
+    if(tier&&tier!==prevTier){tlab='<span class="tier-lab tier-'+tier+'">'+esc(gt('tier_'+tier))+'</span>';}
     var sc=state.scores[g.appid];
     var conf=getConf(sc);
     var rank=i===0?'<span class="medal">🥇</span>':i===1?'<span class="medal">🥈</span>':i===2?'<span class="medal">🥉</span>':(i+1);
-    html+='<tr data-id="'+g.appid+'"'+(g.disc>0?' class="sale"':'')+'>';
+    var trc=(g.disc>0?'sale':'')+(tier?' tr-tier-'+tier:'')+(tlab&&i>0?' tier-first':'');
+    prevTier=tier;
+    html+='<tr data-id="'+g.appid+'"'+(trc?' class="'+trc+'"':'')+'>';
     html+='<td class="rt-handle">⠿</td>';
     html+='<td class="rt-rank">'+rank+'</td>';
     html+='<td><img class="rt-thumb" src="'+g.capsule+'" alt="" onerror="this.style.opacity=0.2"></td>';
-    html+='<td class="rt-title"><a href="https://store.steampowered.com/app/'+g.appid+'/" target="_blank" rel="noopener">'+esc(g.name)+'</a><div class="rt-sub" data-pl="'+g.appid+'">'+priceInfoHtml(g)+'</div></td>';
+    html+='<td class="rt-title">'+tlab+'<a href="https://store.steampowered.com/app/'+g.appid+'/" target="_blank" rel="noopener">'+esc(g.name)+'</a><div class="rt-sub" data-pl="'+g.appid+'">'+priceInfoHtml(g)+'</div></td>';
     html+='<td style="font-size:.72rem;color:var(--text2);white-space:nowrap">'+(g.release||'')+'</td>';
     html+='<td class="rt-wins">'+sc.wins+'</td>';
     html+='<td class="rt-losses">'+sc.losses+'</td>';
@@ -4287,6 +5018,8 @@ function startNextRound(){
   if(state.flow&&state.flow.phase==='grid'){startGrid();return;}
   if(state.flow&&state.flow.phase==='raid'){resumeRaid();return;}
   if(state.flow&&state.flow.phase==='tour'){resumeTour();return;}
+  if(state.flow&&state.flow.phase==='elim'){resumeElim();return;}
+  if(state.flow&&state.flow.phase==='done'&&state.flow.pool){showFinMenu();return;}
   if(state.flow&&(state.flow.phase==='done'||(state.flow.phase==='duel'&&state.flow.topN))){startTopDuel();return;}
   state.roundNo++;state.queue=buildQueue();state.queueIdx=0;
   state.history=[];state.streak=0;state.lastWinnerId=null;
@@ -4299,7 +5032,8 @@ function backToBattle(){
   if(state.flow&&state.flow.phase==='grid'){startGrid();return;}
   if(state.flow&&state.flow.phase==='raid'){resumeRaid();return;}
   if(state.flow&&state.flow.phase==='tour'){resumeTour();return;}
-  if(state.flow&&state.flow.phase==='done'){startTopDuel();return;}
+  if(state.flow&&state.flow.phase==='elim'){resumeElim();return;}
+  if(state.flow&&state.flow.phase==='done'){if(state.flow.pool){showFinMenu();}else{startTopDuel();}return;}
   showScreen('battle');renderPair();renderSidebar();
 }
 
