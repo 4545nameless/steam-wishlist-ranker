@@ -942,6 +942,8 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
 'use strict';
 
 var WORKER_URL  = 'https://steam-wishlist-api.swranker.workers.dev';
+// ゲーム名などの言語（価格の国は Worker がアクセス元の国から決める）
+function steamLang(){ return currentLang||'ja'; }
 var STORAGE_KEY = 'swr_v14';
 var IMG_BASE    = 'https://cdn.akamai.steamstatic.com/steam/apps/';
 var SITE_URL    = 'https://steam-wishlist-ranker.vercel.app';
@@ -3612,11 +3614,11 @@ var SHARE_JA=[
 ];
 // 条件を満たしたときだけ出るレアなひとこと
 var SHARE_RARE_JA=[
-{c:function(s){return s.total>=1000000;},t:'ウィッシュリストの総額が{total}。もはや資産'},
-{c:function(s){return s.total>=1000000;},t:'{total}……ウィッシュリストに7桁入ってる'},
-{c:function(s){return s.total>=300000;},t:'ウィッシュリストが中古車の値段になってた（{total}）'},
-{c:function(s){return s.total>=300000;},t:'{total}あればいいゲーミングPCが買える。でもゲームを買う'},
-{c:function(s){return s.total>0&&s.total<10000;},t:'ウィッシュリスト総額{total}。かわいいもんでしょ'},
+{c:function(s){return s.tj>=1000000;},t:'ウィッシュリストの総額が{total}。もはや資産'},
+{c:function(s){return s.cur==='JPY'&&s.total>=1000000;},t:'{total}……ウィッシュリストに7桁入ってる'},
+{c:function(s){return s.tj>=300000;},t:'ウィッシュリストが中古車の値段になってた（{total}）'},
+{c:function(s){return s.tj>=300000;},t:'{total}あればいいゲーミングPCが買える。でもゲームを買う'},
+{c:function(s){return s.tj>0&&s.tj<10000;},t:'ウィッシュリスト総額{total}。かわいいもんでしょ'},
 {c:function(s){return s.n>=200;},t:'{n}本……ウィッシュリストが図書館になってた'},
 {c:function(s){return s.n>=500;},t:'{n}本。もはやストア'},
 {c:function(s){return s.n<=20;},t:'{n}本の少数精鋭ウィッシュリスト'},
@@ -3626,7 +3628,7 @@ var SHARE_RARE_JA=[
 {c:function(s){return s.top1Sale;},t:'1位の「{top1}」、今セール中。これは運命'},
 {c:function(s){return s.top1Free;},t:'1位の「{top1}」、無料だった。今すぐ遊べる'},
 {c:function(s){return s.top1Tba;},t:'1位の「{top1}」、まだ発売してない。待つしかない'},
-{c:function(s){return s.p1>=8000;},t:'1位の「{top1}」、{p1}もする。セール待ち確定'},
+{c:function(s){return s.p1j>=8000;},t:'1位の「{top1}」、{p1}もする。セール待ち確定'},
 {c:function(s){return s.buy>=1;},t:'過去最安値に近いのが{buy}本。買い時が来てる'}
 ];
 // しめの一言（文字数が足りないときは省く）
@@ -3665,8 +3667,8 @@ var SHARE_EN=[
 'This ranking reveals my whole personality','Your wishlist is a mirror','Show me your wishlist #1','Anyone else have the same #1?','Try it and show me yours'
 ];
 var SHARE_RARE_EN=[
-{c:function(s){return s.total>=1000000;},t:'My wishlist total is {total}. That’s an asset class now'},
-{c:function(s){return s.total>=300000;},t:'My wishlist costs as much as a used car ({total})'},
+{c:function(s){return s.tj>=1000000;},t:'My wishlist total is {total}. That’s an asset class now'},
+{c:function(s){return s.tj>=300000;},t:'My wishlist costs as much as a used car ({total})'},
 {c:function(s){return s.n>=200;},t:'{n} games. My wishlist is a library now'},
 {c:function(s){return s.n>=500;},t:'{n} games. At this point it’s a store'},
 {c:function(s){return s.n<=20;},t:'{n} games, small but elite'},
@@ -3710,7 +3712,7 @@ function fetchWishlist(){
         var batch=appids.slice(i,i+BATCH);
         await Promise.allSettled(batch.map(async function(appid){
           try{
-            var res=await fetch(WORKER_URL+'/appdetails?appid='+encodeURIComponent(appid));
+            var res=await fetch(WORKER_URL+'/appdetails?appid='+encodeURIComponent(appid)+'&l='+steamLang());
             var data=await res.json();
             var info=data&&data[appid];
             if(info&&info.success&&info.data&&info.data.name){
@@ -3732,7 +3734,7 @@ function fetchWishlist(){
           var b2=failed.slice(j,j+5);
           await Promise.allSettled(b2.map(async function(appid){
             try{
-              var res=await fetch(WORKER_URL+'/appdetails?appid='+encodeURIComponent(appid));
+              var res=await fetch(WORKER_URL+'/appdetails?appid='+encodeURIComponent(appid)+'&l='+steamLang());
               var data=await res.json();
               var info=data&&data[appid];
               if(info&&info.success&&info.data&&info.data.name){
@@ -4969,14 +4971,31 @@ function mkGame(appid,d,price){
     release:(d.release_date&&d.release_date.date)||'',
     disc:(po&&po.discount_percent)?po.discount_percent:0,
     orig:(po&&po.initial_formatted)?po.initial_formatted:'',
-    pnum:(po&&po.final_formatted)?parseYen(po.final_formatted):null,
+    // Steam の final はどの通貨でも 100 倍の値（¥2,480 → 248000、$19.99 → 1999）
+    pnum:(po&&po.final)?po.final/100:null,
+    cur:(po&&po.currency)?po.currency:'',
     pre:!!(d.release_date&&d.release_date.coming_soon),
     demo:(d.type==='demo')
   };
 }
 
+// 価格の通貨。古い保存データ（cur なし）は日本ストアの円
+function gameCur(g){ return (g&&g.cur)||'JPY'; }
+
+// 通貨つきで金額を表示（円は今まで通り ¥1,234）
+function fmtMoney(n,cur){
+  cur=cur||'JPY';
+  if(cur==='JPY') return '¥'+fmtNum(Math.round(n));
+  try{ return new Intl.NumberFormat(navigator.language||'en',{style:'currency',currency:cur}).format(n); }
+  catch(e){ return cur+' '+fmtNum(Math.round(n*100)/100); }
+}
+
+// だいたいの円換算レート（シェア文言のしきい値に使うだけなので大雑把でよい）
+var JPY_RATE={JPY:1,USD:150,EUR:165,GBP:195,CHF:175,CAD:110,AUD:100,NZD:92,CNY:21,HKD:19,TWD:4.7,KRW:0.11,SGD:115,RUB:1.7,UAH:3.7,KZT:0.3,BRL:28,MXN:8,CLP:0.16,COP:0.037,PEN:40,UYU:3.7,CRC:0.29,PLN:38,NOK:14,SEK:14,DKK:22,INR:1.8,IDR:0.0095,MYR:34,PHP:2.6,THB:4.3,VND:0.006,ILS:40,SAR:40,AED:41,QAR:41,KWD:490,ZAR:8};
+function toJpy(n,cur){ var r=JPY_RATE[cur||'JPY']; return r?n*r:0; }
+
 function buyNow(g){
-  return !!(g&&g.pnum&&g.low&&g.low.p&&g.low.c==='JPY'&&g.pnum<=g.low.p*1.1);
+  return !!(g&&g.pnum&&g.low&&g.low.p&&g.low.c===gameCur(g)&&g.pnum<=g.low.p*1.1);
 }
 
 function priceInfoHtml(g){
@@ -4990,8 +5009,7 @@ function priceInfoHtml(g){
     h+='<span>'+esc(g.price||'')+'</span>';
   }
   if(g.low&&g.low.p){
-    var cur=(g.low.c&&g.low.c!=='JPY')?(g.low.c+' '):'¥';
-    h+='<div class="low-line">'+esc(gt('lowLabel'))+' '+cur+fmtNum(g.low.p);
+    h+='<div class="low-line">'+esc(gt('lowLabel'))+' '+esc(fmtMoney(g.low.p,g.low.c));
     if(g.low.cut){
       h+=' (-'+g.low.cut+'%'+(g.low.ts?' · '+esc(String(g.low.ts).slice(0,7)):'')+')';
     }
@@ -5949,7 +5967,7 @@ function saveAndContinueLater(){
 function cancelSort(){saveAndGoResult();}
 
 // 1本の価格（円）。無料・発売前・取れないものは null
-function gamePriceYen(g){
+function gamePrice(g){
   if(!g||g.demo) return null;
   if(g.pnum) return g.pnum;
   if(g.pnum===undefined&&g.price&&/[¥￥]/.test(g.price)) return parseYen(g.price);
@@ -5957,23 +5975,31 @@ function gamePriceYen(g){
 }
 
 // シェア用の集計（合計金額・セール中の本数など）
+// 合計は一番多い通貨のゲームだけで出す。tj / p1j はレア文言のしきい値用のだいたいの円換算
 function shareStats(ranked){
-  var s={n:ranked.length,total:0,sale:0,buy:0};
-  for(var i=0;i<ranked.length;i++){
-    var g=ranked[i],p=gamePriceYen(g);
-    if(p) s.total+=p;
+  var s={n:ranked.length,total:0,sale:0,buy:0},cnt={},i,g;
+  for(i=0;i<ranked.length;i++){
+    g=ranked[i];
+    if(gamePrice(g)) cnt[gameCur(g)]=(cnt[gameCur(g)]||0)+1;
+  }
+  s.cur='JPY';
+  for(var c in cnt) if(!cnt[s.cur]||cnt[c]>cnt[s.cur]) s.cur=c;
+  for(i=0;i<ranked.length;i++){
+    g=ranked[i];
+    var p=gamePrice(g);
+    if(p&&gameCur(g)===s.cur) s.total+=p;
     if(g.disc>0) s.sale++;
     if(buyNow(g)) s.buy++;
   }
   var g1=ranked[0]||{};
-  s.p1=gamePriceYen(g1)||0;
+  s.p1=(gameCur(g1)===s.cur&&gamePrice(g1))||0;
+  s.tj=toJpy(s.total,s.cur);
+  s.p1j=toJpy(s.p1,s.cur);
   s.top1Sale=g1.disc>0;
   s.top1Tba=!!g1.pre;
-  s.top1Free=!g1.pre&&!g1.demo&&!s.p1&&g1.price===t('free');
+  s.top1Free=!g1.pre&&!g1.demo&&!gamePrice(g1)&&g1.price===t('free');
   return s;
 }
-
-function yen(n){ return '¥'+fmtNum(n); }
 
 // X の文字数（日本語などは2、URLは23として数える）
 function xLen(str){
@@ -5996,12 +6022,12 @@ function buildShareText(ranked){
   if(rares.length&&Math.random()<0.3) head=pick(rares).t;
   else head=pick((ja?SHARE_JA:SHARE_EN).filter(ok));
   var tail=pick(ja?SHARE_TAIL_JA:SHARE_TAIL_EN);
-  var stat=ja?(s.n+'本'+(s.total?'・全部買うと'+yen(s.total):'のウィッシュリスト')+(s.sale?'（今セール中'+s.sale+'本）':''))
-             :(s.n+' games'+(s.total?' · '+yen(s.total)+' to buy them all':'')+(s.sale?' ('+s.sale+' on sale now)':''));
+  var stat=ja?(s.n+'本'+(s.total?'・全部買うと'+fmtMoney(s.total,s.cur):'のウィッシュリスト')+(s.sale?'（今セール中'+s.sale+'本）':''))
+             :(s.n+' games'+(s.total?' · '+fmtMoney(s.total,s.cur)+' to buy them all':'')+(s.sale?' ('+s.sale+' on sale now)':''));
   var medals=['🥇','🥈','🥉'];
   function compose(maxName,topN,withTail){
     var nm=function(i){ var x=(ranked[i]||{}).name||''; return x.length>maxName?x.slice(0,maxName-1)+'…':x; };
-    var vars={n:s.n,total:yen(s.total),half:yen(Math.round(s.total/2)),sale:s.sale,buy:s.buy,p1:yen(s.p1),top1:nm(0),top2:nm(1),top3:nm(2)};
+    var vars={n:s.n,total:fmtMoney(s.total,s.cur),half:fmtMoney(s.total/2,s.cur),sale:s.sale,buy:s.buy,p1:fmtMoney(s.p1,s.cur),top1:nm(0),top2:nm(1),top3:nm(2)};
     var h=head.replace(/\{(\w+)\}/g,function(m,k){ return vars[k]!==undefined?vars[k]:m; });
     var top=ranked.slice(0,topN).map(function(g,i){ return medals[i]+' '+nm(i); }).join('\n');
     return h+'\n\n'+top+'\n\n'+stat+(withTail?'\n'+tail:'')+'\n\n'+SITE_URL+'\n#Steam '+TAG;
@@ -6081,7 +6107,7 @@ function prepareShareClone(doc,ranked){
   var box=doc.createElement('div');
   box.className='share-total';
   var h='<div class="share-total-lead">'+esc(gf(s.total?'shImgLead':'shImgCount',{n:s.n}))+'</div>';
-  if(s.total) h+='<div class="share-total-num">'+yen(s.total)+'</div>';
+  if(s.total) h+='<div class="share-total-num">'+fmtMoney(s.total,s.cur)+'</div>';
   if(s.sale) h+='<div class="share-total-sale">'+esc(gf('shImgSale',{s:s.sale}))+'</div>';
   box.innerHTML=h;
   var head=cap.querySelector('.result-header');

@@ -16,12 +16,12 @@ Steam のウィッシュリストを、ゲーム感覚の選択で「次に買�
 - `index.html` … アプリ本体（約 350KB）
 - `privacy.html` / `privacy-en.html` … プライバシーポリシー（機能を変えて送信先や保存内容が変わったら必ず更新）
 - `README.md`、`sitemap.xml`、`ads.txt`（AdSense pub-5922701022521864）、`ogp.png`
-- Cloudflare Worker のコードはリポジトリに入っていない（Cloudflare 上で管理）。
+- `worker.js` … Cloudflare Worker のコード（リポジトリには控えとして置いているだけ。反映はユーザーが Cloudflare の編集画面に貼り替えて Deploy）。秘密の値は書かない（`ITAD_KEY` は Cloudflare の Secret）。
 
 ## 外部サービス
 - Worker: `https://steam-wishlist-api.swranker.workers.dev`
   - `/wishlist?steamid=` … IWishlistService/GetWishlist（APIキー不要）。`items[{appid, priority, date_added}]`
-  - `/appdetails?appid=` … Store API（6時間キャッシュ、cc=jp, l=japanese）
+  - `/appdetails?appid=&l=` … Store API（6時間キャッシュ）。国はアクセス元の国（`request.cf.country`、`?cc=` で上書き可）、言語は `l`（ja/en/zh/ru/pt/de）。価格は `price_overview.final/100` と `currency` で持つ（`g.pnum` / `g.cur`、cur なしの古いデータは円）。
   - `/pricelow?appids=` … IsThereAnyDeal の Steam 過去最安値。Worker の秘密変数 `ITAD_KEY` が必要（無いと 501）
   - CORS は本番ドメインと localhost のみ。Cloudflare のログは OFF。
 - Vercel Analytics、Google AdSense（審査中）、Ko-fi（https://ko-fi.com/4545nameless）
@@ -68,7 +68,7 @@ Steam のウィッシュリストを、ゲーム感覚の選択で「次に買�
 ## 未確認・今後の候補
 - 本物の Steam でのブックマーク反映は、PC でユーザーが確認済み。
 - 実データ（約274本）で乱入者選出の A/C 枠が効くか（取得し直したセッションのみ priority / date_added を持つ）。
-- 過去最安値: Worker の `/pricelow` は ITAD_KEY 設定済みで動作確認済み（2026-10-24）。サイト上での表示は実データで未確認。Worker のコードは `E:\ユーザー\Documents\worker.js`。
+- 過去最安値: Worker の `/pricelow` は ITAD_KEY 設定済みで動作確認済み（2026-10-24）。国別の価格（2026-10-24 実装）は Worker の貼り替え後に本番で確認が必要。
 - ru / pt / de 訳は多少粗くてもよい（優先度低）。
 - 予選・上位ラウンドの「やめどき」の基準値（15%、10位以内の入れ替わり1本以下）は仮。実データで調整。
 - 好み分析パネル、効果音（デフォルトOFF）などは未実装の候補。
