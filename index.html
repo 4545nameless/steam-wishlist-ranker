@@ -298,7 +298,50 @@ body.modal-open{overflow:hidden}
 .rank-delta.up{color:#9bd96a}
 .rank-delta.down{color:#ff9a9a}
 
+
+/* ===== v2: グリッド選択・トーナメント・手動並び替え ===== */
+#screen-grid{flex-direction:column;align-items:center}
+#screen-grid>.navbar,#screen-grid>.progress-bar-wrap{width:100%;align-self:stretch}
+.grid-head{width:100%;max-width:1000px;padding:14px 16px 6px;text-align:center}
+.grid-head h2{font-size:1.15rem;color:#fff}
+.grid-head p{font-size:.8rem;color:var(--text2);margin-top:4px;line-height:1.6}
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;width:100%;max-width:1000px;padding:8px 14px 24px}
+.grid-card{position:relative;background:linear-gradient(to bottom,var(--panel2),var(--panel));border:2px solid var(--border);border-radius:var(--radius2);overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .12s;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.grid-card:hover{border-color:var(--accent2)}
+.grid-card.sel{border-color:var(--gold);box-shadow:0 0 18px rgba(246,201,14,.45);transform:scale(1.02)}
+.grid-img{position:relative;width:100%;aspect-ratio:460/215;background:var(--bg2);overflow:hidden}
+.grid-img img{width:100%;height:100%;object-fit:cover;display:block}
+.grid-name{font-size:.74rem;font-weight:700;color:#fff;padding:6px 8px 0;line-height:1.25;min-height:2.5em}
+.grid-price{font-size:.68rem;color:var(--accent2);padding:0 8px 6px;min-height:1.2em}
+.grid-heart{position:absolute;top:6px;right:6px;font-size:1.15rem;opacity:0;transform:scale(.4);transition:opacity .15s,transform .15s;text-shadow:0 0 6px #000;color:#ff5e8a}
+.grid-card.sel .grid-heart{opacity:1;transform:scale(1)}
+.grid-bar{position:sticky;bottom:0;width:100%;background:rgba(27,40,56,.96);border-top:1px solid var(--border2);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;z-index:30}
+.grid-count{font-size:.85rem;font-weight:700;color:var(--gold)}
+.grid-count.over{color:var(--orange)}
+.spot{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:20;opacity:0;transition:opacity .6s;background:radial-gradient(circle at 50% 45%,rgba(0,0,0,0) 28%,rgba(0,0,0,.78) 100%)}
+.spot.on{opacity:1}
+.flow-img{max-width:260px;width:60%;border-radius:8px;border:3px solid var(--gold);box-shadow:0 0 40px rgba(246,201,14,.6);margin:0 auto 12px;display:none}
+.result-hint{font-size:.78rem;color:var(--text2);margin:6px 0}
+.rt-handle{cursor:grab;color:var(--text2);width:30px;text-align:center;user-select:none;font-size:1.1rem;touch-action:none}
+.sortable-ghost{opacity:.4}
+
+
+/* ===== v3: 価格・セール、キー操作ヒント、乱入戦 ===== */
+.game-card{position:relative}
+.key-hint{font-size:.7rem;color:var(--text2);text-align:center;opacity:.85;max-width:680px;margin:4px auto 0;line-height:1.6}
+.sale-badge{display:inline-block;background:#4c6b22;color:#beee11;font-weight:800;font-size:.7rem;padding:1px 6px;border-radius:3px}
+.orig{color:var(--text2);font-size:.7rem}
+.low-line{font-size:.68rem;color:var(--text2);margin-top:2px;line-height:1.5}
+.buy-badge{background:rgba(246,201,14,.18);color:var(--gold);border:1px solid var(--gold);border-radius:10px;padding:0 6px;font-weight:700;white-space:nowrap}
+.grid-sale{position:absolute;top:6px;left:6px;background:#4c6b22;color:#beee11;font-weight:800;font-size:.72rem;padding:1px 6px;border-radius:3px;z-index:2}
+.quad-num{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:1px solid var(--border2);z-index:2}
+.raid-tag{position:absolute;top:8px;left:8px;background:var(--orange);color:#fff;font-weight:800;font-size:.85rem;padding:3px 10px;border-radius:12px;z-index:3;box-shadow:0 0 14px rgba(232,131,42,.7)}
+.raid-in{animation:raidIn .5s ease}
+@keyframes raidIn{0%{transform:translateX(60px) scale(.9);opacity:.2}100%{transform:none;opacity:1}}
+tr.sale td.rt-title{border-left:3px solid #7bb51d}
+
 @media(max-width:700px){
+  .grid-cards{grid-template-columns:repeat(2,1fr);gap:8px}
   #quad-info{display:none}
   .quad-grid{gap:8px}
   .quad-title{font-size:.76rem}
@@ -314,6 +357,7 @@ body.modal-open{overflow:hidden}
   .lang-select{top:8px;right:8px}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 </head>
 <body>
 
@@ -351,15 +395,8 @@ body.modal-open{overflow:hidden}
       </div>
     </div>
     <div class="input-group">
-      <div class="input-label">
-        <span id="txt-label-key">Steam Web API キー</span> ―
-        <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener" id="txt-key-link">こちらで無料取得</a>
-        （<span id="txt-domain">ドメイン名</span>: <strong>localhost</strong>）
-        <button type="button" class="chip" onclick="openGuide('key')" data-g="btnGuide" style="margin-left:6px">📖 詳しい手順</button>
-      </div>
-      <input class="steam-input" id="api-key" type="password" placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
       <div class="input-hint">
-        <span id="txt-hint-key">※ キーはこのブラウザ内にのみ保存されます。ウィッシュリスト取得時のみ、Steam APIへの中継サーバー（Cloudflare Workers）を経由して送信されます。</span>
+        <span data-g="idPrivacy">※ SteamID64はこのブラウザ内にのみ保存されます。ウィッシュリスト取得のため、Steam APIへの中継サーバー（Cloudflare Workers）を経由して送信されます。</span>
         <a href="privacy.html" target="_blank" rel="noopener" style="color:var(--accent2)" id="txt-privacy">プライバシーポリシー</a>
       </div>
     </div>
@@ -431,6 +468,7 @@ body.modal-open{overflow:hidden}
         <button class="btn btn-green btn-sm" onclick="chooseBoth()" id="txt-btn-both">🤝 どっちも欲しい！</button>
         <button class="btn btn-dark btn-sm" onclick="chooseNeither()" id="txt-btn-neither">❓ よく知らない</button>
       </div>
+      <div class="key-hint" data-g="kHintBattle"></div>
       <div class="ad-battle-bottom"><!-- AdSense --></div>
     </div>
     <div class="ranking-sidebar">
@@ -469,6 +507,33 @@ body.modal-open{overflow:hidden}
   </div>
 </div>
 
+<div id="screen-grid" class="screen">
+  <nav class="navbar">
+    <div class="navbar-brand"><div class="si">S</div><span>Wishlist Ranker</span></div>
+    <div class="navbar-info" id="grid-page"></div>
+    <div class="navbar-actions">
+      <button class="btn btn-dark btn-sm" onclick="gridLater()" data-g="gLater">💾 今日はここまで</button>
+    </div>
+  </nav>
+  <div class="progress-bar-wrap">
+    <div class="progress-track"><div class="progress-fill" id="grid-progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="grid-head">
+    <h2 data-g="gTitle2">🛒 気になるゲームをタップ！</h2>
+    <p data-g="gSub"></p>
+    <div class="key-hint" data-g="kHintGrid"></div>
+  </div>
+  <div class="grid-cards" id="grid-cards"></div>
+  <div class="grid-bar">
+    <div class="grid-count" id="grid-count"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-dark btn-sm" id="grid-prev" onclick="gridPrev()" data-g="gPrev">◀ 前へ</button>
+      <button class="btn btn-gold" id="grid-next" onclick="gridNext()" data-g="gNext">次のページ ▶</button>
+    </div>
+  </div>
+  <div style="padding:8px 14px 18px"><button class="btn btn-dark btn-sm" onclick="skipTriage()" data-g="tSkip"></button></div>
+</div>
+
 <div id="screen-quad" class="screen">
   <nav class="navbar">
     <div class="navbar-brand"><div class="si">S</div><span>Wishlist Ranker</span></div>
@@ -493,6 +558,7 @@ body.modal-open{overflow:hidden}
         <button class="btn btn-dark btn-sm" onclick="quadUnknown()" data-g="qUnknown">❓ どれもよく分からない</button>
       </div>
       <div class="quad-help" data-g="qHelp"></div>
+      <div class="key-hint" data-g="kHintQuad"></div>
       <div class="ad-battle-bottom"><!-- AdSense --></div>
     </div>
     <div class="ranking-sidebar">
@@ -519,10 +585,14 @@ body.modal-open{overflow:hidden}
       <p id="result-subtitle"></p>
     </div>
     <div class="podium" id="podium"></div>
+    <div class="result-hint" data-g="rHint"></div>
+    <div class="result-hint" id="sale-summary" style="display:none"></div>
+    <div class="result-hint" id="itad-credit" style="display:none">Price history data: <a href="https://isthereanydeal.com/" target="_blank" rel="noopener" style="color:var(--accent2)">IsThereAnyDeal</a></div>
     <div class="result-table-wrap">
       <table class="result-table">
         <thead>
           <tr>
+            <th></th>
             <th class="rt-rank" id="txt-th-rank">順位 |</th>
             <th id="txt-th-img">画像 |</th>
             <th id="txt-th-title">タイトル |</th>
@@ -552,9 +622,11 @@ body.modal-open{overflow:hidden}
 
 <canvas id="fx-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:900"></canvas>
 <div id="combo-pop" class="combo-pop"></div>
+<div id="spot" class="spot"></div>
 <div id="fx-toast" class="fx-toast"></div>
 <div class="round-complete-overlay" id="flow-overlay">
   <div class="round-complete-content">
+    <img id="flow-img" class="flow-img" alt="">
     <h2 id="flow-title"></h2>
     <p id="flow-sub"></p>
   </div>
@@ -581,79 +653,52 @@ body.modal-open{overflow:hidden}
         <div class="guide-note"><span data-g="gIdNote"></span><br><a class="chip ext" style="margin-top:6px" href="https://steamid.io/" target="_blank" rel="noopener">steamid.io</a></div>
       </div></div>
 
-      <div id="guide-sec-key" class="guide-sec-title" data-g="gSecKey">② Steam Web API キーの取り方</div>
-      <div class="guide-note" data-g="gKeyReq"></div>
-      <div class="guide-step"><span class="guide-num">1</span><div class="guide-step-body">
-        <p data-g="gKey1"></p>
-      </div></div>
-      <div class="guide-step"><span class="guide-num">2</span><div class="guide-step-body">
-        <p data-g="gKey2"></p>
-        <div class="mock" aria-hidden="true"><div class="mock-crumb"><span>&#9776; Menu</span>&rarr;<span>Steam Guard</span>&rarr;<span class="mock-hl">Add Authenticator</span></div></div>
-      </div></div>
-      <div class="guide-step"><span class="guide-num">3</span><div class="guide-step-body">
-        <p data-g="gKey3"></p>
-        <div class="mock" aria-hidden="true">Recovery code: <span class="mock-hl">R12345</span></div>
-      </div></div>
-      <div class="guide-step"><span class="guide-num">4</span><div class="guide-step-body">
-        <p data-g="gKey4"></p>
-        <a class="chip ext" style="align-self:flex-start" href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener">steamcommunity.com/dev/apikey</a>
-      </div></div>
-      <div class="guide-step"><span class="guide-num">5</span><div class="guide-step-body">
-        <p data-g="gKey5"></p>
-        <div class="mock" aria-hidden="true"><div class="mock-form"><b>Register for a new Steam Web API Key</b><div>Domain Name</div><div class="mock-field mock-hl">localhost</div><div>&#9745; I agree to the Steam Web API Terms of Use</div><span class="mock-btn">Register</span></div></div>
-      </div></div>
-      <div class="guide-step"><span class="guide-num">6</span><div class="guide-step-body">
-        <p data-g="gKey6"></p>
-        <div class="mock" aria-hidden="true">Key: <span class="mock-hl">XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</span></div>
-      </div></div>
-      <div class="guide-note warn" data-g="gKeyWarn"></div>
 
     </div>
     <div class="guide-foot"><button type="button" class="btn btn-dark" onclick="closeModal('guide-modal')" data-g="close">閉じる</button></div>
   </div>
 </div>
 
-<!-- Steamに反映する手順 -->
+<!-- Steamに反映する手順（ブックマークレット方式） -->
 <div id="sync-modal" class="guide-overlay">
   <div class="guide-modal" role="dialog" aria-modal="true">
-    <div class="guide-head"><h3 data-g="sTitle">🎮 Steamに反映する手順</h3><button type="button" class="guide-x" onclick="closeModal('sync-modal')" aria-label="close">&times;</button></div>
+    <div class="guide-head"><h3 data-g="bmTitle">🎮 Steamに反映する手順</h3><button type="button" class="guide-x" onclick="closeModal('sync-modal')" aria-label="close">&times;</button></div>
     <div class="guide-body">
       <div id="sync-status" class="sync-status ok"></div>
-      <div id="sync-mobile" class="guide-note warn" style="display:none" data-g="sMobile"></div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <div style="font-size:.78rem;color:var(--text2)" data-g="sCodeLabel"></div>
+      <div id="sync-mobile" class="guide-note warn" style="display:none" data-g="bmPc"></div>
+
+      <div class="guide-sec-title" data-g="bmFirst">【初回だけ】ブックマークを1つ作る</div>
+      <div class="guide-step"><span class="guide-num">1</span><div class="guide-step-body">
+        <p data-g="bm1"></p>
+        <div class="mock" aria-hidden="true"><div class="mock-nav"><span>&#9733; Bookmarks</span><span>Gmail</span><span class="mock-hl">Steam Wishlist Apply</span></div></div>
+      </div></div>
+      <div class="guide-step"><span class="guide-num">2</span><div class="guide-step-body">
+        <p data-g="bm2"></p>
+        <div style="font-size:.78rem;color:var(--text2)" data-g="bmCodeLabel"></div>
+        <textarea id="bm-code" class="code-box" readonly spellcheck="false" onclick="this.select()"></textarea>
+        <button type="button" id="bm-copy-btn" class="btn btn-gold btn-sm" style="align-self:flex-start" onclick="copyBookmarklet()" data-g="bmCopyCode">📋 ブックマーク用コードをコピー</button>
+        <div class="guide-note" data-g="bmShowBar"></div>
+      </div></div>
+
+      <div class="guide-sec-title" data-g="bmEach">【反映するたび】</div>
+      <div class="guide-step"><span class="guide-num">1</span><div class="guide-step-body">
+        <p data-g="bmE1"></p>
+        <div style="font-size:.78rem;color:var(--text2)" data-g="bmRankLabel"></div>
         <textarea id="sync-code" class="code-box" readonly spellcheck="false" onclick="this.select()"></textarea>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button type="button" class="btn btn-gold btn-sm" onclick="copySyncCode()" data-g="sRecopy">📋 コードをもう一度コピー</button>
           <button type="button" id="sync-share-btn" class="btn btn-dark btn-sm" style="display:none" onclick="shareSyncCode()" data-g="sShare">📤 共有</button>
         </div>
-      </div>
-
-      <div class="guide-step"><span class="guide-num">1</span><div class="guide-step-body">
-        <p data-g="s1"></p>
-        <button type="button" class="btn btn-steam" style="align-self:flex-start" onclick="openWishlist()" data-g="sOpenWish">🔗 Steamのウィッシュリストを開く</button>
       </div></div>
       <div class="guide-step"><span class="guide-num">2</span><div class="guide-step-body">
-        <p data-g="s2"></p>
-        <div class="keyrow" aria-hidden="true"><span class="kbd">F12</span></div>
-        <div class="mock" aria-hidden="true"><div class="mock-devtools"><div class="mock-tabs"><span>Elements</span><span class="on">Console</span><span>Sources</span><span>Network</span></div><div class="mock-console"><span class="prompt">&gt;</span><span class="mock-caret"></span></div></div><div class="mock-cap" data-g="sTabHere"></div></div>
+        <p data-g="bmE2"></p>
+        <button type="button" class="btn btn-steam" style="align-self:flex-start" onclick="openWishlist()" data-g="sOpenWish">🔗 Steamのウィッシュリストを開く</button>
       </div></div>
       <div class="guide-step"><span class="guide-num">3</span><div class="guide-step-body">
-        <p data-g="s3"></p>
-        <div class="keyrow" aria-hidden="true"><span class="kbd">Ctrl</span>+<span class="kbd">V</span></div>
-        <div class="mock" aria-hidden="true"><div class="mock-devtools"><div class="mock-tabs"><span>Elements</span><span class="on">Console</span><span>Sources</span><span>Network</span></div><div class="mock-console"><span class="prompt">&gt;</span> <span class="typed">fetch('https://store.steampowered.com/wishlist/action/', ...</span><span class="mock-caret"></span></div></div></div>
+        <p data-g="bmE3"></p>
+        <div class="guide-note" data-g="bmPromptNote"></div>
       </div></div>
-      <div class="guide-step"><span class="guide-num">4</span><div class="guide-step-body">
-        <p data-g="s4"></p>
-        <div class="mock" aria-hidden="true"><div class="mock-devtools"><div class="mock-tabs"><span>Elements</span><span class="on">Console</span><span>Sources</span><span>Network</span></div><div class="mock-console"><div class="warn">Warning: Don't paste code into the DevTools Console that you don't understand or haven't reviewed yourself. This could allow attackers to steal your identity or take control of your computer. Type "allow pasting" below and press Enter to allow pasting.</div><span class="prompt">&gt;</span> <span class="typed mock-hl">allow pasting</span><span class="mock-caret"></span></div></div><div class="mock-cap" data-g="sWarnLabel"></div></div>
-        <div class="keyrow" aria-hidden="true"><span class="kbd">Enter</span></div>
-      </div></div>
-      <div class="guide-step"><span class="guide-num">5</span><div class="guide-step-body">
-        <p data-g="s5"></p>
-        <div class="keyrow" aria-hidden="true"><span class="kbd">Ctrl</span>+<span class="kbd">V</span> &rarr; <span class="kbd">Enter</span></div>
-      </div></div>
-      <div class="guide-note warn" data-g="sNote"></div>
-
+      <div class="guide-note warn" data-g="bmPc"></div>
     </div>
     <div class="guide-foot">
       <button type="button" class="btn btn-dark" onclick="closeModal('sync-modal')" data-g="close">閉じる</button>
@@ -1505,6 +1550,414 @@ var FLOW_ADD = {
   }
 })();
 
+var FLOW2_ADD = {
+  ja: {
+    idPrivacy: '※ SteamID64はこのブラウザ内にのみ保存されます。ウィッシュリスト取得のため、Steam APIへの中継サーバー（Cloudflare Workers）を経由して送信されます。',
+    errPrivate: 'ウィッシュリストを取得できませんでした。SteamIDが正しいか、ウィッシュリストが公開設定（プライバシー設定の「ゲームの詳細」）か確認してください。',
+    gTitle2: '🛒 気になるゲームをタップ！',
+    gSub: 'ざっくりでOK。全体の3割くらい選ぶのがおすすめです。選んだゲームだけが、次の4枚バトルに進みます。',
+    gCount: '気になる: {n}本（目安 約{m}本）',
+    gPrev: '◀ 前へ',
+    gNext: '次のページ ▶',
+    gFinish: '選び終わった ✓',
+    gLater: '💾 今日はここまで',
+    oQuadBtnDuel: '⚔ 上位で1対1バトル（おすすめ）',
+    dStartToast: '⚔ 上位{n}本で1対1バトル！',
+    dRoundTitle: '🏁 上位バトル {r}ラウンド完了！',
+    dStable: '上位10位の顔ぶれが安定しました。決勝トーナメントに進めます！',
+    dUnstable: '上位10位がまだ入れ替わっています。もう1ラウンドで、さらに安定します。',
+    dBtnTour: '🏆 決勝トーナメントへ',
+    dBtnMore: '🔄 もう1ラウンド',
+    tourR16: 'ベスト16', tourR8: 'ベスト8', tourSF: '準決勝', tourF: '決勝',
+    tourSub: '{m}試合 ― 勝った方が次へ進みます',
+    tourStart: 'スタート ▶',
+    tourChamp: '🏆 優勝！',
+    tourChampSub: '「{name}」が頂点に立ちました！結果を順位に反映しました。',
+    tourBtnResult: '📊 結果を見る',
+    rHint: '⠿ をドラッグして順位を手動で入れ替えできます。Steamへの反映にもこの順位が使われます。',
+    rUpdated: '✅ 並び順を更新しました',
+    bmTitle: '🎮 Steamに反映する手順',
+    bmFirst: '【初回だけ】ブックマークを1つ作る',
+    bm1: 'ブラウザのブックマークバーを右クリックして、「ページを追加」（ブラウザによって「ブックマークを追加」など）を選びます。',
+    bm2: '名前に「Steam Wishlist 反映」、URL欄に下のコードを貼り付けて保存します。',
+    bmCopyCode: '📋 ブックマーク用コードをコピー',
+    bmCodeLabel: 'ブックマーク用コード（URL欄に貼り付けます）',
+    bmShowBar: 'ブックマークバーが見えないときは、Ctrl+Shift+B（Macは Cmd+Shift+B）で表示できます。',
+    bmEach: '【反映するたび】',
+    bmE1: 'ランキングは自動でコピー済みです。下のボタンで、もう一度コピーすることもできます。',
+    bmRankLabel: 'ランキングのコード（コピーされた内容）',
+    bmE2: 'Steamのウィッシュリストを開きます。',
+    bmE3: '登録したブックマークをクリックします。初回は「クリップボードの許可」が出るので許可してください。「Done!」と出れば完了です。ページを再読み込みして確認しましょう。',
+    bmPromptNote: '貼り付け欄が出たときは、Ctrl+V でランキングを貼り付けて OK を押してください（クリップボードが使えなかった場合の予備の入力欄です）。',
+    bmPc: 'この操作はパソコンのブラウザで行います。スマホの場合は、下の「共有」でコードを自分に送り、パソコンで開いてください。',
+    bmMsgNoSession: 'Steamにログインしてください',
+    bmMsgPrompt: 'ランキングのコードを貼り付けてください (Ctrl+V)',
+    bmMsgInvalid: 'ランキングのコードが正しくありません',
+    bmMsgDone: '完了！ページを再読み込みしてください',
+    bmMsgFail: '失敗: ',
+    bmMsgError: 'エラー: '
+  },
+  en: {
+    idPrivacy: '* Your SteamID64 is stored only in this browser. To load your wishlist, it is sent through a relay server (Cloudflare Workers) to the Steam API.',
+    errPrivate: 'Could not load the wishlist. Please check that your SteamID is correct and that your wishlist is public (Game details in your Steam privacy settings).',
+    gTitle2: '🛒 Tap the games that catch your eye!',
+    gSub: 'A rough pick is fine. About 30% of all games is a good target. Only the games you pick move on to the 4-card battles.',
+    gCount: 'Picked: {n} (target about {m})',
+    gPrev: '◀ Back',
+    gNext: 'Next page ▶',
+    gFinish: 'Done picking ✓',
+    gLater: '💾 Continue later',
+    oQuadBtnDuel: '⚔ Top 1v1 battles (recommended)',
+    dStartToast: '⚔ 1v1 battles for the top {n}!',
+    dRoundTitle: '🏁 Top battle round {r} complete!',
+    dStable: 'The top 10 has settled. You can move on to the final tournament!',
+    dUnstable: 'The top 10 is still shifting. One more round will make it more stable.',
+    dBtnTour: '🏆 To the final tournament',
+    dBtnMore: '🔄 One more round',
+    tourR16: 'Round of 16', tourR8: 'Quarterfinals', tourSF: 'Semifinals', tourF: 'Final',
+    tourSub: '{m} matches - the winner moves on',
+    tourStart: 'Start ▶',
+    tourChamp: '🏆 Champion!',
+    tourChampSub: '"{name}" takes the crown! The results are applied to your ranking.',
+    tourBtnResult: '📊 View results',
+    rHint: 'Drag ⠿ to reorder the ranking by hand. This order is also used when applying it to Steam.',
+    rUpdated: '✅ Order updated',
+    bmTitle: '🎮 How to apply the ranking to Steam',
+    bmFirst: '[First time only] Create one bookmark',
+    bm1: 'Right-click your browser\'s bookmarks bar and choose "Add page" (or "Add bookmark", depending on the browser).',
+    bm2: 'Enter "Steam Wishlist Apply" as the name, paste the code below into the URL field, and save.',
+    bmCopyCode: '📋 Copy bookmark code',
+    bmCodeLabel: 'Bookmark code (paste into the URL field)',
+    bmShowBar: 'If you cannot see the bookmarks bar, press Ctrl+Shift+B (Mac: Cmd+Shift+B) to show it.',
+    bmEach: '[Every time you apply]',
+    bmE1: 'Your ranking has been copied automatically. You can copy it again with the button below.',
+    bmRankLabel: 'Ranking code (what was copied)',
+    bmE2: 'Open your Steam wishlist.',
+    bmE3: 'Click the bookmark you created. The first time, a clipboard permission prompt appears; allow it. When you see "Done!", it worked. Reload the page to check.',
+    bmPromptNote: 'If a paste box appears, paste the ranking with Ctrl+V and press OK (it is a backup input used when the clipboard is unavailable).',
+    bmPc: 'Do this on a desktop browser. On a phone, use "Share" below to send the code to yourself and open it on a computer.',
+    bmMsgNoSession: 'Please log in to Steam',
+    bmMsgPrompt: 'Paste the ranking code (Ctrl+V)',
+    bmMsgInvalid: 'The ranking code is not valid',
+    bmMsgDone: 'Done! Please reload the page',
+    bmMsgFail: 'Failed: ',
+    bmMsgError: 'Error: '
+  },
+  zh: {
+    idPrivacy: '※ SteamID64 仅保存在此浏览器中。为了获取愿望单，它会经由中转服务器（Cloudflare Workers）发送到 Steam API。',
+    errPrivate: '无法获取愿望单。请确认 SteamID 正确，且愿望单已公开（Steam 隐私设置中的“游戏详情”）。',
+    gTitle2: '🛒 点一点你感兴趣的游戏！',
+    gSub: '大概选就行。建议选全部游戏的三成左右。只有选中的游戏会进入下一步的四选一对决。',
+    gCount: '已选：{n} 款（目标约 {m} 款）',
+    gPrev: '◀ 上一页',
+    gNext: '下一页 ▶',
+    gFinish: '选好了 ✓',
+    gLater: '💾 今天先到这里',
+    oQuadBtnDuel: '⚔ 前排一对一对决（推荐）',
+    dStartToast: '⚔ 前 {n} 款进行一对一对决！',
+    dRoundTitle: '🏁 前排对决第 {r} 轮完成！',
+    dStable: '前 10 名已经稳定，可以进入决赛淘汰赛了！',
+    dUnstable: '前 10 名仍在变动。再来一轮会更稳定。',
+    dBtnTour: '🏆 进入决赛淘汰赛',
+    dBtnMore: '🔄 再来一轮',
+    tourR16: '十六强', tourR8: '八强', tourSF: '半决赛', tourF: '决赛',
+    tourSub: '{m} 场比赛 ― 胜者晋级',
+    tourStart: '开始 ▶',
+    tourChamp: '🏆 冠军！',
+    tourChampSub: '“{name}”登上了榜首！结果已反映到排名中。',
+    tourBtnResult: '📊 查看结果',
+    rHint: '拖动 ⠿ 可以手动调整排名。应用到 Steam 时也会使用这个顺序。',
+    rUpdated: '✅ 排序已更新',
+    bmTitle: '🎮 如何把排名应用到 Steam',
+    bmFirst: '【仅首次】创建一个书签',
+    bm1: '在浏览器的书签栏上右键，选择“添加页面”（不同浏览器名称可能是“添加书签”等）。',
+    bm2: '名称填“Steam Wishlist 应用”，在网址栏粘贴下面的代码后保存。',
+    bmCopyCode: '📋 复制书签代码',
+    bmCodeLabel: '书签代码（粘贴到网址栏）',
+    bmShowBar: '如果看不到书签栏，请按 Ctrl+Shift+B（Mac 为 Cmd+Shift+B）显示。',
+    bmEach: '【每次应用时】',
+    bmE1: '排名已自动复制。也可以用下面的按钮再次复制。',
+    bmRankLabel: '排名代码（已复制的内容）',
+    bmE2: '打开你的 Steam 愿望单。',
+    bmE3: '点击刚才创建的书签。首次会弹出“剪贴板权限”提示，请允许。出现“Done!”就表示完成，刷新页面确认。',
+    bmPromptNote: '如果出现粘贴输入框，请按 Ctrl+V 粘贴排名并点击确定（这是剪贴板无法使用时的备用输入框）。',
+    bmPc: '请在电脑浏览器上操作。手机上请用下面的“分享”把代码发给自己，再在电脑上打开。',
+    bmMsgNoSession: '请先登录 Steam',
+    bmMsgPrompt: '请粘贴排名代码 (Ctrl+V)',
+    bmMsgInvalid: '排名代码无效',
+    bmMsgDone: '完成！请刷新页面',
+    bmMsgFail: '失败：',
+    bmMsgError: '错误：'
+  },
+  ru: {
+    idPrivacy: '* SteamID64 хранится только в этом браузере. Для загрузки списка желаемого он отправляется через промежуточный сервер (Cloudflare Workers) в Steam API.',
+    errPrivate: 'Не удалось загрузить список желаемого. Проверьте SteamID и убедитесь, что список открыт (в настройках приватности Steam — «Сведения об играх»).',
+    gTitle2: '🛒 Отметьте игры, которые вас заинтересовали!',
+    gSub: 'Можно примерно. Хорошо выбрать около 30% всех игр. Только выбранные игры перейдут к боям на 4 карточки.',
+    gCount: 'Выбрано: {n} (ориентир — около {m})',
+    gPrev: '◀ Назад',
+    gNext: 'Следующая страница ▶',
+    gFinish: 'Готово ✓',
+    gLater: '💾 Продолжить позже',
+    oQuadBtnDuel: '⚔ Бои 1 на 1 для лидеров (рекомендуется)',
+    dStartToast: '⚔ Бои 1 на 1 для топ-{n}!',
+    dRoundTitle: '🏁 Раунд {r} боёв лидеров завершён!',
+    dStable: 'Первая десятка стабилизировалась. Можно переходить к финальному турниру!',
+    dUnstable: 'Первая десятка ещё меняется. Ещё один раунд сделает её стабильнее.',
+    dBtnTour: '🏆 К финальному турниру',
+    dBtnMore: '🔄 Ещё раунд',
+    tourR16: '1/8 финала', tourR8: '1/4 финала', tourSF: 'Полуфинал', tourF: 'Финал',
+    tourSub: 'Матчей: {m} ― победитель проходит дальше',
+    tourStart: 'Старт ▶',
+    tourChamp: '🏆 Чемпион!',
+    tourChampSub: '«{name}» на вершине! Результаты применены к рейтингу.',
+    tourBtnResult: '📊 Посмотреть результаты',
+    rHint: 'Перетаскивайте ⠿, чтобы вручную менять порядок. Этот порядок используется и при применении в Steam.',
+    rUpdated: '✅ Порядок обновлён',
+    bmTitle: '🎮 Как применить рейтинг в Steam',
+    bmFirst: '[Только в первый раз] Создайте одну закладку',
+    bm1: 'Щёлкните правой кнопкой по панели закладок браузера и выберите «Добавить страницу» (или «Добавить закладку» — зависит от браузера).',
+    bm2: 'В имени укажите «Steam Wishlist Apply», вставьте код ниже в поле URL и сохраните.',
+    bmCopyCode: '📋 Скопировать код закладки',
+    bmCodeLabel: 'Код закладки (вставьте в поле URL)',
+    bmShowBar: 'Если панель закладок не видна, нажмите Ctrl+Shift+B (на Mac — Cmd+Shift+B).',
+    bmEach: '[Каждый раз при применении]',
+    bmE1: 'Рейтинг уже скопирован автоматически. Его можно скопировать ещё раз кнопкой ниже.',
+    bmRankLabel: 'Код рейтинга (то, что скопировано)',
+    bmE2: 'Откройте свой список желаемого в Steam.',
+    bmE3: 'Нажмите созданную закладку. В первый раз появится запрос на доступ к буферу обмена — разрешите. Если появится «Done!», всё получилось. Обновите страницу для проверки.',
+    bmPromptNote: 'Если появится окно для вставки, вставьте рейтинг через Ctrl+V и нажмите OK (это запасной ввод, когда буфер обмена недоступен).',
+    bmPc: 'Делайте это в браузере на компьютере. С телефона отправьте код себе кнопкой «Поделиться» ниже и откройте на компьютере.',
+    bmMsgNoSession: 'Войдите в Steam',
+    bmMsgPrompt: 'Вставьте код рейтинга (Ctrl+V)',
+    bmMsgInvalid: 'Код рейтинга недействителен',
+    bmMsgDone: 'Готово! Обновите страницу',
+    bmMsgFail: 'Ошибка: ',
+    bmMsgError: 'Ошибка: '
+  },
+  pt: {
+    idPrivacy: '* Seu SteamID64 fica salvo apenas neste navegador. Para carregar sua lista de desejos, ele é enviado por um servidor intermediário (Cloudflare Workers) à API da Steam.',
+    errPrivate: 'Não foi possível carregar a lista de desejos. Verifique se o SteamID está correto e se a lista é pública ("Detalhes do jogo" nas configurações de privacidade da Steam).',
+    gTitle2: '🛒 Toque nos jogos que chamam sua atenção!',
+    gSub: 'Pode ser por alto. Cerca de 30% dos jogos é uma boa meta. Só os jogos escolhidos seguem para as batalhas de 4 cartas.',
+    gCount: 'Escolhidos: {n} (meta de cerca de {m})',
+    gPrev: '◀ Voltar',
+    gNext: 'Próxima página ▶',
+    gFinish: 'Terminei de escolher ✓',
+    gLater: '💾 Continuar depois',
+    oQuadBtnDuel: '⚔ Duelos 1 contra 1 do topo (recomendado)',
+    dStartToast: '⚔ Duelos 1 contra 1 para os {n} primeiros!',
+    dRoundTitle: '🏁 Rodada {r} dos duelos do topo concluída!',
+    dStable: 'O top 10 se estabilizou. Você já pode ir para o torneio final!',
+    dUnstable: 'O top 10 ainda está mudando. Mais uma rodada deixará tudo mais estável.',
+    dBtnTour: '🏆 Ir ao torneio final',
+    dBtnMore: '🔄 Mais uma rodada',
+    tourR16: 'Oitavas de final', tourR8: 'Quartas de final', tourSF: 'Semifinal', tourF: 'Final',
+    tourSub: '{m} partidas ― quem vencer avança',
+    tourStart: 'Começar ▶',
+    tourChamp: '🏆 Campeão!',
+    tourChampSub: '"{name}" chegou ao topo! Os resultados foram aplicados ao ranking.',
+    tourBtnResult: '📊 Ver resultados',
+    rHint: 'Arraste ⠿ para reordenar o ranking manualmente. Essa ordem também é usada ao aplicar na Steam.',
+    rUpdated: '✅ Ordem atualizada',
+    bmTitle: '🎮 Como aplicar o ranking na Steam',
+    bmFirst: '[Só na primeira vez] Crie um favorito',
+    bm1: 'Clique com o botão direito na barra de favoritos do navegador e escolha "Adicionar página" (ou "Adicionar favorito", conforme o navegador).',
+    bm2: 'No nome, digite "Steam Wishlist Apply", cole o código abaixo no campo de URL e salve.',
+    bmCopyCode: '📋 Copiar código do favorito',
+    bmCodeLabel: 'Código do favorito (cole no campo de URL)',
+    bmShowBar: 'Se não vir a barra de favoritos, pressione Ctrl+Shift+B (no Mac: Cmd+Shift+B).',
+    bmEach: '[Toda vez que aplicar]',
+    bmE1: 'O ranking já foi copiado automaticamente. Você pode copiá-lo de novo com o botão abaixo.',
+    bmRankLabel: 'Código do ranking (o que foi copiado)',
+    bmE2: 'Abra sua lista de desejos da Steam.',
+    bmE3: 'Clique no favorito que você criou. Na primeira vez aparece um pedido de permissão da área de transferência; permita. Se aparecer "Done!", deu certo. Recarregue a página para conferir.',
+    bmPromptNote: 'Se aparecer uma caixa de colagem, cole o ranking com Ctrl+V e pressione OK (é uma entrada alternativa quando a área de transferência não está disponível).',
+    bmPc: 'Faça isso em um navegador de computador. No celular, use "Compartilhar" abaixo para enviar o código a você mesmo e abra-o no computador.',
+    bmMsgNoSession: 'Faça login na Steam',
+    bmMsgPrompt: 'Cole o código do ranking (Ctrl+V)',
+    bmMsgInvalid: 'O código do ranking não é válido',
+    bmMsgDone: 'Pronto! Recarregue a página',
+    bmMsgFail: 'Falhou: ',
+    bmMsgError: 'Erro: '
+  },
+  de: {
+    idPrivacy: '* Deine SteamID64 wird nur in diesem Browser gespeichert. Zum Laden der Wunschliste wird sie über einen Relay-Server (Cloudflare Workers) an die Steam-API gesendet.',
+    errPrivate: 'Die Wunschliste konnte nicht geladen werden. Prüfe, ob die SteamID stimmt und die Wunschliste öffentlich ist („Spieldetails“ in den Steam-Privatsphäre-Einstellungen).',
+    gTitle2: '🛒 Tippe die Spiele an, die dich interessieren!',
+    gSub: 'Grob reicht. Etwa 30 % aller Spiele sind ein guter Richtwert. Nur die gewählten Spiele kommen in die 4-Karten-Duelle.',
+    gCount: 'Gewählt: {n} (Richtwert ca. {m})',
+    gPrev: '◀ Zurück',
+    gNext: 'Nächste Seite ▶',
+    gFinish: 'Fertig gewählt ✓',
+    gLater: '💾 Später weitermachen',
+    oQuadBtnDuel: '⚔ 1-gegen-1 an der Spitze (empfohlen)',
+    dStartToast: '⚔ 1-gegen-1 für die Top {n}!',
+    dRoundTitle: '🏁 Spitzenduell-Runde {r} abgeschlossen!',
+    dStable: 'Die Top 10 stehen fest. Du kannst zum Finalturnier!',
+    dUnstable: 'Die Top 10 verschieben sich noch. Eine weitere Runde macht sie stabiler.',
+    dBtnTour: '🏆 Zum Finalturnier',
+    dBtnMore: '🔄 Noch eine Runde',
+    tourR16: 'Achtelfinale', tourR8: 'Viertelfinale', tourSF: 'Halbfinale', tourF: 'Finale',
+    tourSub: '{m} Spiele ― der Sieger kommt weiter',
+    tourStart: 'Start ▶',
+    tourChamp: '🏆 Sieger!',
+    tourChampSub: '„{name}“ steht an der Spitze! Die Ergebnisse wurden in die Rangliste übernommen.',
+    tourBtnResult: '📊 Ergebnisse ansehen',
+    rHint: 'Ziehe ⠿, um die Rangliste von Hand umzusortieren. Diese Reihenfolge wird auch beim Übernehmen in Steam verwendet.',
+    rUpdated: '✅ Reihenfolge aktualisiert',
+    bmTitle: '🎮 So übernimmst du das Ranking in Steam',
+    bmFirst: '[Nur beim ersten Mal] Ein Lesezeichen anlegen',
+    bm1: 'Klicke mit der rechten Maustaste auf die Lesezeichenleiste deines Browsers und wähle „Seite hinzufügen“ (oder „Lesezeichen hinzufügen“, je nach Browser).',
+    bm2: 'Gib als Namen „Steam Wishlist Apply“ ein, füge den Code unten in das URL-Feld ein und speichere.',
+    bmCopyCode: '📋 Lesezeichen-Code kopieren',
+    bmCodeLabel: 'Lesezeichen-Code (ins URL-Feld einfügen)',
+    bmShowBar: 'Siehst du die Lesezeichenleiste nicht, drücke Strg+Umschalt+B (Mac: Cmd+Umschalt+B).',
+    bmEach: '[Bei jeder Übernahme]',
+    bmE1: 'Dein Ranking wurde automatisch kopiert. Mit der Schaltfläche unten kannst du es erneut kopieren.',
+    bmRankLabel: 'Ranking-Code (das Kopierte)',
+    bmE2: 'Öffne deine Steam-Wunschliste.',
+    bmE3: 'Klicke auf das angelegte Lesezeichen. Beim ersten Mal erscheint eine Zwischenablage-Berechtigung; erlaube sie. Erscheint „Done!“, hat es geklappt. Lade die Seite neu, um es zu prüfen.',
+    bmPromptNote: 'Erscheint ein Einfügefeld, füge das Ranking mit Strg+V ein und drücke OK (das ist eine Ersatzeingabe, falls die Zwischenablage nicht verfügbar ist).',
+    bmPc: 'Bitte am Computer im Browser ausführen. Auf dem Handy sendest du den Code mit „Teilen“ unten an dich selbst und öffnest ihn am Computer.',
+    bmMsgNoSession: 'Bitte bei Steam anmelden',
+    bmMsgPrompt: 'Ranking-Code einfügen (Strg+V)',
+    bmMsgInvalid: 'Der Ranking-Code ist ungültig',
+    bmMsgDone: 'Fertig! Bitte Seite neu laden',
+    bmMsgFail: 'Fehlgeschlagen: ',
+    bmMsgError: 'Fehler: '
+  }
+};
+(function(){
+  for (var lg in FLOW2_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW2_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW2_ADD[lg][k];
+  }
+})();
+
+var FLOW3_ADD = {
+  ja: {
+    kHintBattle: '⌨ ←/1: 左　→/2: 右　↑/3: どっちも欲しい　↓/4: よく知らない　Backspace/0: 戻る　Enter: 次へ',
+    kHintQuad: '⌨ 1〜4（テンキー可）: カードを選ぶ　0: どれも分からない　Backspace: 戻る　Enter: 次へ',
+    kHintGrid: '⌨ Enter / →: 次のページ　←: 前のページ',
+    lowLabel: 'Steam最安',
+    buyNow: '💡 買い時',
+    rSaleSummary: '🔥 セール中 {s}本　💡 買い時（Steam最安に近い）{b}本',
+    raidBtn: '⚡ 乱入戦（見落とし救済）',
+    raidTitle: '⚡ 乱入戦！',
+    raidSub: '選ばなかったゲームから{n}本が、上位に挑戦します。勝ち上がれば順位に食い込みます！',
+    raidIn: '⚡ 乱入！',
+    raidUp: '🔥 下剋上！',
+    raidPlaced: '「{name}」が{pos}位に入った！',
+    raidThrone: '👑 王座奪取！「{name}」が1位に！',
+    raidMiss: '「{name}」は圏外…',
+    raidDoneTitle: '⚡ 乱入戦 終了！',
+    raidDoneSub: '{n}本が上位に食い込みました。',
+    raidNone: '乱入できるゲームがありません'
+  },
+  en: {
+    kHintBattle: '⌨ ←/1: left   →/2: right   ↑/3: want both   ↓/4: don\'t know   Backspace/0: undo   Enter: next',
+    kHintQuad: '⌨ 1-4 (numpad OK): pick a card   0: none are familiar   Backspace: undo   Enter: next',
+    kHintGrid: '⌨ Enter / →: next page   ←: previous page',
+    lowLabel: 'Steam low',
+    buyNow: '💡 Good time to buy',
+    rSaleSummary: '🔥 On sale: {s}   💡 Near Steam low: {b}',
+    raidBtn: '⚡ Raid battles (rescue overlooked games)',
+    raidTitle: '⚡ Raid battles!',
+    raidSub: '{n} games you did not pick will challenge the top list. Win your way into the ranking!',
+    raidIn: '⚡ Raid!',
+    raidUp: '🔥 Upset!',
+    raidPlaced: '"{name}" takes rank {pos}!',
+    raidThrone: '👑 Throne taken! "{name}" is now #1!',
+    raidMiss: '"{name}" missed the cut...',
+    raidDoneTitle: '⚡ Raid battles over!',
+    raidDoneSub: '{n} games broke into the top.',
+    raidNone: 'No games available to raid'
+  },
+  zh: {
+    kHintBattle: '⌨ ←/1：左　→/2：右　↑/3：都想要　↓/4：不了解　Backspace/0：撤销　Enter：下一步',
+    kHintQuad: '⌨ 1-4（小键盘可用）：选卡片　0：都不了解　Backspace：撤销　Enter：下一步',
+    kHintGrid: '⌨ Enter / →：下一页　←：上一页',
+    lowLabel: 'Steam史低',
+    buyNow: '💡 入手好时机',
+    rSaleSummary: '🔥 正在打折：{s} 款　💡 接近Steam史低：{b} 款',
+    raidBtn: '⚡ 乱入战（拯救被忽略的游戏）',
+    raidTitle: '⚡ 乱入战！',
+    raidSub: '从你没选的游戏中，有 {n} 款来挑战前排。赢下去就能挤进排名！',
+    raidIn: '⚡ 乱入！',
+    raidUp: '🔥 下克上！',
+    raidPlaced: '“{name}”进入第 {pos} 名！',
+    raidThrone: '👑 夺得王座！“{name}”成为第 1 名！',
+    raidMiss: '“{name}”落榜了……',
+    raidDoneTitle: '⚡ 乱入战结束！',
+    raidDoneSub: '有 {n} 款挤进了前排。',
+    raidNone: '没有可以乱入的游戏'
+  },
+  ru: {
+    kHintBattle: '⌨ ←/1: слева   →/2: справа   ↑/3: хочу обе   ↓/4: не знаю   Backspace/0: назад   Enter: далее',
+    kHintQuad: '⌨ 1–4 (можно с цифровой клавиатуры): выбрать карточку   0: все незнакомы   Backspace: назад   Enter: далее',
+    kHintGrid: '⌨ Enter / →: следующая страница   ←: предыдущая',
+    lowLabel: 'Мин. цена в Steam',
+    buyNow: '💡 Хорошее время',
+    rSaleSummary: '🔥 Со скидкой: {s}   💡 Близко к минимуму Steam: {b}',
+    raidBtn: '⚡ Вторжение (спасти упущенные игры)',
+    raidTitle: '⚡ Вторжение!',
+    raidSub: '{n} игр из тех, что вы не выбрали, бросят вызов лидерам. Победите, чтобы попасть в рейтинг!',
+    raidIn: '⚡ Вторжение!',
+    raidUp: '🔥 Сенсация!',
+    raidPlaced: '«{name}» занимает место {pos}!',
+    raidThrone: '👑 Трон захвачен! «{name}» теперь №1!',
+    raidMiss: '«{name}» не прошла отбор…',
+    raidDoneTitle: '⚡ Вторжение завершено!',
+    raidDoneSub: 'В топ прорвались игр: {n}.',
+    raidNone: 'Нет игр для вторжения'
+  },
+  pt: {
+    kHintBattle: '⌨ ←/1: esquerda   →/2: direita   ↑/3: quero os dois   ↓/4: não conheço   Backspace/0: voltar   Enter: avançar',
+    kHintQuad: '⌨ 1-4 (teclado numérico serve): escolher carta   0: não conheço nenhum   Backspace: voltar   Enter: avançar',
+    kHintGrid: '⌨ Enter / →: próxima página   ←: página anterior',
+    lowLabel: 'Mínima na Steam',
+    buyNow: '💡 Boa hora de comprar',
+    rSaleSummary: '🔥 Em promoção: {s}   💡 Perto da mínima da Steam: {b}',
+    raidBtn: '⚡ Invasão (resgatar jogos esquecidos)',
+    raidTitle: '⚡ Invasão!',
+    raidSub: '{n} jogos que você não escolheu vão desafiar o topo. Vença para entrar no ranking!',
+    raidIn: '⚡ Invasão!',
+    raidUp: '🔥 Zebra!',
+    raidPlaced: '"{name}" entra na posição {pos}!',
+    raidThrone: '👑 Trono conquistado! "{name}" é o nº 1!',
+    raidMiss: '"{name}" ficou de fora...',
+    raidDoneTitle: '⚡ Invasão encerrada!',
+    raidDoneSub: '{n} jogos entraram no topo.',
+    raidNone: 'Não há jogos para invadir'
+  },
+  de: {
+    kHintBattle: '⌨ ←/1: links   →/2: rechts   ↑/3: beide   ↓/4: kenne ich nicht   Backspace/0: zurück   Enter: weiter',
+    kHintQuad: '⌨ 1–4 (Ziffernblock möglich): Karte wählen   0: keines bekannt   Backspace: zurück   Enter: weiter',
+    kHintGrid: '⌨ Enter / →: nächste Seite   ←: vorherige Seite',
+    lowLabel: 'Steam-Bestpreis',
+    buyNow: '💡 Guter Zeitpunkt',
+    rSaleSummary: '🔥 Im Angebot: {s}   💡 Nahe am Steam-Bestpreis: {b}',
+    raidBtn: '⚡ Raid-Duelle (Übersehenes retten)',
+    raidTitle: '⚡ Raid-Duelle!',
+    raidSub: '{n} Spiele, die du nicht gewählt hast, fordern die Spitze heraus. Gewinne, um ins Ranking zu kommen!',
+    raidIn: '⚡ Raid!',
+    raidUp: '🔥 Überraschung!',
+    raidPlaced: '„{name}“ landet auf Platz {pos}!',
+    raidThrone: '👑 Thron erobert! „{name}“ ist jetzt Nr. 1!',
+    raidMiss: '„{name}“ hat es nicht geschafft …',
+    raidDoneTitle: '⚡ Raid-Duelle beendet!',
+    raidDoneSub: '{n} Spiele sind in die Spitze vorgedrungen.',
+    raidNone: 'Keine Spiele für einen Raid verfügbar'
+  }
+};
+(function(){
+  for (var lg in FLOW3_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW3_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW3_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -1525,6 +1978,8 @@ function renderGuideTexts(){
     ls[m].textContent=t(ls[m].getAttribute('data-l'));
   }
   if(typeof triageActive!=='undefined'&&triageActive) prepareTriageUI(true);
+  if(typeof refreshGridLabels==='function') refreshGridLabels();
+  if(typeof refreshPriceLines==='function'&&typeof state!=='undefined'&&state&&state.games) refreshPriceLines();
   var st=document.getElementById('sync-status');
   if(st&&st.getAttribute('data-state')){
     st.textContent=gt(st.getAttribute('data-state')==='ng'?'sCopyFail':'sCopied');
@@ -1734,26 +2189,19 @@ var sortQueue=[],sortIdx=0,sortResults={};
 
 function fetchWishlist(){
   var steamId=document.getElementById('steam-id').value.trim();
-  var apiKey=document.getElementById('api-key').value.trim();
   if(!steamId){setStatus(t('fetchErrId'),'red');return;}
   if(!/^\d+$/.test(steamId)){setStatus(t('fetchErrIdNum'),'red');return;}
-  if(!apiKey){setStatus(t('fetchErrKey'),'red');return;}
   var btn=document.getElementById('btn-fetch');
   btn.disabled=true;showProgress(true);setProgress(0);
   (async function(){
     try{
       setStatus(t('fetchStart'),'info');
-      var wrRes=await fetch(WORKER_URL+'/wishlist?key='+encodeURIComponent(apiKey)+'&steamid='+encodeURIComponent(steamId));
+      var wrRes=await fetch(WORKER_URL+'/wishlist?steamid='+encodeURIComponent(steamId));
       if(!wrRes.ok)throw new Error(t('fetchErrFail')+'('+wrRes.status+')');
       var wrData=await wrRes.json();
       var wishItems=(wrData&&wrData.response&&wrData.response.items)||[];
-      if(!wishItems.length)throw new Error(t('fetchErrEmpty'));
-      setStatus(t('fetchOwned'),'info');
-      var ownedRes=await fetch(WORKER_URL+'/owned?key='+encodeURIComponent(apiKey)+'&steamid='+encodeURIComponent(steamId));
-      var ownedData=await ownedRes.json();
-      var ownedArr=(ownedData&&ownedData.response&&ownedData.response.games)||[];
-      var owned=new Set(ownedArr.map(function(g){return String(g.appid);}));
-      var filtered=wishItems.filter(function(i){return !owned.has(String(i.appid));});
+      if(!wishItems.length)throw new Error(gt('errPrivate'));
+      var filtered=wishItems.slice();
       filtered.sort(function(a,b){return (a.priority||9999)-(b.priority||9999);});
       var appids=filtered.map(function(i){return String(i.appid);});
       setStatus(fmt('fetchGot',{n:appids.length}),'info');
@@ -1770,7 +2218,7 @@ function fetchWishlist(){
               var price=t('free');
               if(!d.is_free&&d.price_overview)price=d.price_overview.final_formatted;
               else if(!d.is_free)price=t('unknown');
-              games.push({appid:String(appid),name:d.name,capsule:(d.header_image||IMG_BASE+appid+'/header.jpg'),price:price,release:(d.release_date&&d.release_date.date)||''});
+              games.push(mkGame(appid,d,price));
             }else{failed.push(appid);}
           }catch(e){failed.push(appid);}
           done++;
@@ -1794,7 +2242,7 @@ function fetchWishlist(){
                 var price=t('free');
                 if(!d.is_free&&d.price_overview)price=d.price_overview.final_formatted;
                 else if(!d.is_free)price=t('unknown');
-                games.push({appid:String(appid),name:d.name,capsule:(d.header_image||IMG_BASE+appid+'/header.jpg'),price:price,release:(d.release_date&&d.release_date.date)||''});
+                games.push(mkGame(appid,d,price));
               }
             }catch(e){}
           }));
@@ -1805,7 +2253,7 @@ function fetchWishlist(){
       setProgress(100);
       setStatus(fmt('fetchDone',{n:games.length}),'green');
       localStorage.setItem('swr_steamid',steamId);
-      localStorage.setItem('swr_apikey',apiKey);
+      try{localStorage.removeItem('swr_apikey');}catch(e){}
       initState(games);
       setTimeout(beginFlow,500);
     }catch(e){
@@ -1844,9 +2292,7 @@ function loadSaved(){
   try{
     state=JSON.parse(saved);
     var sid=localStorage.getItem('swr_steamid');
-    var key=localStorage.getItem('swr_apikey');
     if(sid)document.getElementById('steam-id').value=sid;
-    if(key)document.getElementById('api-key').value=key;
     setStatus(fmt('savedResume',{n:state.games.length,r:state.roundNo}),'green');
     setTimeout(resumeFlow,400);
   }catch(e){setStatus(t('savedFail'),'red');}
@@ -2083,7 +2529,9 @@ function fxComboReset(){
 }
 
 // ---------- 汎用オーバーレイ ----------
-function showFlowOverlay(title,sub,btns){
+function showFlowOverlay(title,sub,btns,imgUrl){
+  var im=document.getElementById('flow-img');
+  if(im){ if(imgUrl){ im.src=imgUrl; im.style.display='block'; }else{ im.style.display='none'; } }
   document.getElementById('flow-title').textContent=title;
   document.getElementById('flow-sub').textContent=sub;
   var box=document.getElementById('flow-actions');
@@ -2107,17 +2555,26 @@ function hideFlowOverlay(){
 
 // ---------- フロー開始・再開 ----------
 function beginFlow(){
-  state.flow={phase:'triage',triageOrder:shuffleArr(state.games).map(function(g){return g.appid;}),
-    triageIdx:0,triageRes:{},triageHist:[],pool:[],quadDone:0,quadQueue:[],quadIdx:0,quadHist:[]};
+  setTourMode(false,false);
+  fetchLows();
+  state.flow={phase:'grid',gridOrder:shuffleArr(state.games).map(function(g){return g.appid;}),gridPage:0,gridSel:{},
+    pool:[],quadDone:0,quadQueue:[],quadIdx:0,quadHist:[]};
   saveState();
-  startTriage();
+  startGrid();
 }
 
 function resumeFlow(){
+  fetchLows();
   var f=state.flow;
-  if(!f||f.phase==='duel'){ startBattle(); return; }
+  if(!f){ setTourMode(false,false); startBattle(); return; }
+  if(f.phase==='grid'){ startGrid(); return; }
   if(f.phase==='triage'){ startTriage(); return; }
-  startQuadRound();
+  if(f.phase==='quad'){ startQuadRound(); return; }
+  if(f.phase==='raid'){ resumeRaid(); return; }
+  if(f.phase==='tour'){ resumeTour(); return; }
+  if(f.phase==='done'){ saveAndGoResult(); return; }
+  setTourMode(false,false);
+  startBattle();
 }
 
 // ---------- 仕分け（全ゲーム） ----------
@@ -2187,6 +2644,7 @@ function triageUndo(){
 
 function skipTriage(){
   triageActive=false;
+  setTourMode(false,false);
   prepareTriageUI(false);
   state.flow={phase:'duel',skipped:true};
   saveState();
@@ -2303,7 +2761,8 @@ function renderQuad(){
     card.setAttribute('data-id',g.appid);
     card.onclick=(function(id){ return function(){ quadPick(id); }; })(g.appid);
     card.innerHTML='<div class="quad-img"><img src="'+esc(g.capsule)+'" alt="" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'"><div class="quad-fb">'+esc(g.name)+'</div></div>'
-      +'<div class="quad-body"><div class="quad-title">'+esc(g.name)+'</div><div class="quad-meta">'+esc(g.price||'')+'</div>'
+      +'<div class="quad-num">'+(i+1)+'</div>'
+      +'<div class="quad-body"><div class="quad-title">'+esc(g.name)+'</div><div class="quad-meta" data-pl="'+esc(g.appid)+'">'+priceInfoHtml(g)+'</div>'
       +'<a class="card-store-link" href="https://store.steampowered.com/app/'+esc(g.appid)+'/" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+esc(t('storeLink'))+'</a></div>'
       +'<div class="quad-tag"></div>';
     grid.appendChild(card);
@@ -2429,9 +2888,9 @@ function quadRoundComplete(){
   fxRain(130);
   fxVibrate([20,40,20]);
   showFlowOverlay(gf('oQuadTitle',{r:f.quadDone}),gt('oQuadSub'),[
+    {label:gt('oQuadBtnDuel'),cls:'btn-gold',fn:startTopDuel},
     {label:gt('oQuadBtnMore'),cls:'btn-steam',fn:startQuadRound},
-    {label:gt('oQuadBtnResult'),cls:'btn-gold',fn:function(){hideFlowOverlay();saveAndGoResult();}},
-    {label:gt('oQuadBtnDuel'),cls:'btn-dark',fn:switchToDuel}
+    {label:gt('oQuadBtnResult'),cls:'btn-dark',fn:function(){hideFlowOverlay();saveAndGoResult();}}
   ]);
 }
 
@@ -2469,6 +2928,741 @@ function renderQuadSidebar(){
   document.getElementById('quad-sidebar').innerHTML=html;
 }
 
+// =====================================================
+// v2: グリッド選択 / 上位1対1 / 決勝トーナメント / 手動並び替え / ブックマークレット反映
+// =====================================================
+
+// ---------- グリッド選択（気になるゲームをタップ） ----------
+var GRID_PAGE=20;
+
+function gridTargetCount(){
+  return Math.max(5,Math.round(state.games.length*0.3));
+}
+
+function startGrid(){
+  triageActive=false;
+  showScreen('grid');
+  renderGrid();
+}
+
+function gridCardEl(id){
+  var els=document.querySelectorAll('#grid-cards .grid-card');
+  for(var i=0;i<els.length;i++){ if(els[i].getAttribute('data-id')===String(id)) return els[i]; }
+  return null;
+}
+
+function renderGrid(){
+  var f=state.flow;
+  var total=f.gridOrder.length;
+  var pages=Math.max(1,Math.ceil(total/GRID_PAGE));
+  if(f.gridPage>=pages) f.gridPage=pages-1;
+  if(f.gridPage<0) f.gridPage=0;
+  var ids=f.gridOrder.slice(f.gridPage*GRID_PAGE,f.gridPage*GRID_PAGE+GRID_PAGE);
+  var box=document.getElementById('grid-cards');
+  box.innerHTML='';
+  for(var i=0;i<ids.length;i++){
+    var g=gameById(ids[i]);
+    if(!g) continue;
+    var el=document.createElement('div');
+    el.className='grid-card'+(f.gridSel[g.appid]?' sel':'');
+    el.setAttribute('data-id',g.appid);
+    el.onclick=(function(id){ return function(){ gridToggle(id); }; })(g.appid);
+    el.innerHTML='<div class="grid-img"><img src="'+esc(g.capsule)+'" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'"><div class="quad-fb">'+esc(g.name)+'</div>'+(g.disc>0?'<div class="grid-sale">-'+g.disc+'%</div>':'')+'</div>'
+      +'<div class="grid-name">'+esc(g.name)+'</div><div class="grid-price" data-pl="'+esc(g.appid)+'">'+priceInfoHtml(g)+'</div><div class="grid-heart">❤</div>';
+    box.appendChild(el);
+  }
+  document.getElementById('grid-page').textContent=(f.gridPage+1)+' / '+pages;
+  document.getElementById('grid-progress-fill').style.width=Math.round((f.gridPage)/pages*100)+'%';
+  refreshGridLabels();
+  window.scrollTo(0,0);
+  var scr=document.getElementById('screen-grid'); if(scr) scr.scrollTop=0;
+}
+
+function refreshGridLabels(){
+  var scr=document.getElementById('screen-grid');
+  if(!scr||!scr.classList.contains('active')||typeof state==='undefined'||!state||!state.flow||!state.flow.gridOrder) return;
+  var f=state.flow;
+  var pages=Math.max(1,Math.ceil(f.gridOrder.length/GRID_PAGE));
+  var last=f.gridPage>=pages-1;
+  var next=document.getElementById('grid-next');
+  if(next) next.textContent=gt(last?'gFinish':'gNext');
+  var prev=document.getElementById('grid-prev');
+  if(prev) prev.disabled=(f.gridPage<=0);
+  var n=0; for(var k in f.gridSel){ n++; }
+  var cnt=document.getElementById('grid-count');
+  if(cnt){
+    cnt.textContent=gf('gCount',{n:n,m:gridTargetCount()});
+    cnt.className='grid-count'+(n>f.gridOrder.length*0.5?' over':'');
+  }
+}
+
+function gridToggle(id){
+  var f=state.flow;
+  var el=gridCardEl(id);
+  var n=0;
+  if(f.gridSel[id]){
+    delete f.gridSel[id];
+    if(el) el.classList.remove('sel');
+    fxComboReset();
+  }else{
+    f.gridSel[id]=1;
+    if(el) el.classList.add('sel');
+    fxCombo();
+    fxVibrate(6);
+    for(var k in f.gridSel){ n++; }
+    if(el&&n%10===0) fxBurstEl(el,24,8);
+    else if(el) fxBurstEl(el,6,4);
+  }
+  refreshGridLabels();
+}
+
+function gridNext(){
+  var f=state.flow;
+  var pages=Math.max(1,Math.ceil(f.gridOrder.length/GRID_PAGE));
+  if(f.gridPage>=pages-1){ finishGrid(); return; }
+  f.gridPage++;
+  if(pages>=4&&f.gridPage===Math.floor(pages/2)) fxToast(gt('tHalf'));
+  else if(pages>=6&&f.gridPage===pages-2) fxToast(gt('tAlmost'));
+  fxVibrate(8);
+  saveState();
+  renderGrid();
+}
+
+function gridPrev(){
+  var f=state.flow;
+  if(f.gridPage>0){ f.gridPage--; renderGrid(); }
+}
+
+function gridLater(){
+  saveState();
+  showScreen('start');
+}
+
+function finishGrid(){
+  var f=state.flow,i,g;
+  var pool=[];
+  for(i=0;i<state.games.length;i++){
+    g=state.games[i];
+    var sel=!!f.gridSel[g.appid];
+    state.scores[g.appid].points=sel?1650:1350;
+    state.scores[g.appid].sorted=true;
+    if(sel) pool.push(g);
+  }
+  var expanded=false;
+  if(pool.length<12){
+    var rest=shuffleArr(state.games.filter(function(x){return !f.gridSel[x.appid];}));
+    for(i=0;i<rest.length&&pool.length<12;i++) pool.push(rest[i]);
+    expanded=true;
+  }
+  if(pool.length<4) pool=state.games.slice();
+  f.pool=pool.map(function(x){return x.appid;});
+  f.phase='quad'; f.quadDone=0; f.quadQueue=[]; f.quadIdx=0; f.quadHist=[];
+  state.roundNo=1;
+  saveState();
+  fxRain(110);
+  fxVibrate([20,40,20]);
+  var sub=gf(expanded?'tDoneSubFew':'tDoneSub',{p:f.pool.length});
+  if(state.games.length<4){
+    showFlowOverlay(gt('tDoneTitle'),sub,[{label:gt('oQuadBtnResult'),cls:'btn-gold',fn:function(){hideFlowOverlay();saveAndGoResult();}}]);
+    return;
+  }
+  showFlowOverlay(gt('tDoneTitle'),sub,[{label:gt('tDoneBtn'),cls:'btn-gold',fn:startQuadRound}]);
+}
+
+// ---------- 上位だけの1対1バトル ----------
+function topDuelN(){
+  var n=state.games.length;
+  return Math.max(Math.min(20,n),Math.min(60,Math.round(n*0.1)));
+}
+
+function top10Ids(){
+  return getRankedGames().slice(0,10).map(function(g){return g.appid;});
+}
+
+function buildTopQueue(){
+  var f=state.flow;
+  var ranked=getRankedGames().slice(0,f.topN);
+  var jit={};
+  ranked.forEach(function(g){ jit[g.appid]=(Math.random()-0.5)*16; });
+  var ordered=ranked.slice().sort(function(a,b){
+    return (state.scores[b.appid].points+jit[b.appid])-(state.scores[a.appid].points+jit[a.appid]);
+  });
+  return pairUp(ordered);
+}
+
+function startTopDuel(){
+  hideFlowOverlay();
+  var f=state.flow;
+  f.phase='duel'; f.topN=topDuelN(); f.duelRound=(f.duelRound||0)+1;
+  if(!f.prevTop10) f.prevTop10=top10Ids();
+  state.roundNo=Math.max(1,f.quadDone||0)+f.duelRound;
+  state.queue=buildTopQueue(); state.queueIdx=0;
+  state.history=[]; state.streak=0; state.lastWinnerId=null;
+  setTourMode(false,false);
+  startBattle();
+  if(f.duelRound===1) fxToast(gf('dStartToast',{n:f.topN}));
+}
+
+function topDuelComplete(){
+  var f=state.flow;
+  var top=top10Ids();
+  var stable=false;
+  if(f.prevTop10&&f.prevTop10.length===top.length){
+    stable=true;
+    for(var i=0;i<top.length;i++){ if(f.prevTop10.indexOf(top[i])<0) stable=false; }
+  }
+  f.prevTop10=top;
+  saveState();
+  fxRain(100);
+  fxVibrate([20,40,20]);
+  var bTour={label:gt('dBtnTour'),cls:'btn-gold',fn:startTournament};
+  var bMore={label:gt('dBtnMore'),cls:stable?'btn-dark':'btn-steam',fn:startTopDuel};
+  var bRes={label:gt('oQuadBtnResult'),cls:'btn-dark',fn:function(){hideFlowOverlay();saveAndGoResult();}};
+  var arr=stable?[bTour,bMore,bRes]:[bMore,bTour,bRes];
+  if(raidCandidates().length>0) arr.splice(stable?1:2,0,{label:gt('raidBtn'),cls:'btn-steam',fn:startRaid});
+  showFlowOverlay(gf('dRoundTitle',{r:f.duelRound}),gt(stable?'dStable':'dUnstable'),arr);
+}
+
+// ---------- 決勝トーナメント ----------
+function seedOrder(n){
+  var o=[1,2];
+  while(o.length<n){
+    var m=o.length*2+1,nx=[];
+    for(var i=0;i<o.length;i++){ nx.push(o[i]); nx.push(m-o[i]); }
+    o=nx;
+  }
+  return o;
+}
+
+function tourSize(){
+  var n=state.games.length;
+  if(n>=16) return 16;
+  if(n>=8) return 8;
+  if(n>=4) return 4;
+  return 0;
+}
+
+function tourRoundName(size,round){
+  var total=0,s=size;
+  while(s>1){ s=s/2; total++; }
+  var names=['tourF','tourSF','tourR8','tourR16'];
+  return names[total-1-round]||'tourF';
+}
+
+function setTourMode(on,spot){
+  setBattleMode(on?'tour':'normal',spot);
+}
+
+function startTournament(){
+  hideFlowOverlay();
+  var f=state.flow;
+  var size=tourSize();
+  if(!size){ saveAndGoResult(); return; }
+  var ranked=getRankedGames().slice(0,size).map(function(g){return g.appid;});
+  var order=seedOrder(size),alive=[];
+  for(var i=0;i<order.length;i++) alive.push(ranked[order[i]-1]);
+  f.phase='tour';
+  f.tour={size:size,round:0,alive:alive,rec:[],out:[]};
+  saveState();
+  tourAnnounce();
+}
+
+function tourAnnounce(){
+  var f=state.flow,T=f.tour;
+  var name=gt(tourRoundName(T.size,T.round));
+  setTourMode(true,T.alive.length<=4);
+  showFlowOverlay(name,gf('tourSub',{m:T.alive.length/2}),[{label:gt('tourStart'),cls:'btn-gold',fn:tourStartRound}]);
+  fxVibrate(15);
+}
+
+function tourStartRound(){
+  hideFlowOverlay();
+  var f=state.flow,T=f.tour,q=[];
+  for(var i=0;i+1<T.alive.length;i+=2) q.push([T.alive[i],T.alive[i+1]]);
+  T.rec=[];
+  state.queue=q; state.queueIdx=0;
+  state.history=[]; state.streak=0; state.lastWinnerId=null;
+  setTourMode(true,T.alive.length<=4);
+  saveState();
+  startBattle();
+  fxToast(gt(tourRoundName(T.size,T.round)));
+}
+
+function resumeTour(){
+  var T=state.flow.tour;
+  if(!T){ saveAndGoResult(); return; }
+  if(!state.queue||state.queueIdx>=state.queue.length){ tourAnnounce(); return; }
+  setTourMode(true,T.alive.length<=4);
+  startBattle();
+}
+
+function tourRoundComplete(){
+  var f=state.flow,T=f.tour,i;
+  var winners=[],losers=[];
+  for(i=0;i<T.rec.length;i++){ winners.push(T.rec[i].w); losers.push(T.rec[i].l); }
+  if(winners.length!==T.alive.length/2){
+    winners=[];losers=[];
+    for(i=0;i+1<T.alive.length;i+=2){
+      var a=T.alive[i],b=T.alive[i+1];
+      var aw=state.scores[a].points>=state.scores[b].points;
+      winners.push(aw?a:b); losers.push(aw?b:a);
+    }
+  }
+  T.out.push(losers);
+  if(winners.length===1){ tourFinish(winners[0]); return; }
+  T.alive=winners; T.round++;
+  saveState();
+  tourAnnounce();
+}
+
+function reassignPoints(order){
+  var ps=[],i;
+  for(i=0;i<order.length;i++) ps.push(state.scores[order[i]].points);
+  ps.sort(function(a,b){return b-a;});
+  for(i=0;i<order.length;i++) state.scores[order[i]].points=ps[i]-i*0.0001;
+}
+
+function tourFinish(champ){
+  var f=state.flow,T=f.tour,order=[champ];
+  for(var r=T.out.length-1;r>=0;r--){
+    var l=T.out[r].slice().sort(function(a,b){return state.scores[b].points-state.scores[a].points;});
+    order=order.concat(l);
+  }
+  reassignPoints(order);
+  f.phase='done';
+  state.roundNo=state.roundNo+1;
+  setTourMode(false,false);
+  saveState();
+  fxRain(230);
+  fxBurst(window.innerWidth/2,window.innerHeight/3,90,12);
+  fxVibrate([30,50,30,50,60]);
+  var g=gameById(champ);
+  showFlowOverlay(gt('tourChamp'),gf('tourChampSub',{name:g?g.name:''}),
+    [{label:gt('tourBtnResult'),cls:'btn-gold',fn:function(){hideFlowOverlay();saveAndGoResult();}}],g?g.capsule:'');
+}
+
+// ---------- 結果画面：手動ドラッグ並び替え ----------
+var resultSortable=null;
+
+function initResultSortable(){
+  var tb=document.getElementById('result-tbody');
+  if(resultSortable||!window.Sortable||!tb) return;
+  resultSortable=Sortable.create(tb,{handle:'.rt-handle',animation:150,ghostClass:'sortable-ghost',onEnd:function(){
+    setTimeout(onManualReorder,0);
+  }});
+}
+
+function applyManualOrder(ids){
+  var all=getRankedGames(),ps=[],i;
+  for(i=0;i<all.length;i++) ps.push(state.scores[all[i].appid].points);
+  ps.sort(function(a,b){return b-a;});
+  for(i=0;i<ids.length;i++){
+    if(state.scores[ids[i]]) state.scores[ids[i]].points=ps[i]-i*0.0001;
+  }
+}
+
+function onManualReorder(){
+  var rows=document.querySelectorAll('#result-tbody tr'),ids=[];
+  for(var i=0;i<rows.length;i++) ids.push(rows[i].getAttribute('data-id'));
+  applyManualOrder(ids);
+  state.manualAdjusted=true;
+  saveState();
+  var ranked=getRankedGames();
+  renderPodium(ranked);
+  renderResultTable(ranked);
+  fxToast(gt('rUpdated'));
+}
+
+// ---------- Steam反映（固定ブックマークレット方式） ----------
+function jsEsc(s){
+  var o='',i,c;
+  for(i=0;i<s.length;i++){
+    c=s.charCodeAt(i);
+    if(c<32||c>126||c===39||c===92||c===37){ o+='\\u'+('0000'+c.toString(16)).slice(-4); }
+    else{ o+=s.charAt(i); }
+  }
+  return o;
+}
+
+function buildBookmarklet(){
+  var mNo=jsEsc(gt('bmMsgNoSession')),mPrompt=jsEsc(gt('bmMsgPrompt')),mInvalid=jsEsc(gt('bmMsgInvalid'));
+  var mDone=jsEsc(gt('bmMsgDone')),mFail=jsEsc(gt('bmMsgFail')),mErr=jsEsc(gt('bmMsgError'));
+  var code="(function(){var sid=document.cookie.match(/sessionid=([^;]+)/);if(!sid){alert('"+mNo+"');return;}"
+   +"function parse(t){try{var a=JSON.parse(t);if(Array.isArray(a)&&a.length>0&&a.every(function(x){return typeof x==='number';})){return a;}}catch(e){}return null;}"
+   +"function post(ids){var body=JSON.stringify({m:'Reorder',mp:[ids.map(function(x,i){return {appid:x,priority:i+1};})]});"
+   +"fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction','X-Requested-With':'XMLHttpRequest'},body:body})"
+   +".then(function(r){return r.json();}).then(function(d){alert(d.data&&d.data.result===1?'"+mDone+"':'"+mFail+"'+JSON.stringify(d));}).catch(function(e){alert('"+mErr+"'+e.message);});}"
+   +"function manual(){var s=prompt('"+mPrompt+"');if(s===null){return;}var a=parse(s);if(a){post(a);}else{alert('"+mInvalid+"');}}"
+   +"if(navigator.clipboard&&navigator.clipboard.readText){navigator.clipboard.readText().then(function(t){var a=parse(t);if(a){post(a);}else{manual();}}).catch(manual);}else{manual();}})();";
+  return 'javascript:'+code;
+}
+
+function copyText(text,cb){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){ cb(true); },function(){ cb(fallbackCopy(text)); });
+  }else{
+    cb(fallbackCopy(text));
+  }
+}
+
+function copySyncCode(){
+  if(!lastSyncCode){ setSyncStatus(false); return; }
+  copyText(lastSyncCode,setSyncStatus);
+}
+
+function copyBookmarklet(){
+  var btn=document.getElementById('bm-copy-btn');
+  copyText(buildBookmarklet(),function(ok){
+    if(!btn) return;
+    btn.textContent=ok?'✅':'❌';
+    setTimeout(function(){ btn.textContent=gt('bmCopyCode'); },1400);
+  });
+}
+
+function syncToSteam(){
+  var ranked=getRankedGames();
+  var ids=ranked.map(function(g){return parseInt(g.appid,10);});
+  lastSyncCode=JSON.stringify(ids);
+  var box=document.getElementById('sync-code');
+  if(box) box.value=lastSyncCode;
+  var bm=document.getElementById('bm-code');
+  if(bm) bm.value=buildBookmarklet();
+  showModal('sync-modal');
+  updateSyncMobileUI();
+  copySyncCode();
+}
+
+// =====================================================
+// v3: 価格・セール表示 / キーボード操作（テンキー対応）/ 乱入戦
+// =====================================================
+
+// ---------- 価格・セール表示 ----------
+function fmtNum(n){
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+}
+
+function parseYen(s){
+  if(!s) return null;
+  var d=String(s).replace(/[^\d]/g,'');
+  return d?parseInt(d,10):null;
+}
+
+function mkGame(appid,d,price){
+  var po=d.price_overview||null;
+  return {
+    appid:String(appid),
+    name:d.name,
+    capsule:(d.header_image||IMG_BASE+appid+'/header.jpg'),
+    price:price,
+    release:(d.release_date&&d.release_date.date)||'',
+    disc:(po&&po.discount_percent)?po.discount_percent:0,
+    orig:(po&&po.initial_formatted)?po.initial_formatted:'',
+    pnum:(po&&po.final_formatted)?parseYen(po.final_formatted):null
+  };
+}
+
+function buyNow(g){
+  return !!(g&&g.pnum&&g.low&&g.low.p&&g.low.c==='JPY'&&g.pnum<=g.low.p*1.1);
+}
+
+function priceInfoHtml(g){
+  if(!g) return '';
+  var h='';
+  if(g.disc>0){
+    h+='<span class="sale-badge">-'+g.disc+'%</span> ';
+    if(g.orig) h+='<s class="orig">'+esc(g.orig)+'</s> ';
+    h+='<b>'+esc(g.price||'')+'</b>';
+  }else{
+    h+='<span>'+esc(g.price||'')+'</span>';
+  }
+  if(g.low&&g.low.p){
+    var cur=(g.low.c&&g.low.c!=='JPY')?(g.low.c+' '):'¥';
+    h+='<div class="low-line">'+esc(gt('lowLabel'))+' '+cur+fmtNum(g.low.p);
+    if(g.low.cut){
+      h+=' (-'+g.low.cut+'%'+(g.low.ts?' · '+esc(String(g.low.ts).slice(0,7)):'')+')';
+    }
+    if(buyNow(g)) h+=' <span class="buy-badge">'+esc(gt('buyNow'))+'</span>';
+    h+='</div>';
+  }
+  return h;
+}
+
+function refreshPriceLines(){
+  var els=document.querySelectorAll('[data-pl]');
+  for(var i=0;i<els.length;i++){
+    var g=gameById(els[i].getAttribute('data-pl'));
+    if(g) els[i].innerHTML=priceInfoHtml(g);
+  }
+  renderSaleSummary();
+}
+
+function renderSaleSummary(){
+  var el=document.getElementById('sale-summary');
+  var cr=document.getElementById('itad-credit');
+  if(!el||typeof state==='undefined'||!state||!state.games) return;
+  var s=0,b=0,hasLow=false;
+  for(var i=0;i<state.games.length;i++){
+    var g=state.games[i];
+    if(g.disc>0) s++;
+    if(buyNow(g)) b++;
+    if(g.low) hasLow=true;
+  }
+  if(s>0||b>0){ el.style.display=''; el.textContent=gf('rSaleSummary',{s:s,b:b}); }
+  else{ el.style.display='none'; }
+  if(cr) cr.style.display=hasLow?'':'none';
+}
+
+var lowFetching=false;
+
+function fetchLows(){
+  if(lowFetching||typeof state==='undefined'||!state||!state.games||!state.games.length) return;
+  var need=[];
+  for(var i=0;i<state.games.length;i++){
+    var g=state.games[i];
+    if(!g.low&&!g.lowTried) need.push(g.appid);
+  }
+  if(!need.length) return;
+  lowFetching=true;
+  function next(pos){
+    if(pos>=need.length){ lowFetching=false; saveState(); refreshPriceLines(); return; }
+    var chunk=need.slice(pos,pos+200);
+    fetch(WORKER_URL+'/pricelow?appids='+chunk.join(','))
+      .then(function(r){ if(!r.ok) throw new Error('pricelow'); return r.json(); })
+      .then(function(d){
+        for(var k=0;k<chunk.length;k++){
+          var gg=gameById(chunk[k]);
+          if(!gg) continue;
+          gg.lowTried=true;
+          var v=d&&d.lows?d.lows[chunk[k]]:null;
+          if(v) gg.low=v;
+        }
+        refreshPriceLines();
+        next(pos+200);
+      })
+      .catch(function(){ lowFetching=false; });
+  }
+  next(0);
+}
+
+// ---------- 戦闘画面のモード（通常 / 決勝 / 乱入） ----------
+function setBattleMode(mode,spot){
+  var tour=(mode==='tour'),raid=(mode==='raid');
+  var both=document.getElementById('txt-btn-both');
+  var neither=document.getElementById('txt-btn-neither');
+  var undo=document.getElementById('txt-btn-undo');
+  if(both) both.style.display=(tour||raid)?'none':'';
+  if(neither) neither.style.display=(tour||raid)?'none':'';
+  if(undo) undo.style.display=raid?'none':'';
+  var sp=document.getElementById('spot');
+  if(sp) sp.className=(tour&&spot)?'spot on':'spot';
+}
+
+// ---------- 乱入戦（見落とし救済） ----------
+function raidCandidates(){
+  var f=state.flow,inPool={},used=f.raidUsed||{};
+  (f.pool||[]).forEach(function(id){ inPool[id]=1; });
+  return state.games.filter(function(g){ return !inPool[g.appid]&&!used[g.appid]; });
+}
+
+function raidK(){
+  return Math.max(6,Math.min(12,Math.round(state.games.length*0.03)));
+}
+
+function pickRaiders(cands,k){
+  var good=shuffleArr(cands.filter(function(g){return buyNow(g);}));
+  var rest=shuffleArr(cands.filter(function(g){return !buyNow(g);}));
+  var out=good.slice(0,Math.ceil(k/2));
+  out=out.concat(rest.slice(0,k-out.length));
+  if(out.length<k) out=out.concat(good.slice(Math.ceil(k/2),Math.ceil(k/2)+(k-out.length)));
+  return out.slice(0,k);
+}
+
+function startRaid(){
+  hideFlowOverlay();
+  var f=state.flow;
+  var cands=raidCandidates();
+  if(!cands.length){ fxToast(gt('raidNone')); return; }
+  var raiders=pickRaiders(cands,raidK()).map(function(g){return g.appid;});
+  var size=Math.max(f.topN||topDuelN(),10);
+  var inPool={};
+  (f.pool||[]).forEach(function(id){ inPool[id]=1; });
+  var list=getRankedGames().filter(function(g){return inPool[g.appid];}).slice(0,size).map(function(g){return g.appid;});
+  f.phase='raid';
+  f.raid={list:list,raiders:raiders,ri:0,lo:0,hi:list.length,placed:[]};
+  saveState();
+  setBattleMode('raid',false);
+  showFlowOverlay(gt('raidTitle'),gf('raidSub',{n:raiders.length}),[{label:gt('tourStart'),cls:'btn-gold',fn:raidBegin}]);
+  fxVibrate(15);
+}
+
+function raidPair(){
+  var R=state.flow.raid;
+  if(!R||R.ri>=R.raiders.length) return null;
+  var mid=Math.floor((R.lo+R.hi)/2);
+  var ch=R.raiders[R.ri],op=R.list[mid];
+  if(op===undefined) return null;
+  return (Math.random()<0.5)?[ch,op]:[op,ch];
+}
+
+function raidBegin(){
+  hideFlowOverlay();
+  var R=state.flow.raid;
+  R.lo=0; R.hi=R.list.length;
+  var nxt=raidPair();
+  if(!nxt){ raidComplete(); return; }
+  state.queue=[nxt]; state.queueIdx=0;
+  state.history=[]; state.streak=0; state.lastWinnerId=null;
+  setBattleMode('raid',false);
+  saveState();
+  startBattle();
+}
+
+function resumeRaid(){
+  var R=state.flow.raid;
+  if(!R){ state.flow.phase='duel'; saveAndGoResult(); return; }
+  setBattleMode('raid',false);
+  var nxt=raidPair();
+  if(!nxt){ raidComplete(); return; }
+  state.queue=[nxt]; state.queueIdx=0; state.history=[];
+  startBattle();
+}
+
+function raidRecord(w,l){
+  var R=state.flow.raid;
+  var ch=R.raiders[R.ri];
+  var mid=Math.floor((R.lo+R.hi)/2);
+  var chWon=(w===ch);
+  if(chWon) R.hi=mid; else R.lo=mid+1;
+  var g=gameById(ch);
+  if(chWon&&mid<R.list.length/2) fxToast(gt('raidUp'));
+  if(R.lo>=R.hi){
+    var pos=R.lo;
+    if(pos<R.list.length){
+      R.list.splice(pos,0,ch);
+      R.placed.push({id:ch,pos:pos+1});
+      if(pos===0){ fxToast(gf('raidThrone',{name:g?g.name:''})); fxRain(140); fxVibrate([30,50,30]); }
+      else{ fxToast(gf('raidPlaced',{name:g?g.name:'',pos:pos+1})); fxBurst(window.innerWidth/2,window.innerHeight/2,40,9); }
+    }else{
+      R.placed.push({id:ch,pos:0});
+      fxToast(gf('raidMiss',{name:g?g.name:''}));
+    }
+    R.ri++; R.lo=0; R.hi=R.list.length;
+  }
+  var nxt=raidPair();
+  if(nxt) state.queue.push(nxt);
+  saveState();
+}
+
+function raidDecorate(ids){
+  var R=state.flow.raid;
+  var ch=R.raiders[R.ri];
+  var sides=['left','right'];
+  for(var i=0;i<2;i++){
+    var card=document.getElementById('card-'+sides[i]);
+    var old=card.querySelector('.raid-tag');
+    if(old) old.parentNode.removeChild(old);
+    if(ids[i]===ch){
+      var tag=document.createElement('div');
+      tag.className='raid-tag';
+      tag.textContent=gt('raidIn');
+      card.appendChild(tag);
+      fxFlash(card,'raid-in');
+    }
+  }
+  var lab=document.getElementById('progress-label');
+  if(lab) lab.textContent='⚡ '+Math.min(R.ri+1,R.raiders.length)+' / '+R.raiders.length;
+  var fill=document.getElementById('progress-fill');
+  if(fill) fill.style.width=Math.round(R.ri/R.raiders.length*100)+'%';
+}
+
+function raidComplete(){
+  var f=state.flow,R=f.raid;
+  // 上位リスト（食い込んだ乱入者を含む）を先頭に、残りは今の順位のまま並べて、点数を割り当て直す
+  var inList={},restIds=[];
+  R.list.forEach(function(id){ inList[id]=1; });
+  getRankedGames().forEach(function(g){ if(!inList[g.appid]) restIds.push(g.appid); });
+  applyManualOrder(R.list.concat(restIds));
+  var used=f.raidUsed||{};
+  R.raiders.forEach(function(id){ used[id]=1; });
+  f.raidUsed=used;
+  var up=0;
+  for(var i=0;i<R.placed.length;i++){ if(R.placed[i].pos>0) up++; }
+  f.phase='duel';
+  setBattleMode('normal',false);
+  saveState();
+  fxRain(130);
+  fxVibrate([20,40,20]);
+  var btns=[{label:gt('dBtnTour'),cls:'btn-gold',fn:startTournament}];
+  if(raidCandidates().length>0) btns.push({label:gt('raidBtn'),cls:'btn-steam',fn:startRaid});
+  btns.push({label:gt('dBtnMore'),cls:'btn-dark',fn:startTopDuel});
+  btns.push({label:gt('oQuadBtnResult'),cls:'btn-dark',fn:function(){hideFlowOverlay();saveAndGoResult();}});
+  showFlowOverlay(gt('raidDoneTitle'),gf('raidDoneSub',{n:up}),btns);
+}
+
+// ---------- キーボード操作（テンキー対応） ----------
+var keyLastTs=0;
+
+function keyNum(code){
+  var m=/^(?:Digit|Numpad)(\d)$/.exec(code||'');
+  return m?parseInt(m[1],10):null;
+}
+
+function handleKey(e){
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  var tag=(e.target&&e.target.tagName)||'';
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+  if(document.querySelector('.guide-overlay.show')) return;
+  var code=e.code||'';
+  var n=keyNum(code);
+  var enter=(code==='Enter'||code==='NumpadEnter');
+  var ov=document.getElementById('flow-overlay');
+  if(ov&&ov.classList.contains('show')){
+    var btns=document.querySelectorAll('#flow-actions button');
+    if(enter||code==='Space'){ if(btns[0]){ btns[0].click(); e.preventDefault(); } return; }
+    if(n&&n>=1&&n<=btns.length){ btns[n-1].click(); e.preventDefault(); }
+    return;
+  }
+  var rc=document.getElementById('round-complete');
+  if(rc&&rc.classList.contains('show')) return;
+  var active=document.querySelector('.screen.active');
+  if(!active||typeof state==='undefined'||!state) return;
+  var id=active.id;
+  var undoKey=(code==='Backspace'||code==='Delete'||code==='KeyZ');
+  if(id==='screen-quad'){
+    if(n&&n>=1&&n<=4){
+      var cards=document.querySelectorAll('#quad-grid .quad-card');
+      if(cards[n-1]){ quadPick(cards[n-1].getAttribute('data-id')); e.preventDefault(); }
+    }else if(undoKey){ quadUndo(); e.preventDefault(); }
+    else if(n===0||code==='KeyX'){ quadUnknown(); e.preventDefault(); }
+    return;
+  }
+  if(id==='screen-battle'){
+    var now=Date.now();
+    if(now-keyLastTs<420) return;
+    var act=null;
+    if(code==='ArrowLeft'||n===1||code==='KeyA') act='L';
+    else if(code==='ArrowRight'||n===2||code==='KeyD') act='R';
+    else if(code==='ArrowUp'||n===3||code==='KeyW') act='B';
+    else if(code==='ArrowDown'||n===4||code==='KeyS') act='N';
+    else if(undoKey||n===0) act='U';
+    if(!act) return;
+    e.preventDefault();
+    keyLastTs=now;
+    if(act==='L') choose(0);
+    else if(act==='R') choose(1);
+    else if(act==='B') chooseBoth();
+    else if(act==='N') chooseNeither();
+    else undoLast();
+    return;
+  }
+  if(id==='screen-grid'){
+    if(enter||code==='ArrowRight'){ gridNext(); e.preventDefault(); }
+    else if(code==='ArrowLeft'){ gridPrev(); e.preventDefault(); }
+  }
+}
+
+document.addEventListener('keydown',handleKey);
+
 function getRankedGames(){
   return state.games.slice().sort(function(a,b){return state.scores[b.appid].points-state.scores[a.appid].points;});
 }
@@ -2483,6 +3677,7 @@ function renderPair(){
   if(!gA||!gB){state.queueIdx++;renderPair();return;}
   fillCard('left',gA);fillCard('right',gB);
   updateProgress();renderNextPreview();
+  if(state.flow&&state.flow.phase==='raid'&&state.flow.raid){raidDecorate(ids);}
 }
 
 function fillCard(side,game){
@@ -2495,7 +3690,9 @@ function fillCard(side,game){
   tmp.onerror=function(){img.style.display='none';fb.style.display='flex';fbt.textContent=game.name;};
   tmp.src=game.capsule;
   document.getElementById('title-'+side).textContent=game.name;
-  document.getElementById('price-'+side).textContent=game.price||'';
+  var pe=document.getElementById('price-'+side);
+  pe.setAttribute('data-pl',game.appid);
+  pe.innerHTML=priceInfoHtml(game);
   document.getElementById('release-'+side).textContent=game.release?'📅 '+game.release:'';
   document.getElementById('link-'+side).href='https://store.steampowered.com/app/'+game.appid+'/';
   document.getElementById('card-'+side)._game=game;
@@ -2539,6 +3736,9 @@ function accuracyLevel(){
 
 function showRoundComplete(){
   saveState();
+  if(state.flow&&state.flow.phase==='tour'&&state.flow.tour){tourRoundComplete();return;}
+  if(state.flow&&state.flow.phase==='raid'&&state.flow.raid){raidComplete();return;}
+  if(state.flow&&state.flow.phase==='duel'&&state.flow.topN){topDuelComplete();return;}
   document.getElementById('round-complete-title').textContent=fmt('roundComplete',{r:state.roundNo});
   document.getElementById('round-complete-sub').textContent=fmt('roundCompleteSub',{b:state.totalBattles,n:state.games.length});
   document.getElementById('round-complete').classList.add('show');
@@ -2556,11 +3756,14 @@ function choose(idx){
   state.lastWinnerId=wId;
   wCard.classList.add('winner');
   updateElo(wId,lId,'win');
+  if(state.flow&&state.flow.phase==='tour'&&state.flow.tour){state.flow.tour.rec.push({w:wId,l:lId});}
+  if(state.flow&&state.flow.phase==='raid'&&state.flow.raid){raidRecord(wId,lId);}
   state.totalBattles++;state.queueIdx++;
   setTimeout(function(){wCard.classList.remove('winner');renderPair();renderSidebar();saveState();},380);
 }
 
 function chooseBoth(){
+  if(state.flow&&(state.flow.phase==='tour'||state.flow.phase==='raid'))return;
   var ids=state.queue[state.queueIdx];
   var idA=ids[0],idB=ids[1];
   state.history.push({type:'both',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
@@ -2573,6 +3776,7 @@ function chooseBoth(){
 }
 
 function chooseNeither(){
+  if(state.flow&&(state.flow.phase==='tour'||state.flow.phase==='raid'))return;
   var ids=state.queue[state.queueIdx];
   var idA=ids[0],idB=ids[1];
   state.history.push({type:'neither',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
@@ -2585,9 +3789,11 @@ function chooseNeither(){
 }
 
 function undoLast(){
+  if(state.flow&&state.flow.phase==='raid')return;
   if(!state.history.length||state.queueIdx===0)return;
   var last=state.history.pop();
   addPair(last.wId,last.lId,-1);
+  if(state.flow&&state.flow.phase==='tour'&&state.flow.tour&&state.flow.tour.rec.length)state.flow.tour.rec.pop();
   var ws=state.scores[last.wId],ls=state.scores[last.lId];
   ws.points=last.wPoints;ls.points=last.lPoints;
   ws.battles=last.wBattles;ls.battles=last.lBattles;
@@ -2629,6 +3835,8 @@ function saveAndGoResult(){
   document.getElementById('result-title').textContent=fmt('resultTitle',{r:state.roundNo});
   document.getElementById('result-subtitle').textContent=fmt('resultSub',{b:state.totalBattles,a:accuracyLabel(),n:state.games.length});
   renderPodium(ranked);renderResultTable(ranked);
+  initResultSortable();
+  renderSaleSummary();
 }
 
 function renderPodium(ranked){
@@ -2651,10 +3859,11 @@ function renderResultTable(ranked){
     var sc=state.scores[g.appid];
     var conf=getConf(sc);
     var rank=i===0?'<span class="medal">🥇</span>':i===1?'<span class="medal">🥈</span>':i===2?'<span class="medal">🥉</span>':(i+1);
-    html+='<tr>';
+    html+='<tr data-id="'+g.appid+'"'+(g.disc>0?' class="sale"':'')+'>';
+    html+='<td class="rt-handle">⠿</td>';
     html+='<td class="rt-rank">'+rank+'</td>';
     html+='<td><img class="rt-thumb" src="'+g.capsule+'" alt="" onerror="this.style.opacity=0.2"></td>';
-    html+='<td class="rt-title"><a href="https://store.steampowered.com/app/'+g.appid+'/" target="_blank" rel="noopener">'+esc(g.name)+'</a><div class="rt-sub">'+(g.price||'')+'</div></td>';
+    html+='<td class="rt-title"><a href="https://store.steampowered.com/app/'+g.appid+'/" target="_blank" rel="noopener">'+esc(g.name)+'</a><div class="rt-sub" data-pl="'+g.appid+'">'+priceInfoHtml(g)+'</div></td>';
     html+='<td style="font-size:.72rem;color:var(--text2);white-space:nowrap">'+(g.release||'')+'</td>';
     html+='<td class="rt-wins">'+sc.wins+'</td>';
     html+='<td class="rt-losses">'+sc.losses+'</td>';
@@ -2674,6 +3883,10 @@ function startNextRound(){
   hideRoundComplete();
   if(state.flow&&state.flow.phase==='quad'){startQuadRound();return;}
   if(state.flow&&state.flow.phase==='triage'){startTriage();return;}
+  if(state.flow&&state.flow.phase==='grid'){startGrid();return;}
+  if(state.flow&&state.flow.phase==='raid'){resumeRaid();return;}
+  if(state.flow&&state.flow.phase==='tour'){resumeTour();return;}
+  if(state.flow&&(state.flow.phase==='done'||(state.flow.phase==='duel'&&state.flow.topN))){startTopDuel();return;}
   state.roundNo++;state.queue=buildQueue();state.queueIdx=0;
   state.history=[];state.streak=0;state.lastWinnerId=null;
   startBattle();
@@ -2682,6 +3895,10 @@ function backToBattle(){
   hideRoundComplete();
   if(state.flow&&state.flow.phase==='quad'){startQuadRound();return;}
   if(state.flow&&state.flow.phase==='triage'){startTriage();return;}
+  if(state.flow&&state.flow.phase==='grid'){startGrid();return;}
+  if(state.flow&&state.flow.phase==='raid'){resumeRaid();return;}
+  if(state.flow&&state.flow.phase==='tour'){resumeTour();return;}
+  if(state.flow&&state.flow.phase==='done'){startTopDuel();return;}
   showScreen('battle');renderPair();renderSidebar();
 }
 
@@ -2741,18 +3958,6 @@ function saveAndContinueLater(){
 
 function cancelSort(){saveAndGoResult();}
 
-function syncToSteam(){
-  var ranked=getRankedGames();
-  var ids=ranked.map(function(g){return parseInt(g.appid);});
-  var code="var swrIds="+JSON.stringify(ids)+";fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction'},body:JSON.stringify({m:'Reorder',mp:[swrIds.map(function(x,i){return {appid:x,priority:i+1};})]})}).then(function(r){return r.json();}).then(function(d){alert(d.data&&d.data.result===1?'✅ Done! Please reload the page.':'❌ Failed: '+JSON.stringify(d));}).catch(function(e){alert('Error: '+e.message);});";
-  lastSyncCode=code;
-  var box=document.getElementById('sync-code');
-  if(box) box.value=code;
-  showModal('sync-modal');
-  updateSyncMobileUI();
-  copySyncCode();
-}
-
 function shareToX(){
   var ranked=getRankedGames();
   var medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
@@ -2792,6 +3997,8 @@ function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
 
 function showScreen(name){
   fxComboReset();
+  var spEl=document.getElementById('spot');
+  if(spEl&&name!=='battle')spEl.className='spot';
   var screens=document.querySelectorAll('.screen');
   for(var i=0;i<screens.length;i++)screens[i].classList.remove('active');
   document.getElementById('screen-'+name).classList.add('active');
@@ -2810,9 +4017,8 @@ window.addEventListener('DOMContentLoaded',function(){
   document.getElementById('lang-select').value=savedLang;
   applyLang();
   var sid=localStorage.getItem('swr_steamid');
-  var key=localStorage.getItem('swr_apikey');
   if(sid)document.getElementById('steam-id').value=sid;
-  if(key)document.getElementById('api-key').value=key;
+  try{localStorage.removeItem('swr_apikey');}catch(e){}
 });
 </script>
 </body>

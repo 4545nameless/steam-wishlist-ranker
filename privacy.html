@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>プライバシーポリシー | Steam Wishlist Ranker</title>
 <meta name="robots" content="index,follow">
+<link rel="alternate" hreflang="en" href="https://steam-wishlist-ranker.vercel.app/privacy-en.html">
 <style>
   body { font-family:'Segoe UI',sans-serif; background:#1b2838; color:#c6d4df; line-height:1.8; margin:0; padding:24px 16px; }
   main { max-width:720px; margin:0 auto; }
@@ -17,33 +18,36 @@
 <body>
 <main>
 <h1>プライバシーポリシー</h1>
-<p class="updated">最終更新日: 2026年10月21日</p>
+<p class="updated">最終更新日: 2026年10月23日 &nbsp;|&nbsp; <a href="privacy-en.html">English</a></p>
 <p>Steam Wishlist Ranker（以下「本サイト」）は、利用者の情報を次のとおり取り扱います。</p>
 
 <h2>1. 入力される情報とその扱い</h2>
-<p>本サイトでは、ウィッシュリストの取得のために SteamID64 と Steam Web API キーを入力します。これらと、ランキングの途中経過・結果は、利用者のブラウザ内（localStorage）に保存されます。運営者が利用者の情報を収集・保存するためのデータベースは持っていません。</p>
-<p>ウィッシュリストや所持ゲームの取得時には、入力された SteamID64 と API キーが、Steam API へのリクエストを中継するサーバー（Cloudflare Workers）を経由して Steam に送信されます。この中継は取得処理のためだけに行われ、中継サーバーのログ収集は無効化されており、運営者がこれらの情報を保存・記録・利用することはありません。</p>
+<p>本サイトでは、ウィッシュリストの取得のために SteamID64 を入力します。SteamID64 と、ランキングの途中経過・結果・設定（言語など）は、利用者のブラウザ内（localStorage）に保存されます。運営者が利用者の情報を収集・保存するためのデータベースは持っていません。</p>
+<p>ウィッシュリストの取得時には、入力された SteamID64 が、Steam API へのリクエストを中継するサーバー（Cloudflare Workers）を経由して Steam に送信されます。この中継は取得処理のためだけに行われ、中継サーバーのログ収集は無効化されており、運営者がこれらの情報を保存・記録・利用することはありません。なお、以前のバージョンで入力された Steam Web API キーは、保存されている場合、本サイトの起動時にブラウザから削除されます。</p>
+<p>Steam での過去最安値などの価格履歴を表示するため、ウィッシュリストに含まれるゲームの App ID（ゲームの番号）が、中継サーバー（Cloudflare Workers）を経由して IsThereAnyDeal の API に送信されます。SteamID64 は IsThereAnyDeal には送信されません。</p>
 
-<h2>2. 広告について</h2>
+<h2>2. Steam への反映（ブックマークレット）</h2>
+<p>ランキングを Steam のウィッシュリストに反映する機能では、ランキングのコード（ゲームの ID の並び）が利用者のクリップボードにコピーされます。利用者が自分で登録したブックマークをクリックしたときにのみ、そのブックマークがクリップボードの内容を読み取り、Steam のウィッシュリストページから Steam へ並び順を送信します。この処理は利用者のブラウザ内で行われ、運営者のサーバーには何も送信されません。</p>
+
+<h2>3. 広告について</h2>
 <p>本サイトでは、第三者配信事業者である Google が提供する広告サービス「Google AdSense」を利用する場合があります。Google などの第三者配信事業者は、Cookie を使用して、利用者が本サイトや他のサイトに過去にアクセスした際の情報に基づいて広告を配信することがあります。</p>
 <p>Google による広告 Cookie の使用は、<a href="https://adssettings.google.com/" target="_blank" rel="noopener">広告設定</a>で無効にできます。詳しくは <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">Google の広告に関するポリシー</a>をご覧ください。</p>
 
-<h2>3. 寄付について</h2>
+<h2>4. 寄付について</h2>
 <p>本サイトには、運営を支援するための任意の寄付リンク（Ko-fi）があります。寄付の決済や情報の取り扱いは、Ko-fi および決済事業者のポリシーに従います。</p>
 
-<h2>4. 外部サービスの利用</h2>
-<p>本サイトは、画像生成のために html2canvas(unpkg 経由)を、アクセス状況の把握のために Vercel Analytics を、ゲーム情報や画像の取得のために Steam の各種サービスを利用します。Vercel Analytics は Cookie を使わずにアクセス統計を収集します。</p>
+<h2>5. 外部サービスの利用</h2>
+<p>本サイトは、画像生成のために html2canvas（unpkg 経由）を、順位の並び替えのために Sortable.js（jsDelivr 経由）を、アクセス状況の把握のために Vercel Analytics を、ゲーム情報や画像の取得のために Steam の各種サービスを、過去最安値の表示のために IsThereAnyDeal の API を利用します。Vercel Analytics は Cookie を使わずにアクセス統計を収集します。</p>
 
-<h2>5. 免責事項</h2>
+<h2>6. 免責事項</h2>
 <p>本サイトは Valve Corporation および Steam とは無関係の非公式ツールです。本サイトの利用により生じた損害について、運営者は責任を負いません。</p>
 
-<h2>6. ポリシーの変更</h2>
+<h2>7. ポリシーの変更</h2>
 <p>本ポリシーは、必要に応じて内容を変更することがあります。変更後の内容は、本ページに掲載した時点から効力を持ちます。</p>
 
-<h2>7. お問い合わせ</h2>
+<h2>8. お問い合わせ</h2>
 <p>本サイトに関するお問い合わせは、運営者の Ko-fi ページ（<a href="https://ko-fi.com/4545nameless" target="_blank" rel="noopener">こちら</a>）からお願いします。</p>
 
-<p><a href="privacy-en.html">English</a></p>
 <p><a href="./">← サイトに戻る</a></p>
 </main>
 </body>

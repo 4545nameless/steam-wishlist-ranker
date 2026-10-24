@@ -18,30 +18,34 @@
 <body>
 <main>
 <h1>Privacy Policy</h1>
-<p class="updated">Last updated: October 21, 2026 &nbsp;|&nbsp; <a href="privacy.html">日本語</a></p>
+<p class="updated">Last updated: October 23, 2026 &nbsp;|&nbsp; <a href="privacy.html">日本語</a></p>
 <p>Steam Wishlist Ranker (the "Site") handles your information as described below.</p>
 
 <h2>1. Information you enter and how it is handled</h2>
-<p>To load your wishlist, the Site asks you to enter your SteamID64 and a Steam Web API key. These values, together with your ranking progress, results, and settings such as your chosen language, are stored only in your own browser (localStorage). The operator does not run a database to collect or store users' information.</p>
-<p>When your wishlist or owned games are loaded, the SteamID64 and API key you entered are sent to Steam through a relay server (Cloudflare Workers) that forwards requests to the Steam API. This relay is used only to complete the request. Logging on the relay server is disabled, and the operator does not store, record, or use this information.</p>
+<p>To load your wishlist, the Site asks you to enter your SteamID64. Your SteamID64, together with your ranking progress, results, and settings such as your chosen language, is stored only in your own browser (localStorage). The operator does not run a database to collect or store users' information.</p>
+<p>When your wishlist is loaded, the SteamID64 you entered is sent to Steam through a relay server (Cloudflare Workers) that forwards requests to the Steam API. This relay is used only to complete the request. Logging on the relay server is disabled, and the operator does not store, record, or use this information. If a Steam Web API key was entered in an earlier version of the Site and is still saved, it is removed from your browser when the Site starts.</p>
+<p>To show price history such as the lowest price on Steam, the App IDs (game numbers) of the games in your wishlist are sent through the relay server (Cloudflare Workers) to the IsThereAnyDeal API. Your SteamID64 is not sent to IsThereAnyDeal.</p>
 
-<h2>2. Advertising</h2>
+<h2>2. Applying your ranking to Steam (bookmarklet)</h2>
+<p>When you apply your ranking to your Steam wishlist, a ranking code (the ordered list of game IDs) is copied to your clipboard. Only when you click the bookmark you registered yourself does that bookmark read the clipboard and send the order to Steam from your Steam wishlist page. This happens entirely in your browser, and nothing is sent to the operator's servers.</p>
+
+<h2>3. Advertising</h2>
 <p>The Site may use Google AdSense, an advertising service provided by Google, a third-party vendor. Google and other third-party vendors may use cookies to serve ads based on your previous visits to this Site or other sites.</p>
 <p>You can opt out of personalized advertising by visiting <a href="https://adssettings.google.com/" target="_blank" rel="noopener">Ads Settings</a>. For more information, see <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">How Google uses information from sites or apps that use our services</a>.</p>
 
-<h2>3. Donations</h2>
+<h2>4. Donations</h2>
 <p>The Site has an optional donation link (Ko-fi) to support its operation. Payments and the handling of your information in the donation process are governed by the policies of Ko-fi and its payment providers.</p>
 
-<h2>4. Third-party services</h2>
-<p>The Site uses html2canvas (loaded via unpkg) to generate images, Vercel Analytics to understand site traffic, and various Steam services to retrieve game information and images. Vercel Analytics collects aggregate traffic statistics without using cookies.</p>
+<h2>5. Third-party services</h2>
+<p>The Site uses html2canvas (loaded via unpkg) to generate images, Sortable.js (loaded via jsDelivr) to reorder rankings, Vercel Analytics to understand site traffic, various Steam services to retrieve game information and images, and the IsThereAnyDeal API to show historical low prices. Vercel Analytics collects aggregate traffic statistics without using cookies.</p>
 
-<h2>5. Disclaimer</h2>
+<h2>6. Disclaimer</h2>
 <p>The Site is an unofficial tool and is not affiliated with Valve Corporation or Steam. The operator is not liable for any damages arising from the use of the Site.</p>
 
-<h2>6. Changes to this policy</h2>
+<h2>7. Changes to this policy</h2>
 <p>This policy may be updated as needed. Changes take effect when they are posted on this page.</p>
 
-<h2>7. Contact</h2>
+<h2>8. Contact</h2>
 <p>For questions about the Site, please contact the operator through their <a href="https://ko-fi.com/4545nameless" target="_blank" rel="noopener">Ko-fi page</a>.</p>
 
 <p><a href="./">&larr; Back to the site</a></p>
