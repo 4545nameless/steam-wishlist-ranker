@@ -277,7 +277,7 @@ details.bm-card .bm-once+*{}
 .bm-view{display:flex;flex-direction:column;gap:14px}
 .bm-switch{align-self:flex-end;background:none;border:none;padding:0;color:var(--accent2);font-size:.8rem;text-decoration:underline;cursor:pointer}
 .bm-m-copy{align-self:stretch;padding:12px;font-size:1rem}
-#bm-mobile .bm-open{align-self:stretch;max-width:100%;white-space:normal}
+#bm-mobile .bm-open{align-self:stretch;max-width:100%;white-space:normal;text-align:center;text-decoration:none}
 .bm-run-step{display:flex;gap:10px;align-items:flex-start}
 .bm-run-step>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
 .bm-mini{flex-shrink:0;width:22px;height:22px;border-radius:5px;background:#2a475e;color:#fff;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
@@ -827,7 +827,7 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
             </div></div>
             <div class="bm-run-step"><span class="bm-mini">3</span><div>
               <p data-g="bmM3"></p>
-              <button type="button" class="btn btn-steam bm-open" onclick="openWishlistApply()" data-g="bmRunBtn">🚀 Steamのウィッシュリストを開く</button>
+              <a id="bm-m-open" class="btn btn-steam bm-open" href="https://store.steampowered.com/wishlist/" target="_blank" rel="noopener" data-g="bmRunBtn">🚀 Steamのウィッシュリストを開く</a>
             </div></div>
             <div class="bm-run-step"><span class="bm-mini">4</span><div>
               <p data-g="bmM4a"></p>
@@ -3203,7 +3203,7 @@ var FLOW14_ADD = {
     bmM1: '下のボタンで反映コードをコピーします。ランキングを変えたら、毎回コピーし直してください。',
     bmMCopy: '📋 反映コードをコピー',
     bmM2: 'ブックマークを作ります。このページを「ブックマークに追加」→ ブックマーク一覧から編集 → 名前を「Steam反映」に、URL欄を全部消してコピーしたコードを貼り付けて保存。2回目からは、同じブックマークのURLを貼り替えるだけでOKです。',
-    bmM3: 'ブラウザでSteamにログインして、ウィッシュリストを開きます。Steamアプリが開いてしまうときは、ブラウザのアドレスバーに store.steampowered.com/wishlist と入力して開いてください。',
+    bmM3: 'ブラウザでSteamにログインして、ウィッシュリストを開きます。Steamアプリが開いてしまうときは、下のボタンを長押しして「新しいタブで開く」を選ぶとブラウザで開けます。それでもダメなら、アドレスバーに store.steampowered.com/wishlist と入力してください。',
     bmM4a: 'Android（Chrome）：アドレスバーに「Steam反映」と入力し、候補に出るブックマークをタップ。',
     bmM4i: 'iPhone（Safari）：ブックマーク一覧から「Steam反映」をタップ。',
     bmMNote: '「完了」と表示されれば反映されています。何も起きないときは、ブックマークのURLが「javascript:」で始まっているか確かめてください。'
@@ -3216,7 +3216,7 @@ var FLOW14_ADD = {
     bmM1: 'Copy the apply code with the button below. Copy it again whenever your ranking changes.',
     bmMCopy: '📋 Copy apply code',
     bmM2: 'Create a bookmark: bookmark this page → edit it from your bookmarks list → name it "Steam Apply", clear the URL field, paste the copied code and save. Next time, just replace that bookmark\'s URL.',
-    bmM3: 'Log in to Steam in your browser and open your wishlist. If the Steam app opens instead, type store.steampowered.com/wishlist into the browser\'s address bar.',
+    bmM3: 'Log in to Steam in your browser and open your wishlist. If the Steam app opens instead, long-press the button below and choose "Open in new tab" to open it in the browser. If that doesn\'t work, type store.steampowered.com/wishlist into the address bar.',
     bmM4a: 'Android (Chrome): type "Steam Apply" into the address bar and tap the bookmark in the suggestions.',
     bmM4i: 'iPhone (Safari): tap "Steam Apply" in your bookmarks list.',
     bmMNote: 'When you see "Done", your order has been applied. If nothing happens, check that the bookmark URL starts with "javascript:".'
@@ -3229,7 +3229,7 @@ var FLOW14_ADD = {
     bmM1: '用下方按钮复制应用代码。每次排名变化后都要重新复制。',
     bmMCopy: '📋 复制应用代码',
     bmM2: '创建书签：把本页加入书签 → 在书签列表中编辑 → 名称改为“Steam应用”，清空网址栏并粘贴复制的代码后保存。以后只需替换这个书签的网址。',
-    bmM3: '在浏览器中登录 Steam 并打开愿望单。如果打开了 Steam App，请在浏览器地址栏输入 store.steampowered.com/wishlist。',
+    bmM3: '在浏览器中登录 Steam 并打开愿望单。如果打开了 Steam App，请长按下方按钮并选择“在新标签页中打开”，即可在浏览器中打开。仍不行的话，请在地址栏输入 store.steampowered.com/wishlist。',
     bmM4a: 'Android（Chrome）：在地址栏输入“Steam应用”，点击候选中的书签。',
     bmM4i: 'iPhone（Safari）：在书签列表中点击“Steam应用”。',
     bmMNote: '显示“完成”即表示已应用。如果没有反应，请确认书签网址以“javascript:”开头。'
@@ -3242,7 +3242,7 @@ var FLOW14_ADD = {
     bmM1: 'Скопируйте код кнопкой ниже. После изменения рейтинга копируйте заново.',
     bmMCopy: '📋 Скопировать код',
     bmM2: 'Создайте закладку: добавьте эту страницу в закладки → отредактируйте её в списке закладок → имя «Steam Apply», очистите поле URL, вставьте код и сохраните. В следующий раз просто замените URL этой закладки.',
-    bmM3: 'Войдите в Steam в браузере и откройте список желаемого. Если открывается приложение Steam, введите store.steampowered.com/wishlist в адресную строку браузера.',
+    bmM3: 'Войдите в Steam в браузере и откройте список желаемого. Если открывается приложение Steam, нажмите и удерживайте кнопку ниже и выберите «Открыть в новой вкладке» — страница откроется в браузере. Если не помогло, введите store.steampowered.com/wishlist в адресную строку.',
     bmM4a: 'Android (Chrome): введите «Steam Apply» в адресную строку и нажмите закладку в подсказках.',
     bmM4i: 'iPhone (Safari): нажмите «Steam Apply» в списке закладок.',
     bmMNote: 'Если появилось «Готово», порядок применён. Если ничего не происходит, проверьте, что URL закладки начинается с «javascript:».'
@@ -3255,7 +3255,7 @@ var FLOW14_ADD = {
     bmM1: 'Copie o código com o botão abaixo. Copie de novo sempre que o ranking mudar.',
     bmMCopy: '📋 Copiar código',
     bmM2: 'Crie um favorito: adicione esta página aos favoritos → edite-o na lista de favoritos → nome "Steam Apply", apague o campo de URL, cole o código e salve. Da próxima vez, basta trocar a URL desse favorito.',
-    bmM3: 'Entre na Steam pelo navegador e abra sua lista de desejos. Se o app da Steam abrir, digite store.steampowered.com/wishlist na barra de endereço do navegador.',
+    bmM3: 'Entre na Steam pelo navegador e abra sua lista de desejos. Se o app da Steam abrir, mantenha pressionado o botão abaixo e escolha "Abrir em nova guia" para abrir no navegador. Se não funcionar, digite store.steampowered.com/wishlist na barra de endereço.',
     bmM4a: 'Android (Chrome): digite "Steam Apply" na barra de endereço e toque no favorito nas sugestões.',
     bmM4i: 'iPhone (Safari): toque em "Steam Apply" na lista de favoritos.',
     bmMNote: 'Quando aparecer "Pronto!", a ordem foi aplicada. Se nada acontecer, verifique se a URL do favorito começa com "javascript:".'
@@ -3268,7 +3268,7 @@ var FLOW14_ADD = {
     bmM1: 'Kopiere den Code mit dem Button unten. Kopiere ihn neu, wenn sich dein Ranking ändert.',
     bmMCopy: '📋 Code kopieren',
     bmM2: 'Lesezeichen anlegen: diese Seite als Lesezeichen speichern → in der Lesezeichenliste bearbeiten → Name „Steam Apply“, URL-Feld leeren, Code einfügen und speichern. Beim nächsten Mal nur die URL dieses Lesezeichens ersetzen.',
-    bmM3: 'Melde dich im Browser bei Steam an und öffne deine Wunschliste. Öffnet sich die Steam-App, gib store.steampowered.com/wishlist in die Adresszeile des Browsers ein.',
+    bmM3: 'Melde dich im Browser bei Steam an und öffne deine Wunschliste. Öffnet sich die Steam-App, halte den Button unten gedrückt und wähle „In neuem Tab öffnen“ – dann öffnet sie sich im Browser. Klappt das nicht, gib store.steampowered.com/wishlist in die Adresszeile ein.',
     bmM4a: 'Android (Chrome): „Steam Apply“ in die Adresszeile eingeben und das Lesezeichen in den Vorschlägen antippen.',
     bmM4i: 'iPhone (Safari): in der Lesezeichenliste auf „Steam Apply“ tippen.',
     bmMNote: 'Erscheint „Fertig“, wurde die Reihenfolge übernommen. Passiert nichts, prüfe, ob die URL des Lesezeichens mit „javascript:“ beginnt.'
@@ -3402,6 +3402,11 @@ function updateSyncMobileUI(){
   var p=document.getElementById('bm-pc');
   if(m) m.style.display=view==='mobile'?'flex':'none';
   if(p) p.style.display=view==='mobile'?'none':'flex';
+  // 長押しで「新しいタブで開く」を選べるよう、スマホ用はふつうのリンクにしてある
+  var a=document.getElementById('bm-m-open');
+  var sid=null;
+  try{ sid=localStorage.getItem('swr_steamid'); }catch(e){}
+  if(a) a.href=sid?'https://store.steampowered.com/wishlist/profiles/'+sid+'/':'https://store.steampowered.com/wishlist/';
   var btn=document.getElementById('sync-share-btn');
   if(btn) btn.style.display=(mob&&navigator.share)?'inline-block':'none';
 }
