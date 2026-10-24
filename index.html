@@ -816,9 +816,9 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
         <span class="bm-ov"><b>3</b><span data-g="bmOv3">ブックマークを押す</span></span>
       </div>
 
-      <!-- ① 初回だけ -->
-      <details id="bm-setup" class="bm-card" open>
-        <summary class="bm-card-head"><span class="bm-badge">1</span><span data-g="bmSetupTitle">ブックマークバーに「Steam反映」を入れる</span><span class="bm-once" data-g="bmOvOnce">初回だけ</span></summary>
+      <!-- ① ランキング入りブックマークを作る（毎回） -->
+      <div id="bm-setup" class="bm-card">
+        <div class="bm-card-head" style="cursor:default"><span class="bm-badge">1</span><span data-g="bmSetupTitle">ブックマークバーに「Steam反映」を入れる</span><span class="bm-once" data-g="bmOvOnce">毎回</span></div>
         <div class="bm-card-body">
           <p data-g="bmSetupDesc"></p>
           <div class="mock bm-mock" aria-hidden="true">
@@ -840,9 +840,8 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
             </div>
           </details>
           <div class="guide-note warn" data-g="bmOldNote"></div>
-          <button type="button" class="btn btn-green bm-made" onclick="bmMarkReady(true)" data-g="bmMadeBtn">✅ 入れた！次へ</button>
         </div>
-      </details>
+      </div>
 
       <!-- ② 毎回 -->
       <div id="bm-run" class="bm-card bm-run">
@@ -874,11 +873,9 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
             <li data-g="bmT3"></li>
             <li data-g="bmT4"></li>
           </ul>
-          <div style="font-size:.78rem;color:var(--text2)" data-g="bmRankLabel"></div>
-          <textarea id="sync-code" class="code-box" readonly spellcheck="false" onclick="this.select()"></textarea>
+          <textarea id="sync-code" class="code-box" readonly spellcheck="false" style="display:none"></textarea>
           <div id="sync-status" class="sync-status ok" style="display:none"></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button type="button" class="btn btn-gold btn-sm" onclick="copySyncCode()" data-g="sRecopy">📋 コードをもう一度コピー</button>
             <button type="button" id="sync-share-btn" class="btn btn-dark btn-sm" style="display:none" onclick="shareSyncCode()" data-g="sShare">📤 共有</button>
           </div>
         </div>
@@ -3030,6 +3027,123 @@ var FLOW11_ADD = {
   }
 })();
 
+var FLOW12_ADD = {
+  ja: {
+    bmOv1: 'ランキング入りブックマークを作る',
+    bmOv2: 'Steamを開く',
+    bmOv3: 'ブックマークを押す',
+    bmOvOnce: '毎回',
+    bmSetupTitle: '今回のランキング入りブックマークを作る',
+    bmSetupDesc: '下の黄色いボタンを、画面上のブックマークバーまでドラッグ（つかんで運んで離す）してください。今回のランキングが丸ごと入った「反映ボタン」になります。',
+    bmOldNote: '⚠ 前に作った「Steam反映」ブックマークは削除してください。古いものを押すと、前のランキングで並び替わります。名前の日時で見分けられます。',
+    bmAlt: 'ブックマークバーを右クリック →「ページを追加」（ブラウザによって「ブックマークを追加」）→ 名前は自由、URL欄に下のコードを貼り付けて保存します。',
+    bmRunTitle: 'Steamで押す',
+    bmRun1: 'このボタンでSteamのウィッシュリストを開きます。',
+    bmNeedLogin: 'Steamにログインした状態で行ってください。反映が終わったら、ブックマークは削除してOKです。',
+    bmDragged: '👍 ブックマークに入ったら、②でSteamを開こう',
+    bmT2: '「Steamストアのページで押してください」と出た → このサイトの上で押しています。②のボタンで開いたSteamのページで押してください。',
+    bmT3: '前の順番で並び替わった → 古いブックマークを押しています。古いものを削除して、①から作り直してください。',
+    bmT4: '何も起きない → ブックマークが正しく保存されていない可能性があります。①の「ドラッグできないとき」の方法で作ってください。',
+    bmPc: 'この操作はパソコンのブラウザで行います。スマホの場合は「うまくいかないとき」の「共有」でブックマーク用コードを自分に送り、パソコンで「ドラッグできないとき」の方法でブックマークを作ってください。'
+  },
+  en: {
+    bmOv1: 'Make a ranking bookmark',
+    bmOv2: 'Open Steam',
+    bmOv3: 'Click the bookmark',
+    bmOvOnce: 'Each time',
+    bmSetupTitle: 'Make a bookmark with this ranking',
+    bmSetupDesc: 'Drag the yellow button below up to your bookmarks bar and let go. It becomes an "apply button" that contains your whole current ranking.',
+    bmOldNote: '⚠ Delete any "Steam Apply" bookmark you made before. Clicking an old one reorders Steam with the old ranking. You can tell them apart by the date and time in the name.',
+    bmAlt: 'Right-click the bookmarks bar → "Add page" (or "Add bookmark") → any name, paste the code below into the URL field, and save.',
+    bmRunTitle: 'Click it on Steam',
+    bmRun1: 'This button opens your Steam wishlist.',
+    bmNeedLogin: 'Make sure you are logged in to Steam. Once it is applied, you can delete the bookmark.',
+    bmDragged: '👍 Once it is in your bookmarks, open Steam in step 2',
+    bmT2: '"Please click this on the Steam Store" → You clicked it on this site. Click it on the Steam page opened by the button in step 2.',
+    bmT3: 'It reordered with an older ranking → You clicked an old bookmark. Delete it and make a new one from step 1.',
+    bmT4: 'Nothing happens → The bookmark may not have been saved correctly. Make it with the "Can\'t drag it?" method in step 1.',
+    bmPc: 'This is done in a computer browser. On a phone, open "If something goes wrong", send yourself the bookmark code with "Share", and make the bookmark on a computer with the "Can\'t drag it?" method.'
+  },
+  zh: {
+    bmOv1: '创建带排名的书签',
+    bmOv2: '打开 Steam',
+    bmOv3: '点击书签',
+    bmOvOnce: '每次',
+    bmSetupTitle: '创建包含本次排名的书签',
+    bmSetupDesc: '把下方的黄色按钮拖到浏览器上方的书签栏后松开。它会变成包含本次完整排名的“应用按钮”。',
+    bmOldNote: '⚠ 请删除以前创建的“Steam应用”书签。点击旧书签会按旧排名重新排序。可以通过名称中的日期时间区分。',
+    bmAlt: '在书签栏上右键 →“添加网页”（或“添加书签”）→ 名称随意，在网址栏粘贴下方代码并保存。',
+    bmRunTitle: '在 Steam 上点击',
+    bmRun1: '用这个按钮打开 Steam 愿望单。',
+    bmNeedLogin: '请在登录 Steam 的状态下操作。应用完成后，可以删除书签。',
+    bmDragged: '👍 放进书签后，在第2步打开 Steam',
+    bmT2: '出现“请在 Steam 商店页面上点击”→ 你是在本网站上点击的。请在第2步按钮打开的 Steam 页面上点击。',
+    bmT3: '按以前的顺序排序了 → 点击的是旧书签。请删除旧书签，从第1步重新创建。',
+    bmT4: '没有任何反应 → 书签可能没有正确保存。请用第1步“无法拖动时”的方法创建。',
+    bmPc: '此操作需在电脑浏览器上进行。使用手机时，请打开“遇到问题时”，用“分享”把书签代码发给自己，再在电脑上用“无法拖动时”的方法创建书签。'
+  },
+  ru: {
+    bmOv1: 'Создать закладку с рейтингом',
+    bmOv2: 'Открыть Steam',
+    bmOv3: 'Нажать закладку',
+    bmOvOnce: 'Каждый раз',
+    bmSetupTitle: 'Создайте закладку с текущим рейтингом',
+    bmSetupDesc: 'Перетащите жёлтую кнопку ниже на панель закладок и отпустите. Она станет «кнопкой применения» со всем вашим текущим рейтингом.',
+    bmOldNote: '⚠ Удалите закладки «Steam Apply», созданные раньше. Старая закладка выстроит список по старому рейтингу. Их можно различить по дате и времени в названии.',
+    bmAlt: 'Щёлкните правой кнопкой по панели закладок → «Добавить страницу» (или «Добавить закладку») → любое имя, вставьте код ниже в поле URL и сохраните.',
+    bmRunTitle: 'Нажмите её в Steam',
+    bmRun1: 'Эта кнопка открывает ваш список желаемого в Steam.',
+    bmNeedLogin: 'Войдите в Steam перед применением. После применения закладку можно удалить.',
+    bmDragged: '👍 Когда закладка добавлена, откройте Steam в шаге 2',
+    bmT2: '«Нажмите это в магазине Steam» → вы нажали её на этом сайте. Нажмите на странице Steam, открытой кнопкой в шаге 2.',
+    bmT3: 'Порядок стал как раньше → нажата старая закладка. Удалите её и создайте новую в шаге 1.',
+    bmT4: 'Ничего не происходит → закладка могла сохраниться неправильно. Создайте её способом «Не получается перетащить?» из шага 1.',
+    bmPc: 'Это делается в браузере на компьютере. На телефоне откройте «Если что-то не получилось», отправьте себе код закладки через «Поделиться» и создайте закладку на компьютере способом «Не получается перетащить?».'
+  },
+  pt: {
+    bmOv1: 'Criar favorito com o ranking',
+    bmOv2: 'Abrir a Steam',
+    bmOv3: 'Clicar no favorito',
+    bmOvOnce: 'Toda vez',
+    bmSetupTitle: 'Crie um favorito com este ranking',
+    bmSetupDesc: 'Arraste o botão amarelo abaixo até a barra de favoritos e solte. Ele vira um "botão de aplicar" com todo o seu ranking atual.',
+    bmOldNote: '⚠ Apague os favoritos "Steam Apply" criados antes. Clicar num antigo reordena com o ranking antigo. Dá para diferenciar pela data e hora no nome.',
+    bmAlt: 'Clique com o botão direito na barra de favoritos → "Adicionar página" (ou "Adicionar favorito") → qualquer nome, cole o código abaixo no campo de URL e salve.',
+    bmRunTitle: 'Clique nele na Steam',
+    bmRun1: 'Este botão abre sua lista de desejos da Steam.',
+    bmNeedLogin: 'Esteja conectado à Steam. Depois de aplicar, pode apagar o favorito.',
+    bmDragged: '👍 Com o favorito criado, abra a Steam no passo 2',
+    bmT2: '"Clique nisto na loja Steam" → você clicou neste site. Clique na página da Steam aberta pelo botão do passo 2.',
+    bmT3: 'Ficou na ordem antiga → você clicou num favorito antigo. Apague-o e crie um novo no passo 1.',
+    bmT4: 'Nada acontece → o favorito pode não ter sido salvo direito. Crie pelo método "Não consegue arrastar?" do passo 1.',
+    bmPc: 'Isto é feito no navegador do computador. No celular, abra "Se algo der errado", envie o código do favorito para você com "Compartilhar" e crie o favorito no computador pelo método "Não consegue arrastar?".'
+  },
+  de: {
+    bmOv1: 'Ranking-Lesezeichen anlegen',
+    bmOv2: 'Steam öffnen',
+    bmOv3: 'Lesezeichen klicken',
+    bmOvOnce: 'Jedes Mal',
+    bmSetupTitle: 'Lesezeichen mit diesem Ranking anlegen',
+    bmSetupDesc: 'Zieh den gelben Button unten in deine Lesezeichenleiste und lass los. Er wird zum „Übernehmen-Button“, der dein gesamtes aktuelles Ranking enthält.',
+    bmOldNote: '⚠ Lösche früher angelegte „Steam Apply“-Lesezeichen. Ein altes sortiert Steam nach dem alten Ranking. Du erkennst sie an Datum und Uhrzeit im Namen.',
+    bmAlt: 'Rechtsklick auf die Lesezeichenleiste → „Seite hinzufügen“ (oder „Lesezeichen hinzufügen“) → beliebiger Name, den Code unten ins URL-Feld einfügen und speichern.',
+    bmRunTitle: 'Auf Steam klicken',
+    bmRun1: 'Dieser Button öffnet deine Steam-Wunschliste.',
+    bmNeedLogin: 'Sei dabei bei Steam angemeldet. Nach dem Übernehmen kannst du das Lesezeichen löschen.',
+    bmDragged: '👍 Ist es in den Lesezeichen, öffne Steam in Schritt 2',
+    bmT2: '„Bitte im Steam-Shop klicken“ → du hast es auf dieser Seite geklickt. Klicke es auf der Steam-Seite, die der Button in Schritt 2 öffnet.',
+    bmT3: 'Alte Reihenfolge übernommen → du hast ein altes Lesezeichen geklickt. Lösche es und lege in Schritt 1 ein neues an.',
+    bmT4: 'Nichts passiert → das Lesezeichen wurde evtl. nicht richtig gespeichert. Lege es mit der Methode „Ziehen klappt nicht?“ aus Schritt 1 an.',
+    bmPc: 'Das funktioniert im Browser am Computer. Am Handy öffne „Wenn etwas nicht klappt“, schick dir den Lesezeichen-Code per „Teilen“ und lege das Lesezeichen am Computer mit der Methode „Ziehen klappt nicht?“ an.'
+  }
+};
+(function(){
+  for (var lg in FLOW12_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW12_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW12_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -4407,25 +4521,24 @@ function jsEsc(s){
 }
 
 function buildBookmarklet(){
-  var mNo=jsEsc(gt('bmMsgNoSession')),mPrompt=jsEsc(gt('bmMsgPrompt')),mInvalid=jsEsc(gt('bmMsgInvalid'));
-  var mDone=jsEsc(gt('bmMsgDone')),mFail=jsEsc(gt('bmMsgFail')),mErr=jsEsc(gt('bmMsgError')),mSite=jsEsc(gt('bmMsgWrongSite')),mClick=jsEsc(gt('bmMsgClick'));
+  var mNo=jsEsc(gt('bmMsgNoSession')),mDone=jsEsc(gt('bmMsgDone')),mFail=jsEsc(gt('bmMsgFail')),mErr=jsEsc(gt('bmMsgError')),mSite=jsEsc(gt('bmMsgWrongSite'));
+  var ids=(lastSyncIds||[]).join(',');
   var code="(function(){if(location.hostname!=='store.steampowered.com'){alert('"+mSite+"');return;}"
-   +"var sid=document.cookie.match(/sessionid=([^;]+)/);if(!sid){alert('"+mNo+"');return;}"
-   +"function parse(t){t=String(t||'').replace(/\\s/g,'');if(!t){return null;}if(t.charAt(0)!=='['){t='['+t+']';}try{var a=JSON.parse(t);if(Array.isArray(a)&&a.length>0&&a.every(function(x){return typeof x==='number';})){return a;}}catch(e){}return null;}"
-   +"function post(ids){var body=JSON.stringify({m:'Reorder',mp:[ids.map(function(x,i){return {appid:x,priority:i+1};})]});"
+   +"if(!/sessionid=/.test(document.cookie)){alert('"+mNo+"');return;}"
+   +"var ids=["+ids+"];"
+   +"var body=JSON.stringify({m:'Reorder',mp:[ids.map(function(x,i){return {appid:x,priority:i+1};})]});"
    +"fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction','X-Requested-With':'XMLHttpRequest'},body:body})"
-   +".then(function(r){return r.json();}).then(function(d){if(d.data&&d.data.result===1){alert('"+mDone+"');location.replace(location.href.split(String.fromCharCode(35))[0]);}else{alert('"+mFail+"'+JSON.stringify(d));}}).catch(function(e){alert('"+mErr+"'+e.message);});}"
-   +"function manual(){var s=prompt('"+mPrompt+"');if(s===null){return;}var a=parse(s);if(a){post(a);}else{alert('"+mInvalid+"');}}"
-   +"var h=location.hash.match(/swr=([0-9,]+)/);if(h){var ha=parse(h[1]);if(ha){post(ha);return;}}"
-   +"function fromClip(){return navigator.clipboard.readText().then(function(t){var a=parse(t);if(a){post(a);}else{manual();}});}"
-   +"function clickBtn(){var o=document.createElement('div');o.style.cssText='position:fixed;left:0;top:0;right:0;bottom:0;z-index:2147483647;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center';"
-   +"var b=document.createElement('button');b.textContent='"+mClick+"';b.style.cssText='font-size:20px;font-weight:bold;padding:18px 30px;border-radius:10px;border:3px solid #f6c90e;background:#1b2838;color:#fff;cursor:pointer';"
-   +"o.appendChild(b);o.onclick=function(ev){if(ev.target===o){o.remove();}};b.onclick=function(){o.remove();fromClip().catch(manual);};document.body.appendChild(o);b.focus();}"
-   +"if(navigator.clipboard&&navigator.clipboard.readText){fromClip().catch(clickBtn);}else{manual();}})();";
+   +".then(function(r){return r.json();}).then(function(d){if(d.data&&d.data.result===1){alert('"+mDone+"');location.replace(location.href.split(String.fromCharCode(35))[0]);}else{alert('"+mFail+"'+JSON.stringify(d));}}).catch(function(e){alert('"+mErr+"'+e.message);});})();";
   return 'javascript:'+code;
 }
 
-var lastSyncIds=[];
+function bmStampName(){
+  var d=new Date();
+  function z(n){ return (n<10?'0':'')+n; }
+  return '⭐ '+gt('bmName')+' '+(d.getMonth()+1)+'/'+d.getDate()+' '+z(d.getHours())+':'+z(d.getMinutes());
+}
+
+var lastSyncIds=[],lastBmName='';
 
 function bmIsReady(){
   try{ return localStorage.getItem('swr_bm_v3')==='1'; }catch(e){ return false; }
@@ -4433,6 +4546,7 @@ function bmIsReady(){
 
 function bmMarkReady(scroll){
   try{ localStorage.setItem('swr_bm_v3','1'); }catch(e){}
+  fxToast(gt('bmDragged'));
   if(scroll===true){
     var st=document.getElementById('bm-setup');
     if(st) st.open=false;
@@ -4450,7 +4564,7 @@ function bmDragClick(e){
 
 function refreshSyncModal(){
   var drag=document.getElementById('bm-drag');
-  if(drag){ drag.href=buildBookmarklet(); drag.textContent='⭐ '+gt('bmName'); }
+  if(drag){ drag.href=buildBookmarklet(); drag.textContent=lastBmName||bmStampName(); }
   var bm=document.getElementById('bm-code');
   if(bm) bm.value=buildBookmarklet();
   var rd=document.getElementById('bm-ready');
@@ -4470,9 +4584,7 @@ function wishlistApplyUrl(){
 }
 
 function openWishlistApply(){
-  if(!lastSyncIds.length){ openWishlist(); return; }
-  copyText(lastSyncCode,function(){});
-  window.open(wishlistApplyUrl(),'_blank');
+  openWishlist();
 }
 
 function copyText(text,cb){
@@ -4506,9 +4618,9 @@ function syncToSteam(){
   if(box) box.value=lastSyncCode;
   var st=document.getElementById('sync-status');
   if(st){ st.style.display='none'; st.removeAttribute('data-state'); }
-  var setup=document.getElementById('bm-setup');
-  if(setup) setup.open=!bmIsReady();
+  lastBmName=bmStampName();
   refreshSyncModal();
+  lastSyncCode=buildBookmarklet();
   showModal('sync-modal');
   updateSyncMobileUI();
 }
