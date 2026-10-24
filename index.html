@@ -196,7 +196,6 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
 .conf-high{background:rgba(91,163,43,.2);color:#5ba32b;border:1px solid rgba(91,163,43,.3)}
 .conf-mid{background:rgba(246,201,14,.15);color:#c8a800;border:1px solid rgba(246,201,14,.3)}
 .conf-low{background:rgba(201,64,64,.15);color:#c94040;border:1px solid rgba(201,64,64,.3)}
-.ad-space-result{width:100%;max-width:900px;min-height:90px;background:rgba(0,0,0,.2);border:1px dashed var(--border);border-radius:var(--radius2);display:flex;align-items:center;justify-content:center;font-size:.72rem;color:var(--text2)}
 
 .round-complete-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:150;align-items:center;justify-content:center;flex-direction:column;gap:20px;backdrop-filter:blur(4px)}
 .round-complete-overlay.show{display:flex}
@@ -378,6 +377,11 @@ details.bm-card .bm-once+*{}
 .spot.on{opacity:1}
 .flow-img{max-width:260px;width:60%;border-radius:8px;border:3px solid var(--gold);box-shadow:0 0 40px rgba(246,201,14,.6);margin:0 auto 12px;display:none}
 .result-hint{font-size:.78rem;color:var(--text2);margin:6px 0}
+/* 手動の広告枠（AD_SLOTS に ID が入っているものだけ表示）。ボタンから離して置く */
+.ad-slot{width:100%;max-width:900px;margin:40px auto 8px}
+.ad-slot:empty{display:none}
+/* ゲーム中の画面には広告を置かない（素早くタップするので誤クリックを誘う） */
+.ad-battle-bottom,.ad-space{display:none}
 /* 上下に固定される自動広告（アンカー広告）が出たら、その分だけこちらの表示をずらす（watchAnchorAds） */
 body{padding-top:var(--ad-top,0px);padding-bottom:var(--ad-bottom,0px)}
 .navbar{top:var(--ad-top,0px)}
@@ -509,6 +513,7 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
       <button class="btn btn-dark" onclick="loadDemo()" id="txt-btn-demo">🎲 デモで試す</button>
     </div>
   </div>
+  <div class="ad-slot" data-slot="start"></div>
   <div class="footer-links">
     <a href="privacy.html" target="_blank" rel="noopener" id="txt-footer-privacy">プライバシーポリシー</a>
   </div>
@@ -706,7 +711,6 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
     <button class="btn btn-dark" onclick="backToBattle()" id="txt-btn-tobattle">⬅ 対戦に戻る</button>
   </div>
   <p style="font-size:.72rem;color:var(--text2);text-align:center;width:100%;" id="txt-popup-note">※ シェアする際はポップアップの許可が必要です</p>
-  <div class="ad-space-result"><!-- AdSense --></div>
   <div id="result-capture">
     <div class="result-header">
       <h2 id="result-title">🏆 ランキング結果</h2>
@@ -734,6 +738,7 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
       </table>
     </div>
   </div>
+  <div class="ad-slot" data-slot="result"></div>
 </div>
 
 <div class="round-complete-overlay" id="round-complete">
@@ -6035,6 +6040,23 @@ function watchAnchorAds(){
 }
 watchAnchorAds();
 
+// 手動の広告枠。AdSense で作ったディスプレイ広告ユニットの data-ad-slot の数字を入れると表示される（空なら何も出ない）
+var AD_CLIENT='ca-pub-5922701022521864';
+var AD_SLOTS={ start:'', result:'' };
+
+// 見えている画面の広告枠だけ読み込む（非表示の画面で読み込むと幅0で失敗するため）
+function initAdSlots(){
+  var els=document.querySelectorAll('.screen.active .ad-slot');
+  for(var i=0;i<els.length;i++){
+    var el=els[i],id=AD_SLOTS[el.getAttribute('data-slot')];
+    if(!id||el.getAttribute('data-done')) continue;
+    el.setAttribute('data-done','1');
+    el.innerHTML='<ins class="adsbygoogle" style="display:block" data-ad-client="'+AD_CLIENT+'" data-ad-slot="'+id+'" data-ad-format="auto" data-full-width-responsive="true"></ins>';
+    try{ (window.adsbygoogle=window.adsbygoogle||[]).push({}); }catch(e){}
+  }
+}
+initAdSlots();
+
 // シェア画像用に、複製したページだけを整える（画面の表示は変えない）
 function prepareShareClone(doc,ranked){
   var cap=doc.getElementById('result-capture');
@@ -6115,6 +6137,7 @@ function showScreen(name){
   for(var i=0;i<screens.length;i++)screens[i].classList.remove('active');
   document.getElementById('screen-'+name).classList.add('active');
   window.scrollTo(0,0);
+  initAdSlots();
 }
 
 function backToStart(){saveState();showScreen('start');}
