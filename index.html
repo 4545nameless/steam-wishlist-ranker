@@ -231,6 +231,57 @@ body.modal-open{overflow:hidden}
 .sync-status{font-size:.85rem;font-weight:700;padding:8px 10px;border-radius:var(--radius);line-height:1.5}
 .sync-status.ok{background:rgba(91,163,43,.15);border:1px solid var(--green);color:#9bd96a}
 .sync-status.ng{background:rgba(201,64,64,.15);border:1px solid var(--red);color:#ff9a9a}
+/* Steam反映 v2 */
+.bm-steps-overview{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap}
+.bm-ov{flex:1;min-width:88px;display:flex;flex-direction:column;align-items:center;gap:2px;background:#0d141c;border:1px solid var(--border);border-radius:var(--radius);padding:8px 6px;font-size:.76rem;text-align:center;line-height:1.35}
+.bm-ov b{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem}
+.bm-ov small{color:var(--gold);font-size:.66rem}
+.bm-ov.done{opacity:.55}
+.bm-ov-arrow{align-self:center;color:var(--text2);font-size:.7rem}
+.bm-card{border:1px solid var(--border2);border-radius:8px;background:rgba(0,0,0,.18);overflow:hidden}
+.bm-card-head{display:flex;align-items:center;gap:10px;padding:11px 12px;font-weight:700;font-size:.95rem;color:#fff;cursor:pointer;list-style:none}
+.bm-card-head::-webkit-details-marker{display:none}
+.bm-run .bm-card-head{cursor:default}
+.bm-run{border-color:var(--accent2);box-shadow:0 0 0 1px rgba(102,192,244,.25) inset}
+.bm-badge{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.bm-badge.q{background:#55606d}
+.bm-once{margin-left:auto;font-size:.7rem;color:#1b2838;background:var(--gold);border-radius:10px;padding:2px 8px;white-space:nowrap}
+details.bm-card:not([open]) .bm-card-head::after{content:'\25BC';margin-left:8px;font-size:.65rem;color:var(--text2)}
+details.bm-card[open] .bm-card-head::after{content:'\25B2';margin-left:8px;font-size:.65rem;color:var(--text2)}
+details.bm-card .bm-once+*{}
+.bm-card-body{padding:0 12px 14px;display:flex;flex-direction:column;gap:10px;font-size:.86rem;line-height:1.7}
+.bm-card-body p{margin:0}
+.bm-mock{position:relative;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.bm-mock-bar{display:flex;align-items:center;gap:14px;background:#171a21;border-radius:3px;padding:7px 12px;white-space:nowrap}
+.bm-mock-slot{display:inline-block;min-width:96px;height:20px;border:2px dashed var(--gold);border-radius:3px;position:relative}
+.bm-mock-ghost{position:absolute;left:4px;top:-1px;color:#fff;opacity:0;animation:bmGhost 3.2s ease-in-out infinite}
+.bm-mock-cap{font-size:.7rem;color:var(--gold);font-weight:700}
+.bm-mock-src{display:flex;align-items:center;gap:6px;padding-left:60px;height:30px;position:relative}
+.bm-mock-pill{display:inline-block;background:var(--gold);color:#1b2838;font-weight:700;border-radius:14px;padding:3px 12px;animation:bmPill 3.2s ease-in-out infinite}
+.bm-mock-hand{font-size:1rem;animation:bmPill 3.2s ease-in-out infinite}
+@keyframes bmPill{0%,15%{transform:translate(0,0);opacity:1}55%{transform:translate(120px,-62px);opacity:1}62%,100%{transform:translate(120px,-62px);opacity:0}}
+@keyframes bmGhost{0%,55%{opacity:0}62%,92%{opacity:1}100%{opacity:0}}
+.bm-mock-click{display:inline-block;animation:bmTap 1.4s ease-in-out infinite}
+@keyframes bmTap{0%,100%{transform:translateY(3px)}50%{transform:translateY(-2px)}}
+.bm-mock-alert{align-self:center;display:flex;align-items:center;gap:12px;background:#2a2f36;border:1px solid #444;border-radius:6px;padding:8px 12px;color:#fff;font-size:.74rem}
+.bm-mock-ok{background:#4c9bdb;border-radius:3px;padding:2px 12px;font-weight:700}
+.bm-drag-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.bm-drag{display:inline-block;background:var(--gold);color:#1b2838 !important;font-weight:800;text-decoration:none;border-radius:20px;padding:9px 20px;font-size:1rem;cursor:grab;box-shadow:0 0 0 3px rgba(246,201,14,.25);animation:bmGlow 1.8s ease-in-out infinite}
+.bm-drag:active{cursor:grabbing}
+@keyframes bmGlow{0%,100%{box-shadow:0 0 0 3px rgba(246,201,14,.25)}50%{box-shadow:0 0 0 7px rgba(246,201,14,.12)}}
+.bm-drag-hint{font-size:.8rem;color:var(--gold);font-weight:700}
+.bm-sub{border:1px dashed var(--border2);border-radius:6px;padding:6px 10px}
+.bm-sub summary{cursor:pointer;font-size:.8rem;color:var(--accent2)}
+.bm-sub-body{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.bm-made{align-self:center;padding:10px 26px}
+.bm-run-step{display:flex;gap:10px;align-items:flex-start}
+.bm-run-step>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.bm-mini{flex-shrink:0;width:22px;height:22px;border-radius:5px;background:#2a475e;color:#fff;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.bm-open{align-self:flex-start;font-size:1rem;padding:10px 20px}
+.bm-trouble .bm-card-head::after{margin-left:auto !important}
+.bm-tlist{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:.82rem}
+@media (prefers-reduced-motion: reduce){.bm-mock-pill,.bm-mock-hand,.bm-mock-ghost,.bm-mock-click,.bm-drag{animation:none}.bm-mock-ghost{opacity:1}}
+@media (max-width:520px){.bm-mock-src{padding-left:10px}@keyframes bmPill{0%,15%{transform:translate(0,0);opacity:1}55%{transform:translate(110px,-62px);opacity:1}62%,100%{transform:translate(110px,-62px);opacity:0}}}
 .mock{background:#0d141c;border:1px solid var(--border);border-radius:var(--radius);padding:10px;font-size:.74rem;overflow-x:auto;color:#dfe8f0}
 .mock-nav{display:flex;align-items:center;gap:14px;background:#171a21;border-radius:3px;padding:7px 12px;white-space:nowrap}
 .mock-nav .sp{flex:1}
@@ -660,46 +711,88 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
   </div>
 </div>
 
-<!-- Steamに反映する手順（ブックマークレット方式） -->
+<!-- Steamに反映する手順（ブックマークレット方式 v2: URLで受け渡し） -->
 <div id="sync-modal" class="guide-overlay">
   <div class="guide-modal" role="dialog" aria-modal="true">
     <div class="guide-head"><h3 data-g="bmTitle">🎮 Steamに反映する手順</h3><button type="button" class="guide-x" onclick="closeModal('sync-modal')" aria-label="close">&times;</button></div>
     <div class="guide-body">
-      <div id="sync-status" class="sync-status ok"></div>
+      <div id="bm-ready" class="sync-status ok"></div>
       <div id="sync-mobile" class="guide-note warn" style="display:none" data-g="bmPc"></div>
+      <div class="bm-steps-overview" aria-hidden="true">
+        <span class="bm-ov" id="bm-ov1"><b>1</b><span data-g="bmOv1">ブックマークに入れる</span><small data-g="bmOvOnce">初回だけ</small></span>
+        <span class="bm-ov-arrow">&#9654;</span>
+        <span class="bm-ov"><b>2</b><span data-g="bmOv2">Steamを開く</span></span>
+        <span class="bm-ov-arrow">&#9654;</span>
+        <span class="bm-ov"><b>3</b><span data-g="bmOv3">ブックマークを押す</span></span>
+      </div>
 
-      <div class="guide-sec-title" data-g="bmFirst">【初回だけ】ブックマークを1つ作る</div>
-      <div class="guide-step"><span class="guide-num">1</span><div class="guide-step-body">
-        <p data-g="bm1"></p>
-        <div class="mock" aria-hidden="true"><div class="mock-nav"><span>&#9733; Bookmarks</span><span>Gmail</span><span class="mock-hl">Steam Wishlist Apply</span></div></div>
-      </div></div>
-      <div class="guide-step"><span class="guide-num">2</span><div class="guide-step-body">
-        <p data-g="bm2"></p>
-        <div style="font-size:.78rem;color:var(--text2)" data-g="bmCodeLabel"></div>
-        <textarea id="bm-code" class="code-box" readonly spellcheck="false" onclick="this.select()"></textarea>
-        <button type="button" id="bm-copy-btn" class="btn btn-gold btn-sm" style="align-self:flex-start" onclick="copyBookmarklet()" data-g="bmCopyCode">📋 ブックマーク用コードをコピー</button>
-        <div class="guide-note" data-g="bmShowBar"></div>
-      </div></div>
-
-      <div class="guide-sec-title" data-g="bmEach">【反映するたび】</div>
-      <div class="guide-step"><span class="guide-num">1</span><div class="guide-step-body">
-        <p data-g="bmE1"></p>
-        <div style="font-size:.78rem;color:var(--text2)" data-g="bmRankLabel"></div>
-        <textarea id="sync-code" class="code-box" readonly spellcheck="false" onclick="this.select()"></textarea>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button type="button" class="btn btn-gold btn-sm" onclick="copySyncCode()" data-g="sRecopy">📋 コードをもう一度コピー</button>
-          <button type="button" id="sync-share-btn" class="btn btn-dark btn-sm" style="display:none" onclick="shareSyncCode()" data-g="sShare">📤 共有</button>
+      <!-- ① 初回だけ -->
+      <details id="bm-setup" class="bm-card" open>
+        <summary class="bm-card-head"><span class="bm-badge">1</span><span data-g="bmSetupTitle">ブックマークバーに「Steam反映」を入れる</span><span class="bm-once" data-g="bmOvOnce">初回だけ</span></summary>
+        <div class="bm-card-body">
+          <p data-g="bmSetupDesc"></p>
+          <div class="mock bm-mock" aria-hidden="true">
+            <div class="bm-mock-bar"><span>&#9733; Gmail</span><span>YouTube</span><span class="bm-mock-slot"><span class="bm-mock-ghost">&#11088; Steam反映</span></span></div>
+            <div class="bm-mock-cap" data-g="bmBarLabel">↑ ブックマークバー</div>
+            <div class="bm-mock-src"><span class="bm-mock-pill">&#11088; Steam反映</span><span class="bm-mock-hand">&#9995;</span></div>
+          </div>
+          <div class="bm-drag-row">
+            <a id="bm-drag" class="bm-drag" href="#" draggable="true" onclick="return bmDragClick(event)" ondragstart="bmMarkReady()">&#11088; Steam反映</a>
+            <span class="bm-drag-hint" data-g="bmDragHint">← これをつかんで、ブックマークバーへ運ぶ</span>
+          </div>
+          <div class="guide-note" data-g="bmShowBar"></div>
+          <details class="bm-sub">
+            <summary data-g="bmAltTitle">ドラッグできないとき（手で作る）</summary>
+            <div class="bm-sub-body">
+              <p data-g="bmAlt"></p>
+              <textarea id="bm-code" class="code-box" readonly spellcheck="false" onclick="this.select()"></textarea>
+              <button type="button" id="bm-copy-btn" class="btn btn-gold btn-sm" style="align-self:flex-start" onclick="copyBookmarklet()" data-g="bmCopyCode">📋 ブックマーク用コードをコピー</button>
+            </div>
+          </details>
+          <div class="guide-note" data-g="bmOldNote"></div>
+          <button type="button" class="btn btn-green bm-made" onclick="bmMarkReady(true)" data-g="bmMadeBtn">✅ 入れた！次へ</button>
         </div>
-      </div></div>
-      <div class="guide-step"><span class="guide-num">2</span><div class="guide-step-body">
-        <p data-g="bmE2"></p>
-        <button type="button" class="btn btn-steam" style="align-self:flex-start" onclick="openWishlist()" data-g="sOpenWish">🔗 Steamのウィッシュリストを開く</button>
-      </div></div>
-      <div class="guide-step"><span class="guide-num">3</span><div class="guide-step-body">
-        <p data-g="bmE3"></p>
-        <div class="guide-note" data-g="bmPromptNote"></div>
-      </div></div>
-      <div class="guide-note warn" data-g="bmPc"></div>
+      </details>
+
+      <!-- ② 毎回 -->
+      <div id="bm-run" class="bm-card bm-run">
+        <div class="bm-card-head"><span class="bm-badge">2</span><span data-g="bmRunTitle">反映する（毎回これだけ）</span></div>
+        <div class="bm-card-body">
+          <div class="bm-run-step"><span class="bm-mini">A</span><div>
+            <p data-g="bmRun1"></p>
+            <button type="button" class="btn btn-steam bm-open" onclick="openWishlistApply()" data-g="bmRunBtn">🚀 Steamのウィッシュリストを開く</button>
+          </div></div>
+          <div class="bm-run-step"><span class="bm-mini">B</span><div>
+            <p data-g="bmRun2"></p>
+            <div class="mock bm-mock" aria-hidden="true">
+              <div class="mock-url"><span>&#128274;</span><span>store.steampowered.com/wishlist/…</span></div>
+              <div class="bm-mock-bar"><span>&#9733; Gmail</span><span>YouTube</span><span class="mock-hl">&#11088; Steam反映 <span class="bm-mock-click">&#128070;</span></span></div>
+              <div class="bm-mock-alert"><b data-g="bmMockDone">完了！新しい順番を読み込みます</b><span class="bm-mock-ok">OK</span></div>
+            </div>
+          </div></div>
+          <div class="guide-note" data-g="bmNeedLogin"></div>
+        </div>
+      </div>
+
+      <!-- 困ったとき -->
+      <details class="bm-card bm-trouble">
+        <summary class="bm-card-head"><span class="bm-badge q">?</span><span data-g="bmTroubleTitle">うまくいかないとき</span></summary>
+        <div class="bm-card-body">
+          <ul class="bm-tlist">
+            <li data-g="bmT1"></li>
+            <li data-g="bmT2"></li>
+            <li data-g="bmT3"></li>
+            <li data-g="bmT4"></li>
+          </ul>
+          <div style="font-size:.78rem;color:var(--text2)" data-g="bmRankLabel"></div>
+          <textarea id="sync-code" class="code-box" readonly spellcheck="false" onclick="this.select()"></textarea>
+          <div id="sync-status" class="sync-status ok" style="display:none"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" class="btn btn-gold btn-sm" onclick="copySyncCode()" data-g="sRecopy">📋 コードをもう一度コピー</button>
+            <button type="button" id="sync-share-btn" class="btn btn-dark btn-sm" style="display:none" onclick="shareSyncCode()" data-g="sShare">📤 共有</button>
+          </div>
+        </div>
+      </details>
     </div>
     <div class="guide-foot">
       <button type="button" class="btn btn-dark" onclick="closeModal('sync-modal')" data-g="close">閉じる</button>
@@ -1959,6 +2052,249 @@ var FLOW3_ADD = {
   }
 })();
 
+var FLOW4_ADD = {
+  ja: { priceTba: '発売前', priceDemo: '体験版' },
+  en: { priceTba: 'Unreleased', priceDemo: 'Demo' },
+  zh: { priceTba: '未发售', priceDemo: '试玩版' },
+  ru: { priceTba: 'Не вышла', priceDemo: 'Демо' },
+  pt: { priceTba: 'Não lançado', priceDemo: 'Demo' },
+  de: { priceTba: 'Unveröffentlicht', priceDemo: 'Demo' }
+};
+(function(){
+  for (var lg in FLOW4_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW4_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW4_ADD[lg][k];
+  }
+})();
+
+var FLOW5_ADD = {
+  ja: { bmOnWishlist: 'ブックマークは、Steamストアのウィッシュリストページ（store.steampowered.com）で押してください。他のページでは動きません。' },
+  en: { bmOnWishlist: 'Click the bookmark while on your Steam wishlist page (store.steampowered.com). It will not work on other pages.' },
+  zh: { bmOnWishlist: '请在 Steam 商店的愿望单页面（store.steampowered.com）上点击书签，在其他页面无法使用。' },
+  ru: { bmOnWishlist: 'Нажимайте закладку на странице списка желаемого в магазине Steam (store.steampowered.com). На других страницах она не работает.' },
+  pt: { bmOnWishlist: 'Clique no favorito na página da sua lista de desejos da loja Steam (store.steampowered.com). Em outras páginas ele não funciona.' },
+  de: { bmOnWishlist: 'Klicke das Lesezeichen auf deiner Steam-Wunschlisten-Seite (store.steampowered.com). Auf anderen Seiten funktioniert es nicht.' }
+};
+(function(){
+  for (var lg in FLOW5_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW5_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW5_ADD[lg][k];
+  }
+})();
+
+var FLOW6_ADD = {
+  ja: {
+    bmTitle: '🎮 Steamに反映する',
+    bmReady: '✅ ランキング {n}本、反映の準備ができました',
+    bmOv1: 'ブックマークに入れる',
+    bmOv2: 'Steamを開く',
+    bmOv3: 'ブックマークを押す',
+    bmOvOnce: '初回だけ',
+    bmSetupTitle: 'ブックマークバーに「Steam反映」を入れる',
+    bmSetupDesc: '下の黄色いボタンをマウスでつかんで、画面上のブックマークバーまで運んで離してください（ドラッグ＆ドロップ）。これで準備は完了。次回からはこの手順はいりません。',
+    bmBarLabel: '↑ ブックマークバー（ここに置く）',
+    bmDragHint: '← つかんでブックマークバーへ',
+    bmName: 'Steam反映',
+    bmDragNoClick: 'クリックではなく、ブックマークバーへドラッグしてください',
+    bmShowBar: 'ブックマークバーが見えないときは、Ctrl+Shift+B（Macは Cmd+Shift+B）で表示できます。',
+    bmAltTitle: 'ドラッグできないとき（手で作る）',
+    bmAlt: 'ブックマークバーを右クリック →「ページを追加」（ブラウザによって「ブックマークを追加」）→ 名前に「Steam反映」、URL欄に下のコードを貼り付けて保存します。',
+    bmOldNote: '前のバージョンで作ったブックマークがある人へ：古いものも使えますが、作り直すとコピーや貼り付けが一切いらなくなります。',
+    bmMadeBtn: '✅ 入れた！次へ',
+    bmRunTitle: '反映する（毎回これだけ）',
+    bmRun1: 'このボタンでSteamのウィッシュリストを開きます。開いたページに、今回のランキングが一緒に渡されます。',
+    bmRunBtn: '🚀 Steamのウィッシュリストを開く',
+    bmRun2: '開いたSteamのページで、ブックマークバーの「⭐ Steam反映」をクリック。「完了！」と出たらOKを押すだけ。自動で再読み込みされ、新しい順番になります。',
+    bmMockDone: '完了！新しい順番を読み込みます',
+    bmNeedLogin: 'Steamにログインした状態で行ってください。ランキングを並べ替えたら、もう一度上の🚀ボタンから開き直してください。',
+    bmTroubleTitle: 'うまくいかないとき',
+    bmT1: '「Steamにログインしてください」と出た → Steamにログインしてから、もう一度ブックマークをクリック。',
+    bmT2: '「Steamストアのページで押してください」と出た → このサイトの上で押しています。🚀ボタンで開いたSteamのページで押してください。',
+    bmT3: '貼り付け欄が出た → Ctrl+V（Macは Cmd+V）で貼り付けて OK。貼れないときは、下のボタンでランキングをコピーしてからもう一度。',
+    bmT4: '何も起きない → ブックマークを作り直してください（①の「ドラッグできないとき」の方法でもOK）。',
+    bmRankLabel: '予備：ランキングのコード',
+    bmPc: 'この操作はパソコンのブラウザで行います。スマホの場合は「うまくいかないとき」を開いて「共有」でコードを自分に送り、パソコンでSteamのウィッシュリストを開いてブックマークを押してください。',
+    bmMsgWrongSite: 'Steamストアのページ（store.steampowered.com）で押してください',
+    bmMsgDone: '完了！新しい順番を読み込みます'
+  },
+  en: {
+    bmTitle: '🎮 Apply to Steam',
+    bmReady: '✅ Your ranking of {n} games is ready to apply',
+    bmOv1: 'Add to bookmarks',
+    bmOv2: 'Open Steam',
+    bmOv3: 'Click the bookmark',
+    bmOvOnce: 'First time only',
+    bmSetupTitle: 'Put "Steam Apply" on your bookmarks bar',
+    bmSetupDesc: 'Grab the yellow button below with your mouse, drag it up to the bookmarks bar at the top of your browser, and let go (drag and drop). That\'s all the setup. You won\'t need this step next time.',
+    bmBarLabel: '↑ Bookmarks bar (drop it here)',
+    bmDragHint: '← Drag me to the bookmarks bar',
+    bmName: 'Steam Apply',
+    bmDragNoClick: 'Don\'t click it - drag it to your bookmarks bar',
+    bmShowBar: 'If you can\'t see the bookmarks bar, press Ctrl+Shift+B (Cmd+Shift+B on Mac).',
+    bmAltTitle: 'Can\'t drag it? (create it by hand)',
+    bmAlt: 'Right-click the bookmarks bar → "Add page" (or "Add bookmark") → enter "Steam Apply" as the name, paste the code below into the URL field, and save.',
+    bmOldNote: 'Made a bookmark with an earlier version? The old one still works, but if you make a new one you won\'t need to copy or paste anything.',
+    bmMadeBtn: '✅ Done! Next',
+    bmRunTitle: 'Apply (this is all you do each time)',
+    bmRun1: 'This button opens your Steam wishlist and passes your current ranking along with it.',
+    bmRunBtn: '🚀 Open my Steam wishlist',
+    bmRun2: 'On the Steam page that opens, click "⭐ Steam Apply" on your bookmarks bar. When it says "Done!", just press OK. The page reloads automatically in the new order.',
+    bmMockDone: 'Done! Loading the new order',
+    bmNeedLogin: 'Make sure you are logged in to Steam. If you change your ranking, open Steam again with the 🚀 button above.',
+    bmTroubleTitle: 'If something goes wrong',
+    bmT1: '"Please log in to Steam" → Log in to Steam, then click the bookmark again.',
+    bmT2: '"Please click this on the Steam Store" → You clicked it on this site. Click it on the Steam page opened by the 🚀 button.',
+    bmT3: 'A paste box appeared → Paste with Ctrl+V (Cmd+V on Mac) and press OK. If nothing pastes, copy the ranking with the button below and try again.',
+    bmT4: 'Nothing happens → Make the bookmark again (the "create it by hand" method in step 1 works too).',
+    bmRankLabel: 'Backup: ranking code',
+    bmPc: 'This is done in a computer browser. On a phone, open "If something goes wrong", send the code to yourself with "Share", then open your Steam wishlist on a computer and click the bookmark.',
+    bmMsgWrongSite: 'Please click this on the Steam Store (store.steampowered.com)',
+    bmMsgDone: 'Done! Loading the new order'
+  },
+  zh: {
+    bmTitle: '🎮 应用到 Steam',
+    bmReady: '✅ {n} 款游戏的排名已准备好',
+    bmOv1: '加入书签',
+    bmOv2: '打开 Steam',
+    bmOv3: '点击书签',
+    bmOvOnce: '仅首次',
+    bmSetupTitle: '把“Steam应用”放到书签栏',
+    bmSetupDesc: '用鼠标按住下方的黄色按钮，拖到浏览器上方的书签栏后松开（拖放）。这样就设置完成了，下次不需要这一步。',
+    bmBarLabel: '↑ 书签栏（放在这里）',
+    bmDragHint: '← 按住拖到书签栏',
+    bmName: 'Steam应用',
+    bmDragNoClick: '请不要点击，把它拖到书签栏',
+    bmShowBar: '看不到书签栏时，按 Ctrl+Shift+B（Mac 为 Cmd+Shift+B）即可显示。',
+    bmAltTitle: '无法拖动时（手动创建）',
+    bmAlt: '在书签栏上右键 →“添加网页”（或“添加书签”）→ 名称填“Steam应用”，在网址栏粘贴下方代码并保存。',
+    bmOldNote: '用旧版本创建过书签的用户：旧书签仍可使用，但重新创建后就完全不需要复制和粘贴了。',
+    bmMadeBtn: '✅ 放好了！下一步',
+    bmRunTitle: '应用（每次只需这样）',
+    bmRun1: '用这个按钮打开 Steam 愿望单，本次的排名会一起传过去。',
+    bmRunBtn: '🚀 打开我的 Steam 愿望单',
+    bmRun2: '在打开的 Steam 页面上，点击书签栏的“⭐ Steam应用”。出现“完成！”后按确定即可，页面会自动刷新为新的顺序。',
+    bmMockDone: '完成！正在载入新顺序',
+    bmNeedLogin: '请在登录 Steam 的状态下操作。修改排名后，请再从上方的🚀按钮重新打开。',
+    bmTroubleTitle: '遇到问题时',
+    bmT1: '出现“请登录 Steam”→ 登录 Steam 后再点击一次书签。',
+    bmT2: '出现“请在 Steam 商店页面上点击”→ 你是在本网站上点击的。请在🚀按钮打开的 Steam 页面上点击。',
+    bmT3: '出现粘贴输入框 → 按 Ctrl+V（Mac 为 Cmd+V）粘贴后按确定。粘贴不了时，用下方按钮复制排名后再试。',
+    bmT4: '没有任何反应 → 请重新创建书签（也可以用第1步的“手动创建”方法）。',
+    bmRankLabel: '备用：排名代码',
+    bmPc: '此操作需在电脑浏览器上进行。使用手机时，请打开“遇到问题时”，用“分享”把代码发给自己，然后在电脑上打开 Steam 愿望单并点击书签。',
+    bmMsgWrongSite: '请在 Steam 商店页面（store.steampowered.com）上点击',
+    bmMsgDone: '完成！正在载入新顺序'
+  },
+  ru: {
+    bmTitle: '🎮 Применить в Steam',
+    bmReady: '✅ Рейтинг из {n} игр готов к применению',
+    bmOv1: 'Добавить закладку',
+    bmOv2: 'Открыть Steam',
+    bmOv3: 'Нажать закладку',
+    bmOvOnce: 'Только в первый раз',
+    bmSetupTitle: 'Добавьте «Steam Apply» на панель закладок',
+    bmSetupDesc: 'Зажмите мышью жёлтую кнопку ниже, перетащите её на панель закладок вверху браузера и отпустите. Вот и вся настройка — в следующий раз этот шаг не нужен.',
+    bmBarLabel: '↑ Панель закладок (бросьте сюда)',
+    bmDragHint: '← Перетащите на панель закладок',
+    bmName: 'Steam Apply',
+    bmDragNoClick: 'Не нажимайте — перетащите на панель закладок',
+    bmShowBar: 'Если панель закладок не видна, нажмите Ctrl+Shift+B (на Mac — Cmd+Shift+B).',
+    bmAltTitle: 'Не получается перетащить? (создать вручную)',
+    bmAlt: 'Щёлкните правой кнопкой по панели закладок → «Добавить страницу» (или «Добавить закладку») → имя «Steam Apply», в поле URL вставьте код ниже и сохраните.',
+    bmOldNote: 'Если закладка создана в прошлой версии: она работает, но новая избавит от копирования и вставки.',
+    bmMadeBtn: '✅ Готово! Дальше',
+    bmRunTitle: 'Применить (каждый раз только это)',
+    bmRun1: 'Эта кнопка открывает ваш список желаемого в Steam и передаёт туда текущий рейтинг.',
+    bmRunBtn: '🚀 Открыть мой список желаемого',
+    bmRun2: 'На открывшейся странице Steam нажмите «⭐ Steam Apply» на панели закладок. Когда появится «Готово!», нажмите OK. Страница обновится сама в новом порядке.',
+    bmMockDone: 'Готово! Загружаем новый порядок',
+    bmNeedLogin: 'Войдите в Steam перед применением. Если вы изменили рейтинг, откройте Steam заново кнопкой 🚀 выше.',
+    bmTroubleTitle: 'Если что-то не получилось',
+    bmT1: '«Войдите в Steam» → войдите в Steam и снова нажмите закладку.',
+    bmT2: '«Нажмите это в магазине Steam» → вы нажали её на этом сайте. Нажмите на странице Steam, открытой кнопкой 🚀.',
+    bmT3: 'Появилось окно для вставки → вставьте Ctrl+V (Cmd+V на Mac) и нажмите OK. Если ничего не вставляется, скопируйте рейтинг кнопкой ниже и повторите.',
+    bmT4: 'Ничего не происходит → создайте закладку заново (можно способом «создать вручную» из шага 1).',
+    bmRankLabel: 'Запасной вариант: код рейтинга',
+    bmPc: 'Это делается в браузере на компьютере. На телефоне откройте «Если что-то не получилось», отправьте себе код через «Поделиться», затем на компьютере откройте список желаемого Steam и нажмите закладку.',
+    bmMsgWrongSite: 'Нажмите это на странице магазина Steam (store.steampowered.com)',
+    bmMsgDone: 'Готово! Загружаем новый порядок'
+  },
+  pt: {
+    bmTitle: '🎮 Aplicar na Steam',
+    bmReady: '✅ Seu ranking de {n} jogos está pronto para aplicar',
+    bmOv1: 'Adicionar favorito',
+    bmOv2: 'Abrir a Steam',
+    bmOv3: 'Clicar no favorito',
+    bmOvOnce: 'Só na primeira vez',
+    bmSetupTitle: 'Coloque "Steam Apply" na barra de favoritos',
+    bmSetupDesc: 'Segure o botão amarelo abaixo com o mouse, arraste até a barra de favoritos no topo do navegador e solte. Pronto, a configuração acabou. Na próxima vez não precisa deste passo.',
+    bmBarLabel: '↑ Barra de favoritos (solte aqui)',
+    bmDragHint: '← Arraste para a barra de favoritos',
+    bmName: 'Steam Apply',
+    bmDragNoClick: 'Não clique — arraste para a barra de favoritos',
+    bmShowBar: 'Se a barra de favoritos não aparecer, pressione Ctrl+Shift+B (Cmd+Shift+B no Mac).',
+    bmAltTitle: 'Não consegue arrastar? (criar manualmente)',
+    bmAlt: 'Clique com o botão direito na barra de favoritos → "Adicionar página" (ou "Adicionar favorito") → nome "Steam Apply", cole o código abaixo no campo de URL e salve.',
+    bmOldNote: 'Criou um favorito numa versão anterior? Ele ainda funciona, mas com um novo você não precisa copiar nem colar nada.',
+    bmMadeBtn: '✅ Pronto! Próximo',
+    bmRunTitle: 'Aplicar (só isto, toda vez)',
+    bmRun1: 'Este botão abre sua lista de desejos da Steam e leva junto o ranking atual.',
+    bmRunBtn: '🚀 Abrir minha lista de desejos da Steam',
+    bmRun2: 'Na página da Steam que abrir, clique em "⭐ Steam Apply" na barra de favoritos. Quando aparecer "Pronto!", é só apertar OK. A página recarrega sozinha na nova ordem.',
+    bmMockDone: 'Pronto! Carregando a nova ordem',
+    bmNeedLogin: 'Esteja conectado à Steam. Se mudar o ranking, abra a Steam de novo pelo botão 🚀 acima.',
+    bmTroubleTitle: 'Se algo der errado',
+    bmT1: '"Faça login na Steam" → entre na Steam e clique no favorito de novo.',
+    bmT2: '"Clique nisto na loja Steam" → você clicou neste site. Clique na página da Steam aberta pelo botão 🚀.',
+    bmT3: 'Apareceu uma caixa para colar → cole com Ctrl+V (Cmd+V no Mac) e aperte OK. Se nada colar, copie o ranking no botão abaixo e tente de novo.',
+    bmT4: 'Nada acontece → crie o favorito de novo (o método "criar manualmente" do passo 1 também serve).',
+    bmRankLabel: 'Reserva: código do ranking',
+    bmPc: 'Isto é feito no navegador do computador. No celular, abra "Se algo der errado", envie o código para você com "Compartilhar", depois abra a lista de desejos da Steam no computador e clique no favorito.',
+    bmMsgWrongSite: 'Clique nisto na loja Steam (store.steampowered.com)',
+    bmMsgDone: 'Pronto! Carregando a nova ordem'
+  },
+  de: {
+    bmTitle: '🎮 In Steam übernehmen',
+    bmReady: '✅ Dein Ranking mit {n} Spielen ist bereit',
+    bmOv1: 'Lesezeichen anlegen',
+    bmOv2: 'Steam öffnen',
+    bmOv3: 'Lesezeichen klicken',
+    bmOvOnce: 'Nur beim ersten Mal',
+    bmSetupTitle: '„Steam Apply“ in die Lesezeichenleiste legen',
+    bmSetupDesc: 'Pack den gelben Button unten mit der Maus, zieh ihn nach oben in die Lesezeichenleiste deines Browsers und lass los (Drag & Drop). Fertig eingerichtet – beim nächsten Mal entfällt dieser Schritt.',
+    bmBarLabel: '↑ Lesezeichenleiste (hier ablegen)',
+    bmDragHint: '← In die Lesezeichenleiste ziehen',
+    bmName: 'Steam Apply',
+    bmDragNoClick: 'Nicht klicken – in die Lesezeichenleiste ziehen',
+    bmShowBar: 'Wenn die Lesezeichenleiste nicht sichtbar ist, drücke Strg+Umschalt+B (Mac: Cmd+Shift+B).',
+    bmAltTitle: 'Ziehen klappt nicht? (manuell anlegen)',
+    bmAlt: 'Rechtsklick auf die Lesezeichenleiste → „Seite hinzufügen“ (oder „Lesezeichen hinzufügen“) → Name „Steam Apply“, den Code unten ins URL-Feld einfügen und speichern.',
+    bmOldNote: 'Lesezeichen aus einer älteren Version? Es funktioniert weiter, aber mit einem neuen musst du nichts mehr kopieren oder einfügen.',
+    bmMadeBtn: '✅ Erledigt! Weiter',
+    bmRunTitle: 'Übernehmen (jedes Mal nur das)',
+    bmRun1: 'Dieser Button öffnet deine Steam-Wunschliste und gibt dein aktuelles Ranking gleich mit.',
+    bmRunBtn: '🚀 Meine Steam-Wunschliste öffnen',
+    bmRun2: 'Klicke auf der geöffneten Steam-Seite in der Lesezeichenleiste auf „⭐ Steam Apply“. Bei „Fertig!“ einfach OK drücken. Die Seite lädt automatisch in der neuen Reihenfolge neu.',
+    bmMockDone: 'Fertig! Neue Reihenfolge wird geladen',
+    bmNeedLogin: 'Sei dabei bei Steam angemeldet. Wenn du das Ranking änderst, öffne Steam erneut über den 🚀-Button oben.',
+    bmTroubleTitle: 'Wenn etwas nicht klappt',
+    bmT1: '„Bitte bei Steam anmelden“ → bei Steam anmelden und das Lesezeichen erneut klicken.',
+    bmT2: '„Bitte im Steam-Shop klicken“ → du hast es auf dieser Seite geklickt. Klicke es auf der Steam-Seite, die der 🚀-Button öffnet.',
+    bmT3: 'Ein Einfügefeld erscheint → mit Strg+V (Mac: Cmd+V) einfügen und OK drücken. Klappt das nicht, kopiere das Ranking mit dem Button unten und versuch es erneut.',
+    bmT4: 'Nichts passiert → lege das Lesezeichen neu an (auch die Methode „manuell anlegen“ aus Schritt 1 geht).',
+    bmRankLabel: 'Reserve: Ranking-Code',
+    bmPc: 'Das funktioniert im Browser am Computer. Am Handy öffne „Wenn etwas nicht klappt“, schick dir den Code per „Teilen“, öffne dann am Computer deine Steam-Wunschliste und klicke das Lesezeichen.',
+    bmMsgWrongSite: 'Bitte im Steam-Shop (store.steampowered.com) klicken',
+    bmMsgDone: 'Fertig! Neue Reihenfolge wird geladen'
+  }
+};
+(function(){
+  for (var lg in FLOW6_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW6_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW6_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -1981,6 +2317,7 @@ function renderGuideTexts(){
   if(typeof triageActive!=='undefined'&&triageActive) prepareTriageUI(true);
   if(typeof refreshGridLabels==='function') refreshGridLabels();
   if(typeof refreshPriceLines==='function'&&typeof state!=='undefined'&&state&&state.games) refreshPriceLines();
+  if(typeof refreshSyncModal==='function'&&lastSyncIds&&lastSyncIds.length) refreshSyncModal();
   var st=document.getElementById('sync-status');
   if(st&&st.getAttribute('data-state')){
     st.textContent=gt(st.getAttribute('data-state')==='ng'?'sCopyFail':'sCopied');
@@ -2023,6 +2360,7 @@ function setSyncStatus(ok){
   var st=document.getElementById('sync-status');
   if(!st) return;
   st.className='sync-status '+(ok?'ok':'ng');
+  st.style.display='block';
   st.setAttribute('data-state',ok?'ok':'ng');
   st.textContent=gt(ok?'sCopied':'sCopyFail');
 }
@@ -2216,9 +2554,7 @@ function fetchWishlist(){
             var info=data&&data[appid];
             if(info&&info.success&&info.data&&info.data.name){
               var d=info.data;
-              var price=t('free');
-              if(!d.is_free&&d.price_overview)price=d.price_overview.final_formatted;
-              else if(!d.is_free)price=t('unknown');
+              var price=mkPrice(d);
               games.push(mkGame(appid,d,price));
             }else{failed.push(appid);}
           }catch(e){failed.push(appid);}
@@ -2240,9 +2576,7 @@ function fetchWishlist(){
               var info=data&&data[appid];
               if(info&&info.success&&info.data&&info.data.name){
                 var d=info.data;
-                var price=t('free');
-                if(!d.is_free&&d.price_overview)price=d.price_overview.final_formatted;
-                else if(!d.is_free)price=t('unknown');
+                var price=mkPrice(d);
                 games.push(mkGame(appid,d,price));
               }
             }catch(e){}
@@ -3287,15 +3621,67 @@ function jsEsc(s){
 
 function buildBookmarklet(){
   var mNo=jsEsc(gt('bmMsgNoSession')),mPrompt=jsEsc(gt('bmMsgPrompt')),mInvalid=jsEsc(gt('bmMsgInvalid'));
-  var mDone=jsEsc(gt('bmMsgDone')),mFail=jsEsc(gt('bmMsgFail')),mErr=jsEsc(gt('bmMsgError'));
-  var code="(function(){var sid=document.cookie.match(/sessionid=([^;]+)/);if(!sid){alert('"+mNo+"');return;}"
-   +"function parse(t){try{var a=JSON.parse(t);if(Array.isArray(a)&&a.length>0&&a.every(function(x){return typeof x==='number';})){return a;}}catch(e){}return null;}"
+  var mDone=jsEsc(gt('bmMsgDone')),mFail=jsEsc(gt('bmMsgFail')),mErr=jsEsc(gt('bmMsgError')),mSite=jsEsc(gt('bmMsgWrongSite'));
+  var code="(function(){if(location.hostname!=='store.steampowered.com'){alert('"+mSite+"');return;}"
+   +"var sid=document.cookie.match(/sessionid=([^;]+)/);if(!sid){alert('"+mNo+"');return;}"
+   +"function parse(t){t=String(t||'').replace(/\\s/g,'');if(!t){return null;}if(t.charAt(0)!=='['){t='['+t+']';}try{var a=JSON.parse(t);if(Array.isArray(a)&&a.length>0&&a.every(function(x){return typeof x==='number';})){return a;}}catch(e){}return null;}"
    +"function post(ids){var body=JSON.stringify({m:'Reorder',mp:[ids.map(function(x,i){return {appid:x,priority:i+1};})]});"
    +"fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction','X-Requested-With':'XMLHttpRequest'},body:body})"
-   +".then(function(r){return r.json();}).then(function(d){alert(d.data&&d.data.result===1?'"+mDone+"':'"+mFail+"'+JSON.stringify(d));}).catch(function(e){alert('"+mErr+"'+e.message);});}"
+   +".then(function(r){return r.json();}).then(function(d){if(d.data&&d.data.result===1){alert('"+mDone+"');location.replace(location.href.split(String.fromCharCode(35))[0]);}else{alert('"+mFail+"'+JSON.stringify(d));}}).catch(function(e){alert('"+mErr+"'+e.message);});}"
    +"function manual(){var s=prompt('"+mPrompt+"');if(s===null){return;}var a=parse(s);if(a){post(a);}else{alert('"+mInvalid+"');}}"
+   +"var h=location.hash.match(/swr=([0-9,]+)/);if(h){var ha=parse(h[1]);if(ha){post(ha);return;}}"
    +"if(navigator.clipboard&&navigator.clipboard.readText){navigator.clipboard.readText().then(function(t){var a=parse(t);if(a){post(a);}else{manual();}}).catch(manual);}else{manual();}})();";
   return 'javascript:'+code;
+}
+
+var lastSyncIds=[];
+
+function bmIsReady(){
+  try{ return localStorage.getItem('swr_bm_v2')==='1'; }catch(e){ return false; }
+}
+
+function bmMarkReady(scroll){
+  try{ localStorage.setItem('swr_bm_v2','1'); }catch(e){}
+  if(scroll===true){
+    var st=document.getElementById('bm-setup');
+    if(st) st.open=false;
+    refreshSyncModal();
+    var run=document.getElementById('bm-run');
+    if(run&&run.scrollIntoView) run.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+function bmDragClick(e){
+  if(e&&e.preventDefault) e.preventDefault();
+  fxToast(gt('bmDragNoClick'));
+  return false;
+}
+
+function refreshSyncModal(){
+  var drag=document.getElementById('bm-drag');
+  if(drag){ drag.href=buildBookmarklet(); drag.textContent='⭐ '+gt('bmName'); }
+  var bm=document.getElementById('bm-code');
+  if(bm) bm.value=buildBookmarklet();
+  var rd=document.getElementById('bm-ready');
+  if(rd) rd.textContent=gf('bmReady',{n:lastSyncIds.length});
+  var ov=document.getElementById('bm-ov1');
+  if(ov) ov.className='bm-ov'+(bmIsReady()?' done':'');
+  var names=document.querySelectorAll('.bm-mock-ghost,.bm-mock-pill');
+  for(var i=0;i<names.length;i++) names[i].textContent='⭐ '+gt('bmName');
+  var hl=document.querySelector('#bm-run .mock-hl');
+  if(hl&&hl.firstChild) hl.firstChild.nodeValue='⭐ '+gt('bmName')+' ';
+}
+
+function wishlistApplyUrl(){
+  var steamId=localStorage.getItem('swr_steamid');
+  var base=steamId?'https://store.steampowered.com/wishlist/profiles/'+steamId+'/':'https://store.steampowered.com/wishlist/';
+  return base+'#swr='+lastSyncIds.join(',');
+}
+
+function openWishlistApply(){
+  if(!lastSyncIds.length){ openWishlist(); return; }
+  copyText(lastSyncCode,function(){});
+  window.open(wishlistApplyUrl(),'_blank');
 }
 
 function copyText(text,cb){
@@ -3323,14 +3709,17 @@ function copyBookmarklet(){
 function syncToSteam(){
   var ranked=getRankedGames();
   var ids=ranked.map(function(g){return parseInt(g.appid,10);});
+  lastSyncIds=ids;
   lastSyncCode=JSON.stringify(ids);
   var box=document.getElementById('sync-code');
   if(box) box.value=lastSyncCode;
-  var bm=document.getElementById('bm-code');
-  if(bm) bm.value=buildBookmarklet();
+  var st=document.getElementById('sync-status');
+  if(st){ st.style.display='none'; st.removeAttribute('data-state'); }
+  var setup=document.getElementById('bm-setup');
+  if(setup) setup.open=!bmIsReady();
+  refreshSyncModal();
   showModal('sync-modal');
   updateSyncMobileUI();
-  copySyncCode();
 }
 
 // =====================================================
@@ -3348,6 +3737,15 @@ function parseYen(s){
   return d?parseInt(d,10):null;
 }
 
+function mkPrice(d){
+  var po=d.price_overview;
+  if(d.type==='demo') return gt('priceDemo');
+  if(po&&po.final_formatted) return po.final_formatted;
+  if(d.release_date&&d.release_date.coming_soon) return gt('priceTba');
+  if(d.is_free) return t('free');
+  return t('unknown');
+}
+
 function mkGame(appid,d,price){
   var po=d.price_overview||null;
   return {
@@ -3358,7 +3756,9 @@ function mkGame(appid,d,price){
     release:(d.release_date&&d.release_date.date)||'',
     disc:(po&&po.discount_percent)?po.discount_percent:0,
     orig:(po&&po.initial_formatted)?po.initial_formatted:'',
-    pnum:(po&&po.final_formatted)?parseYen(po.final_formatted):null
+    pnum:(po&&po.final_formatted)?parseYen(po.final_formatted):null,
+    pre:!!(d.release_date&&d.release_date.coming_soon),
+    demo:(d.type==='demo')
   };
 }
 
