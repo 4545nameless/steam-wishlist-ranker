@@ -839,7 +839,7 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
               <button type="button" id="bm-copy-btn" class="btn btn-gold btn-sm" style="align-self:flex-start" onclick="copyBookmarklet()" data-g="bmCopyCode">📋 ブックマーク用コードをコピー</button>
             </div>
           </details>
-          <div class="guide-note" data-g="bmOldNote"></div>
+          <div class="guide-note warn" data-g="bmOldNote"></div>
           <button type="button" class="btn btn-green bm-made" onclick="bmMarkReady(true)" data-g="bmMadeBtn">✅ 入れた！次へ</button>
         </div>
       </details>
@@ -2991,6 +2991,45 @@ var FLOW10_ADD = {
   }
 })();
 
+var FLOW11_ADD = {
+  ja: {
+    bmMsgClick: '📋 ここをクリックしてランキングを反映',
+    bmOldNote: '⚠ 以前に作った「Steam反映」ブックマークがある人へ：古いものはコードの入力欄が出ることがあります。古いブックマークは削除して、上の黄色いボタンから作り直してください（1回だけ）。',
+    bmT3: '貼り付け欄が出た → 古いブックマークを使っている可能性が高いです。①で作り直してください。今すぐ反映したいときは、Ctrl+V（Macは Cmd+V）で貼り付けて OK でも反映できます。'
+  },
+  en: {
+    bmMsgClick: '📋 Click here to apply your ranking',
+    bmOldNote: '⚠ Made a "Steam Apply" bookmark before? Old ones may show a code input box. Delete the old bookmark and make a new one from the yellow button above (just once).',
+    bmT3: 'A paste box appeared → You are probably using an old bookmark. Make it again in step 1. To apply right now, you can also paste with Ctrl+V (Cmd+V on Mac) and press OK.'
+  },
+  zh: {
+    bmMsgClick: '📋 点击这里应用排名',
+    bmOldNote: '⚠ 以前创建过“Steam应用”书签的用户：旧书签可能会弹出代码输入框。请删除旧书签，并用上方的黄色按钮重新创建（只需一次）。',
+    bmT3: '出现粘贴输入框 → 很可能在使用旧书签。请在第1步重新创建。想马上应用的话，也可以按 Ctrl+V（Mac 为 Cmd+V）粘贴后按确定。'
+  },
+  ru: {
+    bmMsgClick: '📋 Нажмите здесь, чтобы применить рейтинг',
+    bmOldNote: '⚠ Создавали закладку «Steam Apply» раньше? Старая может показывать поле для ввода кода. Удалите её и создайте новую жёлтой кнопкой выше (один раз).',
+    bmT3: 'Появилось окно для вставки → вероятно, используется старая закладка. Создайте её заново в шаге 1. Чтобы применить прямо сейчас, вставьте Ctrl+V (Cmd+V на Mac) и нажмите OK.'
+  },
+  pt: {
+    bmMsgClick: '📋 Clique aqui para aplicar o ranking',
+    bmOldNote: '⚠ Já criou um favorito "Steam Apply" antes? Os antigos podem mostrar uma caixa para colar o código. Apague o antigo e crie um novo pelo botão amarelo acima (só uma vez).',
+    bmT3: 'Apareceu uma caixa para colar → provavelmente é um favorito antigo. Crie de novo no passo 1. Para aplicar agora, também dá para colar com Ctrl+V (Cmd+V no Mac) e apertar OK.'
+  },
+  de: {
+    bmMsgClick: '📋 Hier klicken, um das Ranking zu übernehmen',
+    bmOldNote: '⚠ Schon früher ein „Steam Apply“-Lesezeichen angelegt? Alte Lesezeichen zeigen manchmal ein Eingabefeld. Lösche das alte und lege mit dem gelben Button oben ein neues an (nur einmal).',
+    bmT3: 'Ein Einfügefeld erscheint → wahrscheinlich ein altes Lesezeichen. Lege es in Schritt 1 neu an. Um sofort zu übernehmen, kannst du auch mit Strg+V (Mac: Cmd+V) einfügen und OK drücken.'
+  }
+};
+(function(){
+  for (var lg in FLOW11_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW11_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW11_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -4369,7 +4408,7 @@ function jsEsc(s){
 
 function buildBookmarklet(){
   var mNo=jsEsc(gt('bmMsgNoSession')),mPrompt=jsEsc(gt('bmMsgPrompt')),mInvalid=jsEsc(gt('bmMsgInvalid'));
-  var mDone=jsEsc(gt('bmMsgDone')),mFail=jsEsc(gt('bmMsgFail')),mErr=jsEsc(gt('bmMsgError')),mSite=jsEsc(gt('bmMsgWrongSite'));
+  var mDone=jsEsc(gt('bmMsgDone')),mFail=jsEsc(gt('bmMsgFail')),mErr=jsEsc(gt('bmMsgError')),mSite=jsEsc(gt('bmMsgWrongSite')),mClick=jsEsc(gt('bmMsgClick'));
   var code="(function(){if(location.hostname!=='store.steampowered.com'){alert('"+mSite+"');return;}"
    +"var sid=document.cookie.match(/sessionid=([^;]+)/);if(!sid){alert('"+mNo+"');return;}"
    +"function parse(t){t=String(t||'').replace(/\\s/g,'');if(!t){return null;}if(t.charAt(0)!=='['){t='['+t+']';}try{var a=JSON.parse(t);if(Array.isArray(a)&&a.length>0&&a.every(function(x){return typeof x==='number';})){return a;}}catch(e){}return null;}"
@@ -4378,18 +4417,22 @@ function buildBookmarklet(){
    +".then(function(r){return r.json();}).then(function(d){if(d.data&&d.data.result===1){alert('"+mDone+"');location.replace(location.href.split(String.fromCharCode(35))[0]);}else{alert('"+mFail+"'+JSON.stringify(d));}}).catch(function(e){alert('"+mErr+"'+e.message);});}"
    +"function manual(){var s=prompt('"+mPrompt+"');if(s===null){return;}var a=parse(s);if(a){post(a);}else{alert('"+mInvalid+"');}}"
    +"var h=location.hash.match(/swr=([0-9,]+)/);if(h){var ha=parse(h[1]);if(ha){post(ha);return;}}"
-   +"if(navigator.clipboard&&navigator.clipboard.readText){navigator.clipboard.readText().then(function(t){var a=parse(t);if(a){post(a);}else{manual();}}).catch(manual);}else{manual();}})();";
+   +"function fromClip(){return navigator.clipboard.readText().then(function(t){var a=parse(t);if(a){post(a);}else{manual();}});}"
+   +"function clickBtn(){var o=document.createElement('div');o.style.cssText='position:fixed;left:0;top:0;right:0;bottom:0;z-index:2147483647;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center';"
+   +"var b=document.createElement('button');b.textContent='"+mClick+"';b.style.cssText='font-size:20px;font-weight:bold;padding:18px 30px;border-radius:10px;border:3px solid #f6c90e;background:#1b2838;color:#fff;cursor:pointer';"
+   +"o.appendChild(b);o.onclick=function(ev){if(ev.target===o){o.remove();}};b.onclick=function(){o.remove();fromClip().catch(manual);};document.body.appendChild(o);b.focus();}"
+   +"if(navigator.clipboard&&navigator.clipboard.readText){fromClip().catch(clickBtn);}else{manual();}})();";
   return 'javascript:'+code;
 }
 
 var lastSyncIds=[];
 
 function bmIsReady(){
-  try{ return localStorage.getItem('swr_bm_v2')==='1'; }catch(e){ return false; }
+  try{ return localStorage.getItem('swr_bm_v3')==='1'; }catch(e){ return false; }
 }
 
 function bmMarkReady(scroll){
-  try{ localStorage.setItem('swr_bm_v2','1'); }catch(e){}
+  try{ localStorage.setItem('swr_bm_v3','1'); }catch(e){}
   if(scroll===true){
     var st=document.getElementById('bm-setup');
     if(st) st.open=false;
