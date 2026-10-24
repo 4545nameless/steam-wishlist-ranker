@@ -41,6 +41,7 @@ Steam のウィッシュリストを、ゲーム感覚の選択で「次に買�
   - 乱入者の選出（`pickRaiders`）: A=Steam の元の上位（priority）／B=買い時・セール中／C=最近追加（date_added）を 3:3:3、ランダム 1。並びが追加順のまま（`wishlistUnorganized`）なら A の枠は C へ。
 - **tour**（決勝。上位16のシード制）→ 優勝後 `showFinMenu()`。
 - **done / elim**（仕上げ）… 中位整理（`finMidIds`: プールの残り＋上位入りした乱入者、一番欲しいを選ぶ）と最弱決定戦（`finLowIds`: それ以外全部、一番いらないを選ぶ）。4本ずつ（端数は3・2本、`groupSizes`）の勝ち抜き。途中でやめても `elimApply` で反映。勝ち残り深さで順位をつけ、`reassignPoints` でその集団の点数枠内だけ並べ替える。
+- シェア（`shareToX`）: 投稿文は `buildShareText`（ひとこと `SHARE_JA`/`SHARE_EN` は物量がネタなので多いほどよい＋条件付き `SHARE_RARE_*`＋しめ `SHARE_TAIL_*`、上位3本、合計金額の行、`#Steam #SteamWishlistRanker`、Xの280文字に収まるよう自動で削る）。画像は `prepareShareClone` で複製側だけ整える（上位 `SHARE_ROWS`=30本、合計金額、サイト名URL、操作用の列や説明は消す）。クリップボードへの write はクリック直後に呼び、画像は Promise で渡す。
 - 結果画面: ドラッグ並び替え（Sortable）、上位／中位／下位／最下位のラベル（`resultTiers`）、セール・最安値表示。
 - 旧方式（予選スキップ、`f.skipped`）の1対1も残っている。
 

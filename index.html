@@ -378,6 +378,12 @@ details.bm-card .bm-once+*{}
 .spot.on{opacity:1}
 .flow-img{max-width:260px;width:60%;border-radius:8px;border:3px solid var(--gold);box-shadow:0 0 40px rgba(246,201,14,.6);margin:0 auto 12px;display:none}
 .result-hint{font-size:.78rem;color:var(--text2);margin:6px 0}
+.share-total{text-align:center;line-height:1.3}
+.share-total-lead{font-size:.95rem;color:var(--text)}
+.share-total-num{font-size:2.6rem;font-weight:900;color:var(--gold);text-shadow:0 2px 16px rgba(246,201,14,.35)}
+.share-total-sale{font-size:.9rem;color:var(--orange);font-weight:700;margin-top:2px}
+.share-foot{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.8rem;color:var(--text2)}
+.share-foot b{color:#fff;font-size:.95rem}
 .rt-handle{cursor:grab;color:var(--text2);width:30px;text-align:center;user-select:none;font-size:1.1rem;touch-action:none}
 .sortable-ghost{opacity:.4}
 
@@ -931,6 +937,7 @@ var STORAGE_KEY = 'swr_v14';
 var IMG_BASE    = 'https://cdn.akamai.steamstatic.com/steam/apps/';
 var SITE_URL    = 'https://steam-wishlist-ranker.vercel.app';
 var KOFI_URL    = 'https://ko-fi.com/4545nameless';
+var SHARE_ROWS  = 30;
 var TAG         = '#SteamWishlistRanker';
 
 // ========== 多言語対応 ==========
@@ -3283,6 +3290,22 @@ var FLOW14_ADD = {
   }
 })();
 
+// シェア画像に入れる文言
+var FLOW15_ADD = {
+  ja: { shImgLead: 'ウィッシュリスト{n}本、全部買うと', shImgCount: 'ウィッシュリスト {n}本', shImgSale: '🔥 いまセール中 {s}本', shImgMore: '…ほか {m}本' },
+  en: { shImgLead: '{n} games on my wishlist. Buying them all costs', shImgCount: '{n} games on my wishlist', shImgSale: '🔥 {s} on sale now', shImgMore: '…and {m} more' },
+  zh: { shImgLead: '愿望单共 {n} 款，全部买下需要', shImgCount: '愿望单共 {n} 款', shImgSale: '🔥 正在促销 {s} 款', shImgMore: '…另有 {m} 款' },
+  ru: { shImgLead: 'В списке желаемого {n} игр. Купить всё стоит', shImgCount: 'В списке желаемого {n} игр', shImgSale: '🔥 Сейчас со скидкой: {s}', shImgMore: '…и ещё {m}' },
+  pt: { shImgLead: '{n} jogos na lista de desejos. Comprar tudo custa', shImgCount: '{n} jogos na lista de desejos', shImgSale: '🔥 {s} em promoção agora', shImgMore: '…e mais {m}' },
+  de: { shImgLead: '{n} Spiele auf der Wunschliste. Alles kaufen kostet', shImgCount: '{n} Spiele auf der Wunschliste', shImgSale: '🔥 {s} gerade im Angebot', shImgMore: '…und {m} weitere' }
+};
+(function(){
+  for (var lg in FLOW15_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW15_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW15_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -3511,23 +3534,143 @@ storeLinks.forEach(function(id){
   renderGuideTexts();
 }
 
-// ========== シェア文言（日本語のみ・他言語は英語共通） ==========
-var mkLow  = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+( currentLang==='ja'?'件のウィッシュリスト、まだランク付け中！':' games in wishlist, still ranking!')+'\n\n'+u+'\n\n'+TAG+b; }; };
-var mkMid  = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+(currentLang==='ja'?'件・':'/')+v+(currentLang==='ja'?'回の対決で出した中間結果':' battles - interim results')+'\n\n'+u+'\n\n'+TAG+b; }; };
-var mkHigh = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+(currentLang==='ja'?'件・':'/')+v+(currentLang==='ja'?'回の対決でかなり固まってきた':' battles - getting solid')+'\n\n'+u+'\n\n'+TAG+b; }; };
-var mkPfct = function(a,b){ b=b||''; return function(t,u,n,v){ return a+'\n\n'+t+'\n\n'+n+(currentLang==='ja'?'件・':'/')+v+(currentLang==='ja'?'回の対決で決定した完全版ランキング':' battles - final ranking')+'\n\n'+u+'\n\n'+TAG+b; }; };
+// ========== シェア文言（日本語は ja、それ以外の言語は英語共通） ==========
+// {n}=本数 {total}=全部買うと {half}=その半額 {top1}{top2}{top3}=上位 {sale}=セール中の本数 {buy}=買い時の本数 {p1}=1位の価格
+// 物量がネタなので、ひとことは多いほどよい。{total} を含むものは価格が取れていないと出ない
+var SHARE_JA=[
+'ウィッシュリスト{n}本、全部買うと{total}。見なかったことにした','「いつか買う」を合計したら{total}だった','欲しいゲーム{n}本、合計{total}。人生も財布も足りない','積んでるのは時間じゃなくてお金だった（{total}）','全部買うと{total}らしい。そっと閉じた',
+'ウィッシュリストの総額、{total}。これは家計簿には書けない','{total}分の夢を順位づけした','夢の総額：{total}','{total}あれば全部遊べる。時間はない','合計{total}。まずは1位だけ買う作戦でいく',
+'ウィッシュリストに{total}眠ってた','{total}の欲望に順位をつけた結果','全部買ったら{total}。冷静になるためにランキングを作った','計算したら{total}だったので、優先順位をつけることにした','財布と相談した結果、1位から順に買うことにした（総額{total}）',
+'{total}のウィッシュリストを戦わせた','合計{total}、遊ぶ時間はプライスレス','総額{total}。見なければ0円','{total}を前にして人は無力','ウィッシュリストが{total}になってた件',
+'{total}分の「セールになったら買う」','この{total}、いつ崩すんだろう','{n}本で{total}。冷静になれる数字ではない','全部半額になっても{half}。それでも高い','{total}をどう使うか、順位で決めた',
+'ボーナスが{total}あれば全部買える','Steamに{total}分の期待を預けている','今日のウィッシュリスト時価総額：{total}','ウィッシュリスト時価総額{total}、本日の1位は「{top1}」','{total}の中から本当に欲しいものを選んだ',
+'全部買ったら{total}。全部遊んだら何年？','総額{total}。遊ぶ時間もセットで欲しい','{total}分の「あとで買う」を整理した','気づけば{total}のウィッシュリスト','{total}って書くと急に現実味が出る',
+'ウィッシュリスト、合計{total}。誰か止めて','{total}あったら何する？自分はこの順で買う','夢の買い物リスト（総額{total}）に順位がついた','欲しいもの合計{total}。まずは1本から','{total}のうち、最初に崩すのは「{top1}」',
+'総額{total}を前に、1位だけは決めた','{total}を払う覚悟はないけど、順位をつける覚悟はある','総額{total}。だからこそ優先順位が大事','{total}の山から宝を探した','見積もり：{total}。予算：ない',
+'予算0円、ウィッシュリスト{total}','{total}のウィッシュリストを抱えて生きている','この{total}は未来の自分への宿題','{total}ぶんの「欲しい」を本気で並べた','ウィッシュリストに{total}入れてる人、他にもいる？',
+'{total}。桁を二度見した','ウィッシュリストの合計を初めて見た。{total}だった','{total}あったらPCを新調する？いや、ゲームを買う','合計{total}を、勝ち抜き戦で整理','{total}もあるのに、1位は即決だった',
+'{total}分の未来を予約中','総額{total}、でも全部遊びたい','{total}は見なかったことにして、ランキングだけ見てほしい','{total}のウィッシュリスト、本気で並べてみた','ゲームに{total}使う覚悟、まだない',
+'{n}本の頂点に立ったのは「{top1}」でした','1位は「{top1}」。異論は認める','本気で選んだら「{top1}」が勝ち残った','「{top1}」、優勝おめでとう','1位、自分でも意外だった',
+'1位は「{top1}」。そろそろ買えってことか','「{top1}」が全部なぎ倒していった','栄えある1位は「{top1}」','「{top1}」、次のセールで迎えに行きます','「{top1}」が無双してた',
+'1位の「{top1}」、ずっと欲しかったもんな','気づいたら「{top1}」が王座にいた','結局「{top1}」なんだよな','心の1位と結果の1位が一致した。「{top1}」','「{top1}」強すぎた',
+'「{top1}」に勝てるゲームがいなかった','チャンピオン：「{top1}」','「{top1}」、満場一致（審査員1名）','1位の「{top1}」は買います。たぶん','「{top1}」が1位って、好みがバレる',
+'「{top1}」、ずっとウィッシュリストにいてくれてありがとう','次に買うのは「{top1}」に決定','優勝「{top1}」、準優勝「{top2}」','「{top1}」と「{top2}」の決勝、熱かった','「{top2}」惜しかった。1位は「{top1}」',
+'表彰台に上がったのはこの3本','「{top1}」、王者の風格','「{top1}」がほぼ負けなかった','迷ったけど1位は「{top1}」','「{top1}」を買う理由ができた',
+'1位「{top1}」。もう言い訳はできない','「{top1}」、これは運命','欲しい度ナンバーワンは「{top1}」','第1回 脳内ゲーム大会 優勝「{top1}」','「{top1}」、殿堂入り',
+'結果発表！1位は「{top1}」','「{top1}」が1位なの、納得しかない','1位は「{top1}」。みんなの1位も教えて','あなたの1位は？こっちは「{top1}」','「{top1}」がトップ。財布の紐がゆるむ音がした',
+'王座決定戦の勝者は「{top1}」','「{top1}」、強者の余裕','1位を「{top1}」にした自分を褒めたい','「{top1}」が勝つのはわかってた','1位「{top1}」、2位「{top2}」。この差は何',
+'「{top1}」、おめでとう。次はお前を買う番だ','「{top1}」を1位にした理由は、ただ欲しいから','ずっと迷ってたけど、「{top1}」で決まり','「{top1}」が勝ち抜いた','1位の「{top1}」、セール待ちするか今買うか',
+'1位が「{top1}」なのは、たぶん疲れてるから','「{top1}」が1位。センスを褒めてほしい','「{top1}」、ウィッシュリスト界の頂点','1位発表。「{top1}」です。拍手','今の自分に一番必要なのは「{top1}」らしい',
+'「{top1}」の圧勝だった','優勝トロフィーは「{top1}」へ','「{top1}」が1位。予想通りすぎる','「{top1}」が1位とは。人は変わる','「{top1}」、あなたが1位です',
+'{n}本は多すぎた。でも順位はついた','ウィッシュリスト{n}本、全部に順位をつけた','{n}本の中から本気で選んだ','{n}本を戦わせて、残ったのはこれ','{n}本のバトルロイヤル、決着',
+'{n}本のトーナメントが終わった','{n}本、ちゃんと全部見た','ウィッシュリスト{n}本、やっと整理できた','{n}本を数分で並べ替えた','{n}本あっても、1位は一瞬で決まった',
+'{n}本の中の最強が決まった','{n}本の「欲しい」に決着をつけた','{n}本、多いのか少ないのかわからない','{n}本のウィッシュリストに秩序が戻った','{n}本がひしめくウィッシュリスト、ついに整列',
+'{n}本中の頂点','{n}本を総当たり……はしてないけど、ちゃんと決まった','{n}本のうち、まず買うのはこれ','{n}本入れた過去の自分、聞いてる？','{n}本、追加した記憶がないものもあった',
+'{n}本、いつ遊ぶんだろう','{n}本の欲望に順番をつけた','{n}本の中で、本当に欲しいのはこの3本','{n}本のウィッシュリストを1本ずつ思い出した','{n}本のうち、半分は追加したことを忘れてた',
+'{n}本から選び抜いた精鋭たち','{n}本の頂上決戦、終了','{n}本の欲しいもの、全部本気','ウィッシュリスト{n}本の大掃除完了','{n}本も入れてたの、自分でも驚いた',
+'{n}本を整列させたら気持ちいい','{n}本、ようやく優先順位がついた','{n}本の山から、次の1本を発掘','{n}本あると選べないので、戦わせた','{n}本の中からドラフト1位指名',
+'{n}本の総選挙、開票結果','ウィッシュリスト{n}本の総選挙、センターは「{top1}」','{n}本の頂点を決める戦いが終わった','{n}本の中から、まず1本','{n}本のうち、どれから遊ぶか決まった',
+'ウィッシュリスト、入れるだけ入れて満足してた','「とりあえずウィッシュリスト」の末路がこちら','セールのたびに迷ってたのを終わらせた','ウィッシュリストって、入れた瞬間がピーク','入れたことすら忘れてたゲームと再会した',
+'ウィッシュリストが思い出のアルバムになってた','ウィッシュリストの並び順、追加順のままだった','ウィッシュリストの1番上が、もう興味ないゲームだった','どれ買うか迷う時間を、ゲームする時間に変えたい','セールが来る前に準備完了',
+'次のセールで迷わないための準備','これでセールが来ても迷わない','優先順位がないウィッシュリストは、ただのリスト','並べ替えたら、自分の好みが見えた','自分が何を欲しいのか、やっとわかった',
+'欲しいゲームが多すぎる問題、解決','ウィッシュリスト迷子、卒業','「どれ買おう」で1時間悩むの、もうやめた','欲しいものリストの交通整理','順位がついただけで、なんか偉くなった気がする',
+'ウィッシュリストの断捨離（捨ててはない）','本気で見直したら、知らないゲームがいた','ウィッシュリスト、たまに見直すと発見がある','過去の自分のウィッシュリストのセンスを採点した','昔の自分が欲しかったもの、今の自分も欲しかった',
+'ウィッシュリスト、整えると気持ちいい','1日かかると思ったら数分で終わった','今日のタスク：ウィッシュリストの整理。完了','優柔不断でも順位がつけられた','直感で選んでいったら順位ができてた',
+'選ぶだけでランキングができるの、楽しい','ポチポチ選ぶだけで、欲しい順が完成','ゲーム感覚でウィッシュリストを整理した','ウィッシュリスト整理がゲームになってた','ゲームを買う順番を、ゲームで決めた',
+'ゲームを選ぶゲームをしてた','自分の欲しいもの、こんな順番だったんだ','ランキングにしたら、迷いが消えた','迷った時は戦わせればいい','欲しいゲーム同士を戦わせる、残酷な遊び',
+'ゲームたちの仁義なき戦い','推しゲームたちの戦いを見届けた','ウィッシュリスト内の格付けが完了','本日のウィッシュリスト格付けチェック','自分のウィッシュリスト、格付けしてみた',
+'ウィッシュリスト番付、発表','ウィッシュリスト場所、千秋楽','ウィッシュリストのドラフト会議、終了','ウィッシュリストの序列が決まった','ウィッシュリストに下克上が起きた',
+'下位だったゲームが上位に食い込んできた','思わぬダークホースが現れた','大番狂わせがあった','意外なゲームが上位に来た','自分の好み、思ってたのと違った',
+'ランキングを見て「そうだったのか」ってなった','自分のことは、自分よりこのランキングが知ってる','本音が出たランキング','建前を捨てたウィッシュリスト','正直に選んだらこうなった',
+'直感に従った結果がこちら','迷いを全部捨てたランキング','選ぶほどに自分がわかる','欲望の可視化、完了','欲しいものに順位をつけるって、案外難しい。でも楽しい',
+'これが今の自分の「欲しい」の形','今の自分の物欲ランキング','物欲ランキング、最新版','欲しいゲームランキング、更新しました','ウィッシュリストランキング、今月版',
+'次に買うゲーム、決めました','今年中に買いたい順','次のセールで買うもの、決まり','買う順番、決めた。あとはお金だけ','買う順番は決まった。買うとは言ってない',
+'優先順位は決まった。予算は決まってない','あとはセールを待つだけ','準備は整った。セールよ来い','セールの通知を待つ体勢に入った','いつでもセールに来い',
+'財布との作戦会議、終了','財布にはまだ見せてない','財布が震えてる','財布、ごめん','財布に優しくないランキング',
+'財布のために優先順位をつけた','財布と心が一致した順位','理性で選んだつもりが、欲望が勝った','理性と欲望の戦いの記録','欲望に正直なランキング',
+'ゲームたちが自分のために戦ってくれた','勝ち残ったゲームたち、おめでとう','敗れたゲームたちも、いつか買うから','下位のゲームたち、ごめん。でも愛してる','最下位のゲームも、ウィッシュリストからは消さない',
+'全員1位にしたかった','本当は全部1位','甲乙つけがたいのを無理やりつけた','泣く泣く順位をつけた','どれも欲しいのに順位をつける苦しみ',
+'苦渋の決断の連続だった','選択の連続で脳が疲れた。でも楽しかった','選びすぎて、もう何が欲しいかわからない（わかった）','選ぶたびに心が揺れた','これは戦いだった',
+'激闘の記録','熱い戦いだった','名勝負が多すぎた','歴史に残る1対1があった','実況したかった',
+'優勝インタビューを聞きたい','表彰式を行います','トロフィー授与式','結果発表～！','ドゥルルルル……結果発表！',
+'お待たせしました、結果発表です','発表します','ついに決着','決着がついた','激戦の末に',
+'長い戦いが終わった','戦いの果てに','歴史が動いた','新王者誕生','王座交代',
+'番狂わせの予感が的中した','ランキングができると、なぜか誰かに見せたくなる','見て、自分のウィッシュリスト','ウィッシュリスト、晒します','恥ずかしいけど晒す',
+'性癖がバレるウィッシュリスト','好みが丸出しのランキング','ゲームの趣味、これで全部バレる','このランキングで人となりがわかる','ウィッシュリストは人を映す鏡',
+'ウィッシュリストには人生が出る','ウィッシュリストは心の履歴書','ウィッシュリストは未来の自分へのラブレター','みんなのウィッシュリストも見せて','誰か1位が同じ人いない？',
+'これ、みんなもやってみて','あなたのウィッシュリストの1位は？','欲しいゲーム、みんなはどうやって決めてる？','このランキング、どう思う？','文句がある人は自分のランキングを作ってきて',
+'異論は認める。反論も待ってる','いいセンスしてると思う（自画自賛）','我ながらいいランキング','自分にしか作れないランキング','世界に一つだけのランキング'
+];
+// 条件を満たしたときだけ出るレアなひとこと
+var SHARE_RARE_JA=[
+{c:function(s){return s.total>=1000000;},t:'ウィッシュリストの総額が{total}。もはや資産'},
+{c:function(s){return s.total>=1000000;},t:'{total}……ウィッシュリストに7桁入ってる'},
+{c:function(s){return s.total>=300000;},t:'ウィッシュリストが中古車の値段になってた（{total}）'},
+{c:function(s){return s.total>=300000;},t:'{total}あればいいゲーミングPCが買える。でもゲームを買う'},
+{c:function(s){return s.total>0&&s.total<10000;},t:'ウィッシュリスト総額{total}。かわいいもんでしょ'},
+{c:function(s){return s.n>=200;},t:'{n}本……ウィッシュリストが図書館になってた'},
+{c:function(s){return s.n>=500;},t:'{n}本。もはやストア'},
+{c:function(s){return s.n<=20;},t:'{n}本の少数精鋭ウィッシュリスト'},
+{c:function(s){return s.sale>=10;},t:'今セール中が{sale}本。財布が危ない'},
+{c:function(s){return s.sale>=1;},t:'しかも今{sale}本がセール中。タイミングが悪い（良い）'},
+{c:function(s){return s.sale>=1;},t:'セール中{sale}本。これは買えってこと？'},
+{c:function(s){return s.top1Sale;},t:'1位の「{top1}」、今セール中。これは運命'},
+{c:function(s){return s.top1Free;},t:'1位の「{top1}」、無料だった。今すぐ遊べる'},
+{c:function(s){return s.top1Tba;},t:'1位の「{top1}」、まだ発売してない。待つしかない'},
+{c:function(s){return s.p1>=8000;},t:'1位の「{top1}」、{p1}もする。セール待ち確定'},
+{c:function(s){return s.buy>=1;},t:'過去最安値に近いのが{buy}本。買い時が来てる'}
+];
+// しめの一言（文字数が足りないときは省く）
+var SHARE_TAIL_JA=[
+'今日も平和','財布は泣いてる','セールよ早く来い','まずは1本から','たぶん買う','買うとは言ってない','時間が足りない','いつか遊ぶ','全部遊びたい','積む覚悟はできてる',
+'みんなの1位も教えて','これでセールも怖くない','お疲れさまでした','以上、現場からでした','ランキングが変わったらまた報告します','人生は短い、ウィッシュリストは長い','ウィッシュリストは増える一方','明日にはまた増えてる','後悔はしていない','欲しいものがあるって幸せ',
+'楽しかった','気持ちの整理がついた','迷いは晴れた','あとは買うだけ（お金がない）','次のセールが本番','GG','ナイスファイト','今日はここまで','ありがとう、全ゲーム','戦いは続く'
+];
 
-var SHARE_LOW=[
-  mkLow('🎮 とりあえず今の段階のウィッシュリストランキング'),mkLow('まだ途中だけど現時点の優先順位を公開'),mkLow('🔄 ランク付け進行中。今はこんな感じ'),mkLow('途中経過だけど、上位はだいたい固まってきた'),mkLow('🎯 まだ精度低いけど今の気持ちはこれ'),mkLow('ウィッシュリスト整理中。とりあえず今の順位'),mkLow('暫定ランキング公開。まだ変わるかも'),mkLow('🎮 ざっくりランキング、まだ途中'),mkLow('今の段階ではこれが上位。まだ続く'),mkLow('とりあえず回してみた結果がこちら'),mkLow('🔥 1ラウンド目終了。上位はこんな感じ'),mkLow('まずはざっくり順位をつけてみた'),mkLow('🎮 初回ランキング。これから精度上げていく'),mkLow('途中だけど上位は揺るがない気がする'),mkLow('暫定1位から目が離せない'),mkLow('🎯 まだランク付け中だけど報告'),mkLow('とりあえず1周目が終わった'),mkLow('まだ精度低いけど、傾向は見えてきた'),mkLow('🔄 進行中。上位は安定してきた'),mkLow('初戦終了。まだまだこれから'),mkLow('ざっくりだけどこんな感じ',' #Steam'),mkLow('まず1ラウンドやった結果',' #PCゲーム'),mkLow('🎮 途中経過を晒す',' #ゲーム'),mkLow('暫定ランキング。まだ変動あり',' #Steam'),mkLow('とりあえず今はこれが上位',' #積みゲー'),mkLow('精度低いけど公開する',' #Steam'),mkLow('🔥 初回なのに上位は決まりかけてる',' #ゲーム'),mkLow('まだ途中だけど上位は固い気がする',' #PCゲーム'),mkLow('1周目終了報告',' #Steam'),mkLow('🎯 まずはここから。次ラウンドで精度上げる',' #ゲーム'),mkLow('Steamウィッシュリストのランク付け始めた'),mkLow('🎮 ランキング作成中。今はこんな感じ'),mkLow('途中だけど見せちゃう'),mkLow('まだ全然終わってないけど現時点の結果'),mkLow('🔄 ゲームたちを戦わせ始めた'),mkLow('初ラウンドの結果を公開'),mkLow('まだ精度は低いが方向性は見えた',' #Steam'),mkLow('🎯 ざっくり仕分け完了。上位はこれ',' #ゲーム'),mkLow('1対1で戦わせ始めた。途中経過',' #Steam'),mkLow('ウィッシュリスト整理スタート',' #積みゲー'),mkLow('初戦の結果。まだ精度は低い',' #Steam'),mkLow('🎮 とりあえず回してみた',' #ゲーム'),mkLow('途中だけど上位は確定っぽい',' #PCゲーム'),mkLow('最初の結果。これから詰めていく',' #Steam'),mkLow('🔥 1ラウンド目。まずまずの結果',' #ゲーム'),mkLow('ざっくり版を公開します',' #Steam'),mkLow('まだ途中なので変動するかも',' #ゲーム'),mkLow('🎯 初回にしてはいい感じ',' #Steam'),mkLow('とりあえず今の順位を公開',' #PCゲーム'),mkLow('🎮 ランク付け開始。途中経過',' #Steam'),mkLow('1周目終わった。上位はだいたい決まった',' #ゲーム'),mkLow('まず大まかに整理した結果',' #Steam'),mkLow('🔄 初ラウンド完了。次は精度上げる',' #ゲーム'),mkLow('今の段階の正直な順位',' #Steam'),mkLow('途中経過を晒します',' #積みゲー'),mkLow('🎮 まずはざっくりランキング',' #ゲーム'),mkLow('初回なのでまだ荒削り',' #Steam'),mkLow('とりあえず1周目の結果です',' #PCゲーム'),mkLow('🎯 上位はだいたい見えてきた',' #ゲーム'),mkLow('途中だけど報告したかった',' #Steam'),mkLow('🔥 1ラウンド目終了！上位はこれ',' #ゲーム'),mkLow('まだ精度低いよ？という前置きで',' #Steam'),mkLow('初戦終了。手応えあり',' #ゲーム'),mkLow('🎮 まず1回やってみた',' #Steam'),mkLow('暫定ランキング（変わるかも）',' #ゲーム'),mkLow('🔄 ランク付け中。経過報告',' #Steam'),mkLow('上位は固まってきた気がする',' #ゲーム'),mkLow('まだ途中だけどこんな感じ',' #Steam'),mkLow('🎯 初ラウンドの結果を公開',' #PCゲーム'),mkLow('ゲームたちに戦わせてみた初回結果',' #ゲーム'),mkLow('🎮 まずはここから始める',' #Steam'),mkLow('途中経過。上位は安定中',' #ゲーム'),mkLow('1周目だけど上位は揺るがない',' #Steam'),mkLow('🔥 初戦の結果がこちら',' #ゲーム'),mkLow('ざっくりだけど傾向は見えた',' #Steam'),mkLow('まず回してみた。これが今の答え',' #ゲーム'),mkLow('🎯 1ラウンド目完了',' #Steam'),mkLow('途中だけど見せちゃう（変わるかも）',' #ゲーム'),mkLow('🎮 初回ランキング公開',' #Steam'),mkLow('まだ荒削りだけど上位は固い',' #ゲーム'),mkLow('とりあえずの結果です',' #Steam #積みゲー'),mkLow('🔄 進行中。途中経過',' #Steam #ゲーム'),mkLow('初ラウンド終了。感触よし',' #Steam #PCゲーム'),mkLow('まず大まかに決めた',' #Steam #ゲーム'),mkLow('🎮 1周目の結果',' #Steam #ゲーム'),mkLow('途中だけど上位は決まりつつある',' #Steam #ゲーム'),mkLow('🎯 暫定版ランキング',' #Steam #ゲーム'),mkLow('まだ精度低いけど公開する勇気',' #Steam #ゲーム'),mkLow('🔥 初回の結果を晒す',' #Steam #ゲーム'),mkLow('ランク付け中。現時点の結果',' #Steam #ゲーム'),mkLow('🎮 1対1で戦わせ始めた',' #Steam #ゲーム'),mkLow('途中経過。参考程度に',' #Steam #ゲーム'),mkLow('暫定トップはこれだ',' #Steam #ゲーム'),mkLow('🔄 まだ途中。続きは次回',' #Steam #ゲーム'),mkLow('初ラウンドなのに上位は揺るがない気がする',' #Steam #ゲーム'),mkLow('🎯 とりあえず今の気持ち',' #Steam #ゲーム'),mkLow('1周目終了。上位はほぼ決まり',' #Steam #ゲーム'),mkLow('途中だけど自信ある上位',' #Steam #ゲーム')
+var SHARE_EN=[
+'My wishlist: {n} games, {total} to buy them all. I have chosen not to look at that number again','Added up every “I’ll buy it someday”. It came to {total}','{n} games, {total}. Not enough money, not enough lifetime','I’m not hoarding games, I’m hoarding {total}','Apparently buying my whole wishlist costs {total}. Closing the tab now',
+'Wishlist total: {total}. This is not going in the budget spreadsheet','Ranked {total} worth of dreams','Total value of my dreams: {total}','{total} buys every game. Nothing buys the time to play them','Total {total}. New plan: buy #1 first and pretend the rest don’t exist',
+'Found {total} sleeping in my wishlist','Ranked {total} worth of desire','Buying it all would cost {total}, so I made a ranking to calm down','Did the math: {total}. Decided priorities were needed','My wallet and I agreed: buy them in this order (total {total})',
+'{total} of games, fought it out 1v1','{total} in games. Time to play them: priceless','Wishlist total {total}. If you don’t look, it’s free','Humans are powerless before {total}','My wishlist quietly became {total}',
+'{total} of “I’ll buy it on sale”','Even at 50% off it’s {half}. Still too much','Today’s wishlist market cap: {total}. Today’s #1: {top1}','Estimate: {total}. Budget: none','Budget: $0. Wishlist: {total}',
+'Looked at my wishlist total for the first time. {total}. Looked twice','{total}, and #1 was still an instant decision','Anyone else carrying a {total} wishlist?','Out of {total} of games, the first one I’m buying is {top1}','{total} is homework for future me',
+'Out of {n} games, the champion is {top1}','#1 is {top1}. Fight me','Ranked honestly and {top1} came out on top','Congrats {top1}, you won','My #1 surprised even me',
+'#1 is {top1}. I guess that means I should buy it','{top1} just steamrolled everything','The crown goes to {top1}','{top1}, I’m coming for you next sale','{top1} was unstoppable',
+'Of course it’s {top1}','My heart’s #1 and the ranking’s #1 matched: {top1}','{top1} was too strong','Nothing could beat {top1}','Champion: {top1}',
+'Unanimous decision (panel of one): {top1}','I will buy {top1}. Probably','{top1} at #1 says a lot about me','Next purchase: {top1}. Decided','Winner {top1}, runner-up {top2}',
+'The final between {top1} and {top2} was intense','So close, {top2}. #1 is {top1}','The podium is set','{top1} has champion energy','No more excuses, {top1} is #1',
+'{top1}. It’s fate','The game I want most: {top1}','First annual Brain Game Awards winner: {top1}','Results are in! #1 is {top1}','What’s your #1? Mine is {top1}',
+'{top1} at the top. I can hear my wallet opening','Knew {top1} would win','Congrats {top1}. Now it’s your turn to be bought','{top1} won because I just want it','Wait for a sale or buy {top1} now?',
+'{n} games was too many. But they’re ranked now','Ranked all {n} games on my wishlist','{n} games, one winner','Ran a battle royale with {n} games','The {n}-game tournament is over',
+'Finally sorted my {n}-game wishlist','Sorted {n} games in a few minutes','{n} games and #1 took a second','Order restored to my {n}-game wishlist','{n} games, and I don’t remember adding half of them',
+'Hey past me, why did you add {n} games?','{n} games, when will I ever play them','Out of {n} games, these are the 3 I actually want','The elite few out of {n} games','Spring cleaning for a {n}-game wishlist',
+'I used to add games to my wishlist and just feel satisfied','This is what “just wishlist it” leads to','No more freezing up every sale','A wishlist peaks the moment you add the game','Reunited with games I forgot I wishlisted',
+'My wishlist was still sorted by date added','The top of my wishlist was a game I no longer care about','Less time deciding, more time playing','Ready before the sale hits','Now no sale can stop me',
+'A wishlist without priorities is just a list','Sorting it showed me what I actually like','Finally know what I want','Too-many-games problem: solved','Ranked my wishlist by playing a game about games',
+'Picking which game to buy, as a game','Made my favorite games fight each other. Cruel, but fun','The great wishlist power rankings','Wishlist draft day is over','An upset happened in my wishlist',
+'A dark horse appeared','My taste is not what I thought','This ranking knows me better than I do','My honest ranking','Gut feeling only. Here’s the result',
+'The shape of what I want right now','My current want-list, ranked','Order decided. Budget not decided','Order decided. Didn’t say I’d buy them','All set. Bring on the sale',
+'My wallet is trembling','Sorry, wallet','Reason vs. desire: desire won','The games fought for me','Sorry to the bottom of the list. I still love you',
+'I wanted everyone to be #1','Painful decisions were made','Pure chaos, but we have a winner','It was a war','Too many great matchups',
+'Ladies and gentlemen, the results','And the winner is...','After a long battle','A new champion is born','Exposing my wishlist. Be nice',
+'This ranking reveals my whole personality','Your wishlist is a mirror','Show me your wishlist #1','Anyone else have the same #1?','Try it and show me yours'
 ];
-var SHARE_MID=[
-  mkMid('だいたい決まってきた。現時点のランキング'),mkMid('🎯 2ラウンド目終了。だいぶ固まってきた'),mkMid('割と自信あり。現時点の順位'),mkMid('🎮 だいたいこんな感じになってきた'),mkMid('上位はほぼ確定。現時点のランキング'),mkMid('🔥 精度が上がってきた。現在の順位'),mkMid('ある程度固まってきた現時点のランキング'),mkMid('もうだいたい決まってる気がする'),mkMid('🎮 中間発表。上位は安定してきた'),mkMid('割と本気のランキングになってきた'),mkMid('上位は動かないと思う。現時点で',' #Steam'),mkMid('🎯 精度中。でも上位は確信あり',' #ゲーム'),mkMid('だいぶ整理されてきた',' #Steam'),mkMid('🔄 2周目終了。かなり見えてきた',' #ゲーム'),mkMid('現時点の答えがほぼ固まった',' #Steam'),mkMid('🎮 中間地点のランキング',' #ゲーム'),mkMid('上位の顔ぶれが安定してきた',' #Steam'),mkMid('🔥 だいたいこれで確定な気がする',' #ゲーム'),mkMid('割と自信のあるランキングになってきた',' #Steam'),mkMid('中間発表。上位は不動',' #ゲーム'),mkMid('🎯 現時点でかなり固まった'),mkMid('2ラウンドやった結果がこちら'),mkMid('だいぶ決まってきた。これが中間発表'),mkMid('🎮 上位は安定。中間ランキング公開'),mkMid('割と本気のランキングになってきた'),mkMid('現時点の正直な順位',' #Steam'),mkMid('🔄 まだ続けるけど現時点はこれ',' #ゲーム'),mkMid('上位の顔ぶれが安定してきた',' #PCゲーム'),mkMid('だいたい見えてきた現在のランキング',' #Steam'),mkMid('🎯 中間発表。かなり自信あり',' #ゲーム'),mkMid('2周目終了。上位はほぼ確定',' #Steam'),mkMid('🎮 精度が上がってきた',' #ゲーム'),mkMid('割と決まってきた感じがある',' #Steam'),mkMid('現時点で自信のある順位',' #ゲーム'),mkMid('🔥 だいぶ固まってきたランキング',' #Steam'),mkMid('中間地点の答えがこちら',' #ゲーム'),mkMid('🎯 上位は揺るがない。中間発表',' #Steam'),mkMid('ある程度決まってきた',' #ゲーム'),mkMid('🎮 2ラウンド目の結果',' #Steam'),mkMid('現時点でかなり固まってきた',' #ゲーム'),mkMid('割と自信あり。でもまだ続ける',' #Steam'),mkMid('🔄 だいたいこんな感じになった',' #ゲーム'),mkMid('上位は安定。中間ランキング',' #Steam'),mkMid('🎮 まだ続けるけど現時点はこれ',' #ゲーム'),mkMid('だいたい決まった気がする',' #Steam'),mkMid('🎯 中間発表。自信あり',' #ゲーム'),mkMid('2周目でかなり整理できた',' #Steam'),mkMid('現時点でほぼ答えが出た',' #ゲーム'),mkMid('🔥 中間なのに上位は確信あり',' #Steam'),mkMid('だいぶ見えてきた現在地',' #ゲーム'),mkMid('割と本気になってきた現時点の順位'),mkMid('🎮 2ラウンド終了。かなり固まった'),mkMid('上位の顔ぶれが安定してきた'),mkMid('中間発表。これが今の答え'),mkMid('🎯 精度中でこれなら完成も近い'),mkMid('だいたい決まってきた感じ',' #Steam'),mkMid('🔄 現時点の中間ランキング',' #ゲーム'),mkMid('上位はほぼ確定してきた',' #PCゲーム'),mkMid('中間地点の正直な順位',' #Steam'),mkMid('🎮 2周目の結果がこちら',' #ゲーム'),mkMid('だいぶ固まってきた',' #Steam'),mkMid('🎯 中間発表。上位は不動',' #ゲーム'),mkMid('割と決まった感じがする',' #Steam'),mkMid('現在地を公開します',' #ゲーム'),mkMid('🔥 2ラウンドでここまで固まった',' #Steam'),mkMid('だいぶ整理されてきたランキング',' #ゲーム'),mkMid('🎮 中間地点のランキング公開',' #Steam'),mkMid('割と自信のある中間結果',' #ゲーム'),mkMid('現時点でほぼ確信あり',' #Steam'),mkMid('🎯 上位は安定してきた',' #ゲーム'),mkMid('2周目終了報告',' #Steam'),mkMid('だいたいこれが答えかも',' #ゲーム'),mkMid('🔄 精度が上がってきた現時点の結果',' #Steam'),mkMid('中間にしては自信あり',' #ゲーム'),mkMid('🎮 現時点でかなり固まってきた',' #Steam'),mkMid('上位はもう動かない気がする',' #ゲーム'),mkMid('🎯 中間発表します',' #Steam'),mkMid('2ラウンドやってかなり見えてきた',' #ゲーム'),mkMid('割と本気の中間ランキング',' #Steam'),mkMid('🔥 だいぶ整理されてきた',' #ゲーム'),mkMid('現時点の中間結果を公開',' #Steam'),mkMid('だいたいこんな感じになってきた',' #ゲーム'),mkMid('🎮 中間なのに自信満々',' #Steam #ゲーム'),mkMid('割と決まってきた現在のランキング',' #Steam #ゲーム'),mkMid('🎯 現時点の答えを公開',' #Steam #ゲーム'),mkMid('2周目終了。かなりよくなった',' #Steam #ゲーム'),mkMid('上位は確定してきた感じ',' #Steam #ゲーム'),mkMid('🔄 中間発表。これが今の順位',' #Steam #ゲーム'),mkMid('だいぶ固まってきたランキング',' #Steam #ゲーム'),mkMid('🎮 中間地点での答え',' #Steam #ゲーム'),mkMid('現時点でかなり自信あり',' #Steam #ゲーム'),mkMid('🎯 割と本気の中間ランキング',' #Steam #ゲーム'),mkMid('2ラウンド目の結果がこちら',' #Steam #ゲーム'),mkMid('上位の顔ぶれが安定してきた',' #Steam #ゲーム'),mkMid('🔥 中間なのに上位は揺るがない',' #Steam #ゲーム'),mkMid('だいたい決まった現時点の順位',' #Steam #ゲーム'),mkMid('🎮 精度上がってきた。中間発表',' #Steam #ゲーム'),mkMid('現在地を報告します',' #Steam #ゲーム'),mkMid('中間でこれなら完成版も楽しみ',' #Steam #ゲーム')
+var SHARE_RARE_EN=[
+{c:function(s){return s.total>=1000000;},t:'My wishlist total is {total}. That’s an asset class now'},
+{c:function(s){return s.total>=300000;},t:'My wishlist costs as much as a used car ({total})'},
+{c:function(s){return s.n>=200;},t:'{n} games. My wishlist is a library now'},
+{c:function(s){return s.n>=500;},t:'{n} games. At this point it’s a store'},
+{c:function(s){return s.n<=20;},t:'{n} games, small but elite'},
+{c:function(s){return s.sale>=10;},t:'{sale} of them are on sale right now. My wallet is in danger'},
+{c:function(s){return s.sale>=1;},t:'{sale} on sale right now. Is this a sign?'},
+{c:function(s){return s.top1Sale;},t:'My #1, {top1}, is on sale right now. It’s fate'},
+{c:function(s){return s.top1Free;},t:'My #1, {top1}, is free. Playing it today'},
+{c:function(s){return s.top1Tba;},t:'My #1, {top1}, isn’t even out yet. Waiting it is'},
+{c:function(s){return s.buy>=1;},t:'{buy} games are near their all-time low. It’s time'}
 ];
-var SHARE_HIGH=[
-  mkHigh('🎯 かなり自信あり。現時点のランキング'),mkHigh('もうほぼ確定。現在のランキング'),mkHigh('🏆 精度高め。これが今の答え'),mkHigh('自信を持って公開できるランキング'),mkHigh('🎮 かなり固まった。これが今の順位'),mkHigh('精度高いのでほぼ完成版'),mkHigh('🔥 これが俺のウィッシュリストランキング'),mkHigh('高精度になってきた。現時点の答え'),mkHigh('🎯 自信満々のランキングがこちら'),mkHigh('もうほぼ変わらないと思う'),mkHigh('かなり精度が上がったランキング',' #Steam'),mkHigh('🏆 これが今の正直な順位',' #ゲーム'),mkHigh('自信ありのランキングを公開',' #Steam'),mkHigh('🎮 ほぼ完成版のランキング',' #ゲーム'),mkHigh('高精度版のランキングがこちら',' #Steam'),mkHigh('🔥 これが俺の答えだ',' #ゲーム'),mkHigh('かなり固まったランキングを公開',' #Steam'),mkHigh('🎯 精度高め。自信あり',' #ゲーム'),mkHigh('ほぼ完成。これが今の順位',' #Steam'),mkHigh('高精度ランキングを公開します',' #ゲーム'),mkHigh('かなり自信のあるランキング'),mkHigh('🏆 これがほぼ完成版'),mkHigh('自信を持って言える今の順位'),mkHigh('🎮 ほぼ確定のランキング'),mkHigh('精度が上がって自信が出てきた'),mkHigh('これが今の正直な答え',' #Steam'),mkHigh('🎯 かなり固まった。ほぼ確定版',' #ゲーム'),mkHigh('高精度になってきた現在のランキング',' #Steam'),mkHigh('もうほぼ変わらないランキング',' #PCゲーム'),mkHigh('🔥 精度高め。これが俺の順位',' #Steam'),mkHigh('かなり本気のランキング',' #ゲーム'),mkHigh('🏆 自信満々版ランキング',' #Steam'),mkHigh('ほぼ完成版を公開します',' #ゲーム'),mkHigh('🎮 これが今の答えです',' #Steam'),mkHigh('精度高いのでほぼ確定',' #ゲーム'),mkHigh('かなり固まってきた。ほぼ完成',' #Steam'),mkHigh('🎯 自信ありのランキングを公開',' #ゲーム'),mkHigh('高精度ランキング。ほぼ完成版',' #Steam'),mkHigh('もう変わらないと思う順位',' #ゲーム'),mkHigh('🔥 これが今の俺の答えだ',' #Steam'),mkHigh('精度が高くなってきた現在地'),mkHigh('🏆 ほぼ完成版のランキング'),mkHigh('自信を持って公開できる'),mkHigh('🎮 かなり固まった現在のランキング'),mkHigh('高精度。これが今の順位'),mkHigh('ほぼ確定した現時点のランキング',' #Steam'),mkHigh('🎯 精度高め。自信あり',' #ゲーム'),mkHigh('これがほぼ完成版の答え',' #Steam'),mkHigh('かなり自信のある現時点の順位',' #ゲーム'),mkHigh('🔥 高精度ランキングを公開',' #Steam'),mkHigh('自信満々のランキングがこちら',' #ゲーム'),mkHigh('🏆 ほぼ完成版を公開',' #Steam'),mkHigh('かなり固まった。もうほぼ確定',' #ゲーム'),mkHigh('精度高め。これが俺の順位',' #Steam'),mkHigh('🎮 ほぼ決まりのランキング',' #ゲーム'),mkHigh('これが今の正直な気持ち',' #Steam'),mkHigh('🎯 高精度版ランキング公開',' #ゲーム'),mkHigh('自信があるから公開する',' #Steam'),mkHigh('ほぼ完成のランキング',' #ゲーム'),mkHigh('🔥 精度が上がって確信が持てた',' #Steam'),mkHigh('かなり自信のあるランキング',' #ゲーム'),mkHigh('もうほぼ確定した順位',' #Steam #ゲーム'),mkHigh('🏆 高精度ランキング',' #Steam #ゲーム'),mkHigh('かなり固まった現在のランキング',' #Steam #ゲーム'),mkHigh('🎮 自信満々版を公開',' #Steam #ゲーム'),mkHigh('精度高め。ほぼ完成版',' #Steam #ゲーム'),mkHigh('🎯 これが今の答えです',' #Steam #ゲーム'),mkHigh('ほぼ確定。高精度ランキング',' #Steam #ゲーム'),mkHigh('自信ありのランキング',' #Steam #ゲーム'),mkHigh('🔥 かなり固まってきた',' #Steam #ゲーム'),mkHigh('高精度版がこちら',' #Steam #ゲーム'),mkHigh('🏆 ほぼ完成した現在のランキング',' #Steam #ゲーム'),mkHigh('かなり自信あり。これが今の順位',' #Steam #ゲーム'),mkHigh('精度高め。もうほぼ決まり',' #Steam #ゲーム'),mkHigh('🎮 これが高精度版ランキング',' #Steam #ゲーム'),mkHigh('自信満々で公開する',' #Steam #ゲーム'),mkHigh('🎯 高精度ランキングを公開します',' #Steam #ゲーム'),mkHigh('ほぼ完成版を公開します',' #Steam #ゲーム'),mkHigh('かなり固まった高精度ランキング',' #Steam #ゲーム'),mkHigh('🔥 これが今の俺のランキング',' #Steam #ゲーム'),mkHigh('もう変わらないと思う高精度版',' #Steam #ゲーム'),mkHigh('🏆 自信ありの高精度ランキング',' #Steam #ゲーム'),mkHigh('精度高めでかなり自信あり',' #Steam #ゲーム'),mkHigh('🎮 高精度版。ほぼ完成',' #Steam #ゲーム'),mkHigh('これがほぼ完成版のランキング',' #Steam #ゲーム'),mkHigh('🎯 高精度でほぼ確定',' #Steam #ゲーム'),mkHigh('かなり本気のランキングがこちら',' #Steam #ゲーム'),mkHigh('自信持って公開できる高精度版',' #Steam #ゲーム'),mkHigh('🔥 ほぼ完成した高精度ランキング',' #Steam #ゲーム'),mkHigh('もうほぼ変わらない順位',' #Steam #ゲーム'),mkHigh('🏆 高精度版ランキング公開',' #Steam #ゲーム'),mkHigh('かなり固まった。自信あり',' #Steam #ゲーム'),mkHigh('精度高いのでほぼ完成版です',' #Steam #ゲーム'),mkHigh('🎮 ほぼ確定のランキングがこちら',' #Steam #ゲーム'),mkHigh('これが今の本気の順位',' #Steam #ゲーム'),mkHigh('🎯 自信満々。高精度版',' #Steam #ゲーム'),mkHigh('高精度ランキング。自信あり',' #Steam #ゲーム'),mkHigh('ほぼ完成。これが俺の答え',' #Steam #ゲーム')
-];
-var SHARE_PFCT=[
-  mkPfct('🏆 完璧に整理した！これが最終ランキング'),mkPfct('✅ ウィッシュリスト完全整理完了！'),mkPfct('これが俺の最終答えだ。異論は認める'),mkPfct('🎮 完全版ランキング完成！'),mkPfct('完璧に決まった。これが最終版'),mkPfct('🔥 完全版！これが俺のウィッシュリストランキング'),mkPfct('迷いなし。これが最終決定'),mkPfct('🎯 完璧なランキングが完成した'),mkPfct('これ以上ない仕上がり。最終版'),mkPfct('🏆 完成！これが俺の答えだ'),mkPfct('完全版ランキングを公開します',' #Steam'),mkPfct('🎮 完璧に整理完了！最終版',' #ゲーム'),mkPfct('これが最終決定版のランキング',' #Steam'),mkPfct('迷いなし。完璧な仕上がり',' #ゲーム'),mkPfct('🔥 完成版！異論は認める',' #Steam'),mkPfct('完璧に決まった最終ランキング',' #ゲーム'),mkPfct('🏆 これが俺の最終答え',' #Steam'),mkPfct('完全版を公開します',' #ゲーム'),mkPfct('🎯 完成！これが最終版',' #Steam'),mkPfct('迷いなし。これが答えだ',' #ゲーム'),mkPfct('完全版ランキング完成！'),mkPfct('🏆 これが最終決定版'),mkPfct('完璧に整理できた'),mkPfct('🎮 最終版ランキングを公開'),mkPfct('これ以上ない仕上がり'),mkPfct('🔥 完成版。これが俺の答え',' #Steam'),mkPfct('迷いなし！最終決定版',' #ゲーム'),mkPfct('完璧なランキングが完成した',' #Steam'),mkPfct('🏆 これが完成版のランキング',' #ゲーム'),mkPfct('最終版を公開します',' #Steam'),mkPfct('🎯 完璧に整理した結果がこちら',' #ゲーム'),mkPfct('完全版！これが最終答え',' #Steam'),mkPfct('🎮 完成した！最終ランキング公開',' #ゲーム'),mkPfct('迷いなし。完璧な順位',' #Steam'),mkPfct('🔥 完成版ランキングがこちら',' #ゲーム'),mkPfct('完璧に決まった。これが俺の答え',' #Steam'),mkPfct('🏆 最終決定版を公開',' #ゲーム'),mkPfct('これが最終版のランキング',' #Steam'),mkPfct('🎯 完璧な仕上がり。最終版',' #ゲーム'),mkPfct('完全版完成！異論は認める',' #Steam'),mkPfct('完璧に整理した！',' #Steam #ゲーム'),mkPfct('🏆 最終版ランキング完成',' #Steam #ゲーム'),mkPfct('これが俺の最終決定',' #Steam #ゲーム'),mkPfct('🎮 完全版を公開します',' #Steam #ゲーム'),mkPfct('完璧な順位が決まった',' #Steam #ゲーム'),mkPfct('🔥 最終版。これが答えだ',' #Steam #ゲーム'),mkPfct('迷いなし。完璧な仕上がり',' #Steam #ゲーム'),mkPfct('🏆 完成版ランキング公開',' #Steam #ゲーム'),mkPfct('これが最終答えです',' #Steam #ゲーム'),mkPfct('🎯 完璧に整理完了！',' #Steam #ゲーム'),mkPfct('完全版！これが俺のランキング',' #Steam #ゲーム'),mkPfct('最終決定版を公開します',' #Steam #ゲーム'),mkPfct('🎮 完成した最終ランキング',' #Steam #ゲーム'),mkPfct('完璧に決まった！最終版',' #Steam #ゲーム'),mkPfct('🔥 これが完全版のランキング',' #Steam #ゲーム'),mkPfct('迷いなし！これが最終答え',' #Steam #ゲーム'),mkPfct('🏆 完璧な仕上がりのランキング',' #Steam #ゲーム'),mkPfct('完全版ランキングがこちら',' #Steam #ゲーム'),mkPfct('🎯 最終決定版！完璧に整理した',' #Steam #ゲーム'),mkPfct('これ以上ない完成度',' #Steam #ゲーム'),mkPfct('🎮 完成！これが俺の最終答え',' #Steam #ゲーム'),mkPfct('完璧に整理した最終ランキング',' #Steam #ゲーム'),mkPfct('🔥 完全版！異論は認める',' #Steam #ゲーム'),mkPfct('最終版。これが俺の答えだ',' #Steam #ゲーム'),mkPfct('🏆 完璧に決まった最終版',' #Steam #ゲーム'),mkPfct('これが完全版のランキングです',' #Steam #ゲーム'),mkPfct('🎯 完成版！迷いなし',' #Steam #ゲーム'),mkPfct('完全版ランキングを公開',' #Steam #ゲーム'),mkPfct('🎮 最終版！完璧な仕上がり',' #Steam #ゲーム'),mkPfct('完璧に整理した！これが答え',' #Steam #ゲーム'),mkPfct('🔥 最終決定！これが俺のランキング',' #Steam #ゲーム'),mkPfct('完成版。変える気はない',' #Steam #ゲーム'),mkPfct('🏆 これが完璧な仕上がり',' #Steam #ゲーム'),mkPfct('最終版ランキングがこちら',' #Steam #ゲーム'),mkPfct('🎯 完全版！これが最終答え',' #Steam #ゲーム'),mkPfct('完璧に整理できた最終版',' #Steam #ゲーム'),mkPfct('🎮 完成版のランキングを公開',' #Steam #ゲーム'),mkPfct('これが俺の完璧なランキング',' #Steam #ゲーム'),mkPfct('🔥 完全版！迷いなし',' #Steam #ゲーム'),mkPfct('最終答え。これが俺の順位',' #Steam #ゲーム'),mkPfct('🏆 完璧に決まった！最終版',' #Steam #ゲーム'),mkPfct('完成版ランキング！異論は認める',' #Steam #ゲーム'),mkPfct('🎯 最終決定版。完璧な仕上がり',' #Steam #ゲーム'),mkPfct('これが完成版の最終ランキング',' #Steam #ゲーム'),mkPfct('完全版！これが俺の答えだ',' #Steam #ゲーム'),mkPfct('🎮 完璧なランキングが完成した',' #Steam #ゲーム'),mkPfct('最終版を公開。変える気はない',' #Steam #ゲーム'),mkPfct('🔥 完成！これが最終決定版',' #Steam #ゲーム'),mkPfct('完璧に整理した！最終ランキング公開',' #Steam #ゲーム'),mkPfct('🏆 これが俺の完全版ランキング',' #Steam #ゲーム'),mkPfct('最終決定。完璧な仕上がりです',' #Steam #ゲーム'),mkPfct('🎯 完成版！これが最終版',' #Steam #ゲーム'),mkPfct('完全版ランキング。迷いなし',' #Steam #ゲーム'),mkPfct('🎮 完璧に整理した最終版',' #Steam #ゲーム'),mkPfct('これが最終決定版のランキングです',' #Steam #ゲーム'),mkPfct('🔥 完成版！完璧な仕上がり',' #Steam #ゲーム'),mkPfct('最終版。これが俺の最終答え',' #Steam #ゲーム'),mkPfct('🏆 完全版完成！これが答えだ',' #Steam #ゲーム')
+var SHARE_TAIL_EN=[
+'GG','Wallet is crying','Come on, sale','Starting with one','Probably buying it','Didn’t say I’d buy them','Not enough time','Someday','Want to play them all','No regrets',
+'What’s your #1?','Sales don’t scare me anymore','That’s all from me','Life is short, wishlists are long','It only keeps growing','Good game, everyone','The battle continues','Thanks, all games','Decision made','Now I just need money'
 ];
 
 var state={games:[],scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],pairHist:{},streak:0,lastWinnerId:null};
@@ -5796,37 +5939,140 @@ function saveAndContinueLater(){
 
 function cancelSort(){saveAndGoResult();}
 
+// 1本の価格（円）。無料・発売前・取れないものは null
+function gamePriceYen(g){
+  if(!g||g.demo) return null;
+  if(g.pnum) return g.pnum;
+  if(g.pnum===undefined&&g.price&&/[¥￥]/.test(g.price)) return parseYen(g.price);
+  return null;
+}
+
+// シェア用の集計（合計金額・セール中の本数など）
+function shareStats(ranked){
+  var s={n:ranked.length,total:0,sale:0,buy:0};
+  for(var i=0;i<ranked.length;i++){
+    var g=ranked[i],p=gamePriceYen(g);
+    if(p) s.total+=p;
+    if(g.disc>0) s.sale++;
+    if(buyNow(g)) s.buy++;
+  }
+  var g1=ranked[0]||{};
+  s.p1=gamePriceYen(g1)||0;
+  s.top1Sale=g1.disc>0;
+  s.top1Tba=!!g1.pre;
+  s.top1Free=!g1.pre&&!g1.demo&&!s.p1&&g1.price===t('free');
+  return s;
+}
+
+function yen(n){ return '¥'+fmtNum(n); }
+
+// X の文字数（日本語などは2、URLは23として数える）
+function xLen(str){
+  var s=str.replace(/https?:\/\/\S+/g,'xxxxxxxxxxxxxxxxxxxxxxx'),n=0;
+  for(var i=0;i<s.length;i++){
+    var c=s.charCodeAt(i);
+    n+=(c<=0x10FF||(c>=0x2000&&c<=0x200D)||(c>=0x2010&&c<=0x201F)||(c>=0x2032&&c<=0x2037))?1:2;
+  }
+  return n;
+}
+
+function buildShareText(ranked){
+  var ja=currentLang==='ja';
+  var s=shareStats(ranked);
+  var pick=function(a){ return a[Math.floor(Math.random()*a.length)]; };
+  var ok=function(tm){ return s.total>0||(tm.indexOf('{total}')<0&&tm.indexOf('{half}')<0); };
+  // レアは条件を満たしたものがあれば3割の確率で出す
+  var rares=(ja?SHARE_RARE_JA:SHARE_RARE_EN).filter(function(r){ return r.c(s); });
+  var head;
+  if(rares.length&&Math.random()<0.3) head=pick(rares).t;
+  else head=pick((ja?SHARE_JA:SHARE_EN).filter(ok));
+  var tail=pick(ja?SHARE_TAIL_JA:SHARE_TAIL_EN);
+  var stat=ja?(s.n+'本'+(s.total?'・全部買うと'+yen(s.total):'のウィッシュリスト')+(s.sale?'（今セール中'+s.sale+'本）':''))
+             :(s.n+' games'+(s.total?' · '+yen(s.total)+' to buy them all':'')+(s.sale?' ('+s.sale+' on sale now)':''));
+  var medals=['🥇','🥈','🥉'];
+  function compose(maxName,topN,withTail){
+    var nm=function(i){ var x=(ranked[i]||{}).name||''; return x.length>maxName?x.slice(0,maxName-1)+'…':x; };
+    var vars={n:s.n,total:yen(s.total),half:yen(Math.round(s.total/2)),sale:s.sale,buy:s.buy,p1:yen(s.p1),top1:nm(0),top2:nm(1),top3:nm(2)};
+    var h=head.replace(/\{(\w+)\}/g,function(m,k){ return vars[k]!==undefined?vars[k]:m; });
+    var top=ranked.slice(0,topN).map(function(g,i){ return medals[i]+' '+nm(i); }).join('\n');
+    return h+'\n\n'+top+'\n\n'+stat+(withTail?'\n'+tail:'')+'\n\n'+SITE_URL+'\n#Steam '+TAG;
+  }
+  // 長すぎたら、しめの一言 → ゲーム名の長さ → 上位の本数 の順に削る
+  var tries=[[60,3,true],[60,3,false],[24,3,false],[16,3,false],[16,1,false],[10,1,false]];
+  var text='';
+  for(var i=0;i<tries.length;i++){
+    text=compose(tries[i][0],tries[i][1],tries[i][2]);
+    if(xLen(text)<=280) break;
+  }
+  return text;
+}
+
+// シェア画像用に、複製したページだけを整える（画面の表示は変えない）
+function prepareShareClone(doc,ranked){
+  var cap=doc.getElementById('result-capture');
+  if(!cap) return;
+  var s=shareStats(ranked);
+  // 操作用の表示は消す
+  var rm=cap.querySelectorAll('.result-hint,#result-subtitle');
+  for(var i=0;i<rm.length;i++) rm[i].parentNode.removeChild(rm[i]);
+  // 表は 順位・画像・タイトル（価格・セール）だけ残す
+  var drop=[7,6,5,4,0];
+  var rows=cap.querySelectorAll('.result-table tr');
+  for(var r=0;r<rows.length;r++){
+    for(var d=0;d<drop.length;d++){
+      var cell=rows[r].children[drop[d]];
+      if(cell) rows[r].removeChild(cell);
+    }
+  }
+  // 上位 SHARE_ROWS 本だけ（全件だと数百本で縦数万pxになり、生成が遅く容量もXの上限を超える）
+  var tb=doc.getElementById('result-tbody');
+  while(tb&&tb.children.length>SHARE_ROWS) tb.removeChild(tb.lastChild);
+  // 合計金額を大きく
+  var box=doc.createElement('div');
+  box.className='share-total';
+  var h='<div class="share-total-lead">'+esc(gf(s.total?'shImgLead':'shImgCount',{n:s.n}))+'</div>';
+  if(s.total) h+='<div class="share-total-num">'+yen(s.total)+'</div>';
+  if(s.sale) h+='<div class="share-total-sale">'+esc(gf('shImgSale',{s:s.sale}))+'</div>';
+  box.innerHTML=h;
+  var head=cap.querySelector('.result-header');
+  if(head&&head.nextSibling) cap.insertBefore(box,head.nextSibling); else cap.insertBefore(box,cap.firstChild);
+  // 下にサイト名とURL
+  var foot=doc.createElement('div');
+  foot.className='share-foot';
+  var more=s.n-SHARE_ROWS;
+  foot.innerHTML=(more>0?'<span>'+esc(gf('shImgMore',{m:more}))+'</span>':'')+'<b>🎮 Steam Wishlist Ranker</b><span>'+esc(SITE_URL.replace(/^https?:\/\//,''))+'</span>';
+  cap.appendChild(foot);
+}
+
 function shareToX(){
   var ranked=getRankedGames();
-  var medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
-  var top5=ranked.slice(0,5).map(function(g,i){return medals[i]+' '+g.name;}).join('\n');
-  var n=state.games.length,b=state.totalBattles;
-  var level=accuracyLevel();
-  var pool=level==='low'?SHARE_LOW:level==='mid'?SHARE_MID:level==='high'?SHARE_HIGH:SHARE_PFCT;
-  var tmpl=pool[Math.floor(Math.random()*pool.length)];
-  var text=tmpl(top5,SITE_URL,n,b);
+  var text=buildShareText(ranked);
 
-  (async function(){
-    var btn=document.getElementById('txt-btn-share');
-    var orig=btn?btn.textContent:'';
-    if(btn){btn.textContent=t('shareGenerating');btn.disabled=true;}
-    try{
-      var target=document.getElementById('result-capture');
-      var canvas=await html2canvas(target,{backgroundColor:'#1b2838',scale:1.5,useCORS:true,allowTaint:false});
-      await new Promise(function(resolve,reject){
-        canvas.toBlob(async function(blob){
-          try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);resolve();}
-          catch(e){reject(e);}
-        },'image/png');
-      });
-      if(btn){btn.textContent=orig;btn.disabled=false;}
-      alert(t('shareCapture'));
-    }catch(e){
-      if(btn){btn.textContent=orig;btn.disabled=false;}
-      alert(t('shareCaptureFail'));
-    }
+  var btn=document.getElementById('txt-btn-share');
+  var orig=btn?btn.textContent:'';
+  if(btn){btn.textContent=t('shareGenerating');btn.disabled=true;}
+  function finish(msg){
+    if(btn){btn.textContent=orig;btn.disabled=false;}
+    alert(msg);
     window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text),'_blank','width=550,height=450');
-  })();
+  }
+  function fail(){ finish(t('shareCaptureFail')); }
+  // 画像は上位 SHARE_ROWS 本だけ（全件だと数百本で縦数万pxになり、生成が遅く容量もXの上限を超える）
+  var blobP;
+  try{
+    blobP=html2canvas(document.getElementById('result-capture'),{
+      backgroundColor:'#1b2838',scale:1.5,useCORS:true,allowTaint:false,
+      onclone:function(doc){ prepareShareClone(doc,ranked); }
+    }).then(function(canvas){
+      return new Promise(function(resolve,reject){
+        canvas.toBlob(function(blob){ if(blob) resolve(blob); else reject(new Error('toBlob')); },'image/png');
+      });
+    });
+    // クリックの直後に write を呼び、画像はあとから渡す（生成を待ってから呼ぶと、ブラウザに操作が切れたと見なされて失敗する）
+    navigator.clipboard.write([new ClipboardItem({'image/png':blobP})]).then(function(){ finish(t('shareCapture')); },fail);
+  }catch(e){
+    fail();
+  }
 }
 
 function openKofi(){window.open(KOFI_URL,'_blank');}
