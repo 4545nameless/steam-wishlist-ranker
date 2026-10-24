@@ -4,19 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Steam Wishlist Ranker</title>
-<meta name="description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。積みゲー整理や購入順の迷いに。">
+<meta name="description" content="Steamのウィッシュリストを、ゲーム感覚で選んでいくだけで「次に買う順」にランキング化し、そのままSteamに反映できる無料ツール。積みゲー整理や購入順の迷いに。">
 <link rel="canonical" href="https://steam-wishlist-ranker.vercel.app">
 <meta name="google-site-verification" content="93eb8b39280edeaa">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steam Wishlist Ranker">
-<meta property="og:title" content="Steam Wishlist Ranker - ウィッシュリストを1対1でランク付け">
-<meta property="og:description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。">
+<meta property="og:title" content="Steam Wishlist Ranker - ウィッシュリストをゲーム感覚でランク付け">
+<meta property="og:description" content="ゲーム感覚で選んでいくだけで、Steamのウィッシュリストを「次に買う順」にランキング化。そのままSteamに反映できる無料ツール。">
 <meta property="og:url" content="https://steam-wishlist-ranker.vercel.app">
 <meta property="og:image" content="https://steam-wishlist-ranker.vercel.app/ogp.png">
 <meta name="twitter:image" content="https://steam-wishlist-ranker.vercel.app/ogp.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Steam Wishlist Ranker">
-<meta name="twitter:description" content="Steamのウィッシュリストを1対1で比較して、買う優先度をランキング化できる無料ツール。">
+<meta name="twitter:description" content="ゲーム感覚で選んでいくだけで、Steamのウィッシュリストを「次に買う順」にランキング化。そのままSteamに反映できる無料ツール。">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
@@ -456,7 +456,7 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
 
   <div class="logo-area">
     <h2>🎮 Steam Wishlist Ranker</h2>
-    <p id="txt-subtitle">ウィッシュリストのゲームを1対1で比較して、購入優先ランキングを作ろう</p>
+    <p id="txt-subtitle">ゲーム感覚で選んでいくだけで、ウィッシュリストを「次に買う順」に並べ替えよう</p>
     <button type="button" class="chip howto-chip" onclick="showModal('howto-modal')" data-g="hwBtn">🗺 遊び方・全体の流れ</button>
   </div>
   <div class="start-card">
@@ -900,7 +900,7 @@ var TAG         = '#SteamWishlistRanker';
 // ========== 多言語対応 ==========
 var LANGS = {
   ja: {
-    subtitle: 'ウィッシュリストのゲームを1対1で比較して、購入優先ランキングを作ろう',
+    subtitle: 'ゲーム感覚で選んでいくだけで、ウィッシュリストを「次に買う順」に並べ替えよう',
     cardTitle: 'Steam情報を入力',
     labelId: 'SteamID64',
     hintId: 'ウィッシュリストのURLの数字部分をコピー',
@@ -975,7 +975,7 @@ var LANGS = {
     unknown: '価格不明',
   },
   en: {
-    subtitle: 'Compare your wishlist games 1-on-1 and create your purchase priority ranking',
+    subtitle: 'Just pick games like playing a game, and sort your wishlist into "what to buy next" order',
     cardTitle: 'Enter Steam Info',
     labelId: 'SteamID64',
     hintId: 'Copy the number from your wishlist URL',
@@ -1050,7 +1050,7 @@ var LANGS = {
     unknown: 'Price unknown',
   },
   zh: {
-    subtitle: '1对1比较愿望单游戏，创建购买优先级排名',
+    subtitle: '像玩游戏一样挑选，把愿望单排成“下一个要买的”顺序',
     cardTitle: '输入Steam信息',
     labelId: 'SteamID64',
     hintId: '复制愿望单URL中的数字部分',
@@ -1125,7 +1125,7 @@ var LANGS = {
     unknown: '价格未知',
   },
   ru: {
-    subtitle: 'Сравнивайте игры из списка желаемого 1 на 1 и создавайте рейтинг приоритета покупок',
+    subtitle: 'Выбирайте игры, как в игре, — и выстройте список желаемого в порядке «что купить следующим»',
     cardTitle: 'Введите данные Steam',
     labelId: 'SteamID64',
     hintId: 'Скопируйте число из URL вашего списка желаемого',
@@ -1200,7 +1200,7 @@ var LANGS = {
     unknown: 'Цена неизвестна',
   },
   pt: {
-    subtitle: 'Compare jogos da lista de desejos 1 a 1 e crie seu ranking de prioridade de compras',
+    subtitle: 'Escolha como num jogo e organize sua lista de desejos na ordem "o que comprar a seguir"',
     cardTitle: 'Insira suas informações Steam',
     labelId: 'SteamID64',
     hintId: 'Copie o número da URL da sua lista de desejos',
@@ -1275,7 +1275,7 @@ var LANGS = {
     unknown: 'Preço desconhecido',
   },
   de: {
-    subtitle: 'Vergleiche Spiele aus deiner Wunschliste 1-gegen-1 und erstelle eine Kaufpriorisierungs-Rangliste',
+    subtitle: 'Wähle spielerisch aus und ordne deine Wunschliste nach „Was kaufe ich als Nächstes?“',
     cardTitle: 'Steam-Daten eingeben',
     labelId: 'SteamID64',
     hintId: 'Kopiere die Zahl aus der URL deiner Wunschliste',
@@ -3141,6 +3141,21 @@ var FLOW12_ADD = {
   for (var lg in FLOW12_ADD) {
     if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
     for (var k in FLOW12_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW12_ADD[lg][k];
+  }
+})();
+
+var FLOW13_ADD = {
+  ja: { hw7d: 'ランキングが入ったブックマークをブックマークバーにドラッグして、Steamのウィッシュリストで押すだけで並びが入れ替わります。反映するたびに作り直し、終わったら削除してOK（パソコンのブラウザで行います）。' },
+  en: { hw7d: 'Drag a bookmark containing your ranking to the bookmarks bar, then click it on your Steam wishlist to reorder it. Make a new one each time you apply, and delete it afterwards (on a computer browser).' },
+  zh: { hw7d: '把包含排名的书签拖到书签栏，在 Steam 愿望单页面点击即可重新排序。每次应用都重新创建，用完可以删除（需在电脑浏览器上操作）。' },
+  ru: { hw7d: 'Перетащите закладку с рейтингом на панель закладок и нажмите её на странице списка желаемого в Steam — порядок обновится. Создавайте новую при каждом применении и удаляйте после (в браузере на компьютере).' },
+  pt: { hw7d: 'Arraste um favorito com o seu ranking para a barra de favoritos e clique nele na sua lista de desejos da Steam para reordenar. Crie um novo a cada vez e apague depois (no navegador do computador).' },
+  de: { hw7d: 'Zieh ein Lesezeichen mit deinem Ranking in die Lesezeichenleiste und klicke es auf deiner Steam-Wunschliste – schon ist sie neu sortiert. Lege es jedes Mal neu an und lösche es danach (im Browser am Computer).' }
+};
+(function(){
+  for (var lg in FLOW13_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW13_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW13_ADD[lg][k];
   }
 })();
 
