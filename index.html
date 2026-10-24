@@ -415,6 +415,8 @@ tr.tier-first td{border-top:2px solid var(--border2)}
 .hw-step b{display:block;color:#fff;font-size:.92rem;margin-top:6px}
 .hw-step p{margin:3px 0 0;font-size:.82rem;line-height:1.65;color:var(--text2)}
 .hw-tips{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:.82rem;line-height:1.65}
+.kbd{display:inline-block;margin-left:8px;font-size:.66rem;font-family:monospace;font-weight:700;padding:1px 6px;border-radius:4px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.35);vertical-align:middle;line-height:1.4;opacity:.9}
+@media (hover:none),(max-width:700px){.kbd{display:none}}
 .raid-in{animation:raidIn .5s ease}
 @keyframes raidIn{0%{transform:translateX(60px) scale(.9);opacity:.2}100%{transform:none;opacity:1}}
 tr.sale td.rt-title{border-left:3px solid #7bb51d}
@@ -2869,6 +2871,126 @@ var FLOW8_ADD = {
   }
 })();
 
+var FLOW9_ADD = {
+  ja: {
+    qBadge2: '予選 {r}周目（目安 {m}周）',
+    recSfx: ' ★おすすめ',
+    oQuadBtnDuel2: '⚔ 上位の1対1へ進む',
+    qrSmall: '上位バトルに進む本数（{n}本）とほぼ同じ数なので、予選はこれで十分です。上位の1対1へ進みましょう！',
+    qrFirst: '1周目おわり！上位{n}本の顔ぶれがまだ仮決めなので、もう1周して確かめるのがおすすめです。',
+    qrStable: '上位{n}本の入れ替わりは{c}本だけ。顔ぶれが固まったので、予選はここまででOK！上位の1対1へ進みましょう。',
+    qrUnstable: '上位{n}本のうち{c}本が入れ替わりました。まだ動いているので、もう1周がおすすめです。',
+    qrMax: '{r}周やったので予選は十分です。上位の1対1へ進みましょう！'
+  },
+  en: {
+    qBadge2: 'Qualifier round {r} (aim: {m})',
+    recSfx: ' ★ Recommended',
+    oQuadBtnDuel2: '⚔ Go to top 1v1',
+    qrSmall: 'You have about as many games as the top battle uses ({n}), so the qualifiers are done. On to the top 1v1!',
+    qrFirst: 'Round 1 done! Your top {n} are still a rough guess, so one more round to check is recommended.',
+    qrStable: 'Only {c} of your top {n} changed. The line-up has settled, so you can stop the qualifiers here. On to the top 1v1!',
+    qrUnstable: '{c} of your top {n} changed. Things are still moving, so one more round is recommended.',
+    qrMax: '{r} rounds is plenty for the qualifiers. On to the top 1v1!'
+  },
+  zh: {
+    qBadge2: '预选 第 {r} 轮（参考 {m} 轮）',
+    recSfx: ' ★推荐',
+    oQuadBtnDuel2: '⚔ 进入上位一对一',
+    qrSmall: '游戏数和进入上位对决的数量（{n} 款）差不多，预选到这里就够了。进入上位一对一吧！',
+    qrFirst: '第 1 轮结束！上位 {n} 款还只是暂定，推荐再来一轮确认一下。',
+    qrStable: '上位 {n} 款中只有 {c} 款发生变化。阵容已经稳定，预选到此即可！进入上位一对一吧。',
+    qrUnstable: '上位 {n} 款中有 {c} 款发生了变化。还在变动，推荐再来一轮。',
+    qrMax: '已经进行了 {r} 轮，预选足够了。进入上位一对一吧！'
+  },
+  ru: {
+    qBadge2: 'Отбор, круг {r} (ориентир: {m})',
+    recSfx: ' ★ Рекомендуется',
+    oQuadBtnDuel2: '⚔ К боям 1 на 1 в топе',
+    qrSmall: 'Игр примерно столько же, сколько идёт в топ ({n}), так что отбора достаточно. Переходим к боям 1 на 1!',
+    qrFirst: 'Первый круг готов! Топ-{n} пока предварительный, поэтому рекомендуется ещё один круг для проверки.',
+    qrStable: 'В топ-{n} сменилось всего {c}. Состав устоялся, отбор можно заканчивать. Переходим к боям 1 на 1!',
+    qrUnstable: 'В топ-{n} сменилось {c}. Состав ещё меняется, рекомендуется ещё один круг.',
+    qrMax: '{r} кругов отбора достаточно. Переходим к боям 1 на 1!'
+  },
+  pt: {
+    qBadge2: 'Classificatória, rodada {r} (meta: {m})',
+    recSfx: ' ★ Recomendado',
+    oQuadBtnDuel2: '⚔ Ir para o 1x1 do topo',
+    qrSmall: 'Você tem quase a mesma quantidade de jogos que vai para o topo ({n}), então a classificatória basta. Vamos ao 1x1 do topo!',
+    qrFirst: 'Rodada 1 concluída! Seu top {n} ainda é provisório, então recomendamos mais uma rodada para conferir.',
+    qrStable: 'Só {c} do seu top {n} mudaram. A lista se firmou, pode parar a classificatória aqui. Vamos ao 1x1 do topo!',
+    qrUnstable: '{c} do seu top {n} mudaram. Ainda está mexendo, então recomendamos mais uma rodada.',
+    qrMax: '{r} rodadas já bastam na classificatória. Vamos ao 1x1 do topo!'
+  },
+  de: {
+    qBadge2: 'Qualifikation, Runde {r} (Richtwert: {m})',
+    recSfx: ' ★ Empfohlen',
+    oQuadBtnDuel2: '⚔ Zum 1 gegen 1 der Spitze',
+    qrSmall: 'Du hast etwa so viele Spiele, wie in die Spitze kommen ({n}), daher reicht die Qualifikation. Weiter zum 1 gegen 1!',
+    qrFirst: 'Runde 1 geschafft! Deine Top {n} sind noch vorläufig, daher wird eine weitere Runde zur Kontrolle empfohlen.',
+    qrStable: 'Nur {c} deiner Top {n} haben gewechselt. Die Auswahl steht, du kannst die Qualifikation hier beenden. Weiter zum 1 gegen 1!',
+    qrUnstable: '{c} deiner Top {n} haben gewechselt. Es bewegt sich noch, daher wird eine weitere Runde empfohlen.',
+    qrMax: '{r} Runden reichen für die Qualifikation. Weiter zum 1 gegen 1!'
+  }
+};
+(function(){
+  for (var lg in FLOW9_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW9_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW9_ADD[lg][k];
+  }
+})();
+
+var FLOW10_ADD = {
+  ja: {
+    dStable2: '上位10位の入れ替わりは{c}本だけ。順位が固まったので、決勝トーナメントへ進みましょう！',
+    dUnstable2: '上位10位のうち{c}本が入れ替わりました。まだ動いているので、もう1ラウンドがおすすめです。',
+    dMax: '{r}ラウンドやったので十分です。決勝トーナメントへ進みましょう！',
+    rcRecMore: 'まだ精度が上がります。次のラウンドがおすすめ',
+    rcRecDone: '精度は十分です。結果を見て、気になるところはドラッグで直しましょう'
+  },
+  en: {
+    dStable2: 'Only {c} of your top 10 changed. The order has settled, so head to the final tournament!',
+    dUnstable2: '{c} of your top 10 changed. Things are still moving, so one more round is recommended.',
+    dMax: '{r} rounds is plenty. Head to the final tournament!',
+    rcRecMore: 'Accuracy can still improve. Next round recommended',
+    rcRecDone: 'Accuracy is high enough. Check the results and drag to fix anything'
+  },
+  zh: {
+    dStable2: '前10名中只有 {c} 款发生变化。顺序已经稳定，进入决赛淘汰赛吧！',
+    dUnstable2: '前10名中有 {c} 款发生了变化。还在变动，推荐再来一轮。',
+    dMax: '已经进行了 {r} 轮，足够了。进入决赛淘汰赛吧！',
+    rcRecMore: '精度还能提高，推荐进入下一轮',
+    rcRecDone: '精度已经足够。查看结果，可以拖动调整'
+  },
+  ru: {
+    dStable2: 'В топ-10 сменилось всего {c}. Порядок устоялся — вперёд, к финальному турниру!',
+    dUnstable2: 'В топ-10 сменилось {c}. Порядок ещё меняется, рекомендуется ещё один раунд.',
+    dMax: '{r} раундов достаточно. Вперёд, к финальному турниру!',
+    rcRecMore: 'Точность ещё можно повысить. Рекомендуется следующий раунд',
+    rcRecDone: 'Точность достаточная. Посмотрите результат и поправьте перетаскиванием'
+  },
+  pt: {
+    dStable2: 'Só {c} do seu top 10 mudaram. A ordem se firmou, vamos ao torneio final!',
+    dUnstable2: '{c} do seu top 10 mudaram. Ainda está mexendo, então recomendamos mais uma rodada.',
+    dMax: '{r} rodadas já bastam. Vamos ao torneio final!',
+    rcRecMore: 'A precisão ainda pode melhorar. Próxima rodada recomendada',
+    rcRecDone: 'A precisão já está boa. Veja o resultado e ajuste arrastando'
+  },
+  de: {
+    dStable2: 'Nur {c} deiner Top 10 haben gewechselt. Die Reihenfolge steht – auf zum Finalturnier!',
+    dUnstable2: '{c} deiner Top 10 haben gewechselt. Es bewegt sich noch, daher wird eine weitere Runde empfohlen.',
+    dMax: '{r} Runden reichen. Auf zum Finalturnier!',
+    rcRecMore: 'Die Genauigkeit kann noch steigen. Nächste Runde empfohlen',
+    rcRecDone: 'Die Genauigkeit reicht. Sieh dir das Ergebnis an und korrigiere per Ziehen'
+  }
+};
+(function(){
+  for (var lg in FLOW10_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW10_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW10_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -3459,7 +3581,27 @@ function showFlowOverlay(title,sub,btns,imgUrl){
       box.appendChild(el);
     })(btns[i]);
   }
+  addKeyBadges(box.querySelectorAll('button'));
   document.getElementById('flow-overlay').classList.add('show');
+}
+
+function addKeyBadges(btns){
+  for(var i=0;i<btns.length;i++){
+    var old=btns[i].querySelector('.kbd');
+    if(old) old.parentNode.removeChild(old);
+    var k=document.createElement('span');
+    k.className='kbd';
+    k.textContent=i===0?'Enter':String(i);
+    btns[i].appendChild(k);
+  }
+}
+
+// Enter=先頭（次へ／おすすめ）、1〜=左から2番目以降
+function keyPickButton(btns,code,n){
+  var enter=(code==='Enter'||code==='NumpadEnter'||code==='Space');
+  if(enter&&btns[0]){ btns[0].click(); return true; }
+  if(n&&n>=1&&n<btns.length){ btns[n].click(); return true; }
+  return false;
 }
 
 function hideFlowOverlay(){
@@ -3690,7 +3832,7 @@ function renderQuad(){
 function updateQuadProgress(){
   var f=state.flow;
   var total=f.quadQueue.length,done=f.quadIdx;
-  document.getElementById('q-badge').textContent=gf('qBadge',{r:f.quadDone+1});
+  document.getElementById('q-badge').textContent=gf('qBadge2',{r:f.quadDone+1,m:quadGuideRounds()});
   document.getElementById('q-progress-label').textContent=done+' / '+total;
   document.getElementById('q-progress-fill').style.width=(total?Math.round(done/total*100):0)+'%';
   document.getElementById('quad-info').textContent=gf('qInfo',{p:f.pool.length,c:state.totalBattles});
@@ -3793,19 +3935,43 @@ function quadUnknown(){
   renderQuad();
 }
 
+// 予選の「やめどき」：上位に上がる顔ぶれがどれだけ入れ替わったかで判断する
+function quadTopSet(){
+  var f=state.flow,inPool={};
+  (f.pool||[]).forEach(function(id){ inPool[id]=1; });
+  return getRankedGames().filter(function(g){ return inPool[g.appid]; }).slice(0,topDuelN()).map(function(g){ return g.appid; });
+}
+
+function quadGuideRounds(){
+  var f=state.flow;
+  return (f.pool||[]).length<=topDuelN()*1.5?1:2;
+}
+
 function quadRoundComplete(){
   var f=state.flow;
   f.quadDone++;
   state.roundNo=Math.max(1,f.quadDone);
   f.quadQueue=[]; f.quadIdx=0; f.quadHist=[];
+  var top=quadTopSet(),n=top.length,prev=f.quadTopPrev||null,changed=-1,i;
+  if(prev){
+    var pm={}; for(i=0;i<prev.length;i++) pm[prev[i]]=1;
+    changed=0; for(i=0;i<top.length;i++){ if(!pm[top[i]]) changed++; }
+  }
+  f.quadTopPrev=top;
+  var sub,goDuel;
+  if((f.pool||[]).length<=topDuelN()*1.5){ sub=gf('qrSmall',{n:n}); goDuel=true; }
+  else if(changed<0){ sub=gf('qrFirst',{n:n}); goDuel=false; }
+  else if(f.quadDone>=3){ sub=gf('qrMax',{r:f.quadDone}); goDuel=true; }
+  else if(changed<=Math.max(2,Math.round(n*0.15))){ sub=gf('qrStable',{n:n,c:changed}); goDuel=true; }
+  else{ sub=gf('qrUnstable',{n:n,c:changed}); goDuel=false; }
   saveState();
   fxRain(130);
   fxVibrate([20,40,20]);
-  showFlowOverlay(gf('oQuadTitle',{r:f.quadDone}),gt('oQuadSub'),[
-    {label:gt('oQuadBtnDuel'),cls:'btn-gold',fn:startTopDuel},
-    {label:gt('oQuadBtnMore'),cls:'btn-steam',fn:startQuadRound},
-    {label:gt('oQuadBtnResult'),cls:'btn-dark',fn:function(){hideFlowOverlay();saveAndGoResult();}}
-  ]);
+  var rec=gt('recSfx');
+  var bDuel={label:gt('oQuadBtnDuel2')+(goDuel?rec:''),cls:goDuel?'btn-gold':'btn-dark',fn:startTopDuel};
+  var bMore={label:gt('oQuadBtnMore')+(goDuel?'':rec),cls:goDuel?'btn-dark':'btn-gold',fn:startQuadRound};
+  var bRes={label:gt('oQuadBtnResult'),cls:'btn-dark',fn:function(){hideFlowOverlay();saveAndGoResult();}};
+  showFlowOverlay(gf('oQuadTitle',{r:f.quadDone}),sub,goDuel?[bDuel,bMore,bRes]:[bMore,bDuel,bRes]);
 }
 
 function switchToDuel(){
@@ -4019,23 +4185,23 @@ function startTopDuel(){
 
 function topDuelComplete(){
   var f=state.flow;
-  var top=top10Ids();
-  var stable=false;
-  if(f.prevTop10&&f.prevTop10.length===top.length){
-    stable=true;
-    for(var i=0;i<top.length;i++){ if(f.prevTop10.indexOf(top[i])<0) stable=false; }
-  }
+  var top=top10Ids(),changed=0,i;
+  var prev=f.prevTop10||[];
+  for(i=0;i<top.length;i++){ if(prev.indexOf(top[i])<0) changed++; }
   f.prevTop10=top;
   saveState();
   fxRain(100);
   fxVibrate([20,40,20]);
-  var bTour={label:gt('dBtnTour'),cls:'btn-gold',fn:startTournament};
-  var bMore={label:gt('dBtnMore'),cls:stable?'btn-dark':'btn-steam',fn:startTopDuel};
-  var bRes={label:gt('oQuadBtnResult'),cls:'btn-dark',fn:function(){hideFlowOverlay();saveAndGoResult();}};
-  var arr=stable?[bTour,bMore,bRes]:[bMore,bTour,bRes];
-  var sub=gt(stable?'dStable':'dUnstable');
+  var sub,goTour;
+  if(f.duelRound>=3){ sub=gf('dMax',{r:f.duelRound}); goTour=true; }
+  else if(changed<=1){ sub=gf('dStable2',{c:changed}); goTour=true; }
+  else{ sub=gf('dUnstable2',{c:changed}); goTour=false; }
   if(f.raidLog&&f.raidLog.n>0) sub=gf('raidRoundSum',{n:f.raidLog.n,j:f.raidLog.j})+' '+sub;
-  showFlowOverlay(gf('dRoundTitle',{r:f.duelRound}),sub,arr);
+  var rec=gt('recSfx');
+  var bTour={label:gt('dBtnTour')+(goTour?rec:''),cls:goTour?'btn-gold':'btn-dark',fn:startTournament};
+  var bMore={label:gt('dBtnMore')+(goTour?'':rec),cls:goTour?'btn-dark':'btn-gold',fn:startTopDuel};
+  var bRes={label:gt('oQuadBtnResult'),cls:'btn-dark',fn:function(){hideFlowOverlay();saveAndGoResult();}};
+  showFlowOverlay(gf('dRoundTitle',{r:f.duelRound}),sub,goTour?[bTour,bMore,bRes]:[bMore,bTour,bRes]);
 }
 
 // ---------- 決勝トーナメント ----------
@@ -4699,6 +4865,7 @@ function showFinMenu(){
   }
   var bRes={label:gt('oQuadBtnResult'),cls:todo.length?'btn-dark':'btn-gold',fn:function(){ hideFlowOverlay(); saveAndGoResult(); }};
   var bMore={label:gt('finMore'),cls:'btn-dark',fn:startTopDuel};
+  if(todo.length) todo[0].label+=gt('recSfx'); else bRes.label+=gt('recSfx');
   var btns=todo.length?todo.concat([bRes]).concat(done).concat([bMore]):[bRes].concat(done).concat([bMore]);
   showFlowOverlay(gt('finTitle'),gt(todo.length?'finSub':'finSubDone'),btns);
 }
@@ -4940,13 +5107,14 @@ function handleKey(e){
   var enter=(code==='Enter'||code==='NumpadEnter');
   var ov=document.getElementById('flow-overlay');
   if(ov&&ov.classList.contains('show')){
-    var btns=document.querySelectorAll('#flow-actions button');
-    if(enter||code==='Space'){ if(btns[0]){ btns[0].click(); e.preventDefault(); } return; }
-    if(n&&n>=1&&n<=btns.length){ btns[n-1].click(); e.preventDefault(); }
+    if(keyPickButton(document.querySelectorAll('#flow-actions button'),code,n)) e.preventDefault();
     return;
   }
   var rc=document.getElementById('round-complete');
-  if(rc&&rc.classList.contains('show')) return;
+  if(rc&&rc.classList.contains('show')){
+    if(keyPickButton(document.querySelectorAll('#round-complete .round-complete-actions button'),code,n)) e.preventDefault();
+    return;
+  }
   var active=document.querySelector('.screen.active');
   if(!active||typeof state==='undefined'||!state) return;
   var id=active.id;
@@ -5076,7 +5244,17 @@ function showRoundComplete(){
   if(state.flow&&state.flow.phase==='tour'&&state.flow.tour){tourRoundComplete();return;}
   if(state.flow&&state.flow.phase==='duel'&&state.flow.topN){topDuelComplete();return;}
   document.getElementById('round-complete-title').textContent=fmt('roundComplete',{r:state.roundNo});
-  document.getElementById('round-complete-sub').textContent=fmt('roundCompleteSub',{b:state.totalBattles,n:state.games.length});
+  var done=state.roundNo>=4;
+  document.getElementById('round-complete-sub').textContent=fmt('roundCompleteSub',{b:state.totalBattles,n:state.games.length})+' / '+gt(done?'rcRecDone':'rcRecMore');
+  var box=document.querySelector('#round-complete .round-complete-actions');
+  var bRes=document.getElementById('txt-rc-result'),bNext=document.getElementById('txt-rc-next'),bBack=document.getElementById('txt-rc-back');
+  bRes.textContent=t('rcResult')+(done?gt('recSfx'):'');
+  bNext.textContent=t('rcNext')+(done?'':gt('recSfx'));
+  bRes.className='btn '+(done?'btn-gold':'btn-dark');
+  bNext.className='btn '+(done?'btn-dark':'btn-gold');
+  var order=done?[bRes,bNext,bBack]:[bNext,bRes,bBack];
+  for(var i=0;i<order.length;i++) box.appendChild(order[i]);
+  addKeyBadges(box.querySelectorAll('button'));
   document.getElementById('round-complete').classList.add('show');
 }
 function hideRoundComplete(){document.getElementById('round-complete').classList.remove('show');}
