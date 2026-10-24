@@ -576,14 +576,12 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
         <button class="btn btn-dark btn-sm" onclick="chooseNeither()" id="txt-btn-neither">❓ よく知らない</button>
       </div>
       <div class="key-hint" data-g="kHintBattle"></div>
-      <div class="ad-battle-bottom"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864"
-     crossorigin="anonymous"></script></div>
+      <div class="ad-battle-bottom"><!-- AdSense --></div>
     </div>
     <div class="ranking-sidebar">
       <div class="sidebar-header" id="txt-sidebar-header">現在のランキング</div>
       <div class="ranking-list" id="sidebar-ranking"></div>
-      <div class="ad-space"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864"
-     crossorigin="anonymous"></script></div>
+      <div class="ad-space"><!-- AdSense --></div>
     </div>
   </div>
 </div>
@@ -668,8 +666,7 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
       </div>
       <div class="quad-help" data-g="qHelp"></div>
       <div class="key-hint" data-g="kHintQuad"></div>
-      <div class="ad-battle-bottom"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864"
-     crossorigin="anonymous"></script></div>
+      <div class="ad-battle-bottom"><!-- AdSense --></div>
     </div>
     <div class="ranking-sidebar">
       <div class="sidebar-header" data-l="sidebarHeader">現在のランキング</div>
@@ -702,8 +699,7 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
       </div>
       <div class="quad-help" id="elim-help"></div>
       <div class="key-hint" data-g="kHintElim"></div>
-      <div class="ad-battle-bottom"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864"
-     crossorigin="anonymous"></script></div>
+      <div class="ad-battle-bottom"><!-- AdSense --></div>
     </div>
   </div>
 </div>
@@ -4801,7 +4797,12 @@ var resultSortable=null;
 function initResultSortable(){
   var tb=document.getElementById('result-tbody');
   if(resultSortable||!window.Sortable||!tb) return;
-  resultSortable=Sortable.create(tb,{handle:'.rt-handle',animation:150,ghostClass:'sortable-ghost',onEnd:function(){
+  // forceFallback: ブラウザ標準のドラッグだとドラッグ中にホイールでスクロールできないので、Sortable 自前のドラッグにする
+  // scroll: 表の枠ではなくページ全体を自動スクロールさせる。上は固定ヘッダーの下まで反応するよう広めに
+  resultSortable=Sortable.create(tb,{handle:'.rt-handle',animation:150,ghostClass:'sortable-ghost',
+    forceFallback:true,fallbackTolerance:3,
+    scroll:document.scrollingElement||document.documentElement,scrollSensitivity:110,scrollSpeed:22,bubbleScroll:true,
+    onEnd:function(){
     setTimeout(onManualReorder,0);
   }});
 }
