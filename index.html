@@ -406,6 +406,15 @@ tr.tr-tier-mid td:first-child{box-shadow:inset 3px 0 0 var(--accent2)}
 tr.tr-tier-low td:first-child{box-shadow:inset 3px 0 0 #55606d}
 tr.tr-tier-bottom td:first-child{box-shadow:inset 3px 0 0 var(--red)}
 tr.tier-first td{border-top:2px solid var(--border2)}
+.howto-chip{margin-top:10px;font-size:.85rem;padding:6px 14px;border-color:var(--gold);color:var(--gold)}
+.hw-intro{margin:0;font-size:.88rem;line-height:1.7}
+.hw-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;position:relative}
+.hw-step{display:flex;gap:12px;align-items:flex-start;position:relative;padding-bottom:14px}
+.hw-step:not(:last-child)::before{content:'';position:absolute;left:17px;top:36px;bottom:0;width:2px;background:var(--border2)}
+.hw-ico{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:#0d141c;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.05rem;position:relative;z-index:1}
+.hw-step b{display:block;color:#fff;font-size:.92rem;margin-top:6px}
+.hw-step p{margin:3px 0 0;font-size:.82rem;line-height:1.65;color:var(--text2)}
+.hw-tips{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:.82rem;line-height:1.65}
 .raid-in{animation:raidIn .5s ease}
 @keyframes raidIn{0%{transform:translateX(60px) scale(.9);opacity:.2}100%{transform:none;opacity:1}}
 tr.sale td.rt-title{border-left:3px solid #7bb51d}
@@ -446,6 +455,7 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
   <div class="logo-area">
     <h2>🎮 Steam Wishlist Ranker</h2>
     <p id="txt-subtitle">ウィッシュリストのゲームを1対1で比較して、購入優先ランキングを作ろう</p>
+    <button type="button" class="chip howto-chip" onclick="showModal('howto-modal')" data-g="hwBtn">🗺 遊び方・全体の流れ</button>
   </div>
   <div class="start-card">
     <h3 id="txt-card-title">Steam情報を入力</h3>
@@ -734,6 +744,36 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
 </div>
 
 <!-- 入力手順ガイド -->
+<!-- 遊び方・全体の流れ -->
+<div id="howto-modal" class="guide-overlay" onclick="if(event.target===this)closeModal('howto-modal')">
+  <div class="guide-modal" role="dialog" aria-modal="true">
+    <div class="guide-head"><h3 data-g="hwTitle">🗺 遊び方・全体の流れ</h3><button type="button" class="guide-x" onclick="closeModal('howto-modal')" aria-label="close">&times;</button></div>
+    <div class="guide-body">
+      <p class="hw-intro" data-g="hwIntro"></p>
+      <ol class="hw-list">
+        <li class="hw-step"><span class="hw-ico">🔑</span><div><b data-g="hw0t"></b><p data-g="hw0d"></p></div></li>
+        <li class="hw-step"><span class="hw-ico">🛒</span><div><b data-g="hw1t"></b><p data-g="hw1d"></p></div></li>
+        <li class="hw-step"><span class="hw-ico">🃏</span><div><b data-g="hw2t"></b><p data-g="hw2d"></p></div></li>
+        <li class="hw-step"><span class="hw-ico">⚔</span><div><b data-g="hw3t"></b><p data-g="hw3d"></p></div></li>
+        <li class="hw-step"><span class="hw-ico">🏆</span><div><b data-g="hw4t"></b><p data-g="hw4d"></p></div></li>
+        <li class="hw-step"><span class="hw-ico">🧹</span><div><b data-g="hw5t"></b><p data-g="hw5d"></p></div></li>
+        <li class="hw-step"><span class="hw-ico">📊</span><div><b data-g="hw6t"></b><p data-g="hw6d"></p></div></li>
+        <li class="hw-step"><span class="hw-ico">🎮</span><div><b data-g="hw7t"></b><p data-g="hw7d"></p></div></li>
+      </ol>
+      <div class="guide-sec-title" data-g="hwTipsTitle">💡 知っておくと便利</div>
+      <ul class="hw-tips">
+        <li data-g="hwTip1"></li>
+        <li data-g="hwTip2"></li>
+        <li data-g="hwTip3"></li>
+        <li data-g="hwTip4"></li>
+      </ul>
+    </div>
+    <div class="guide-foot">
+      <button type="button" class="btn btn-gold" onclick="closeModal('howto-modal')" data-g="hwStart">はじめる</button>
+    </div>
+  </div>
+</div>
+
 <div id="guide-modal" class="guide-overlay" onclick="if(event.target===this)closeModal('guide-modal')">
   <div class="guide-modal" role="dialog" aria-modal="true">
     <div class="guide-head"><h3 data-g="gTitle">📖 入力の手順</h3><button type="button" class="guide-x" onclick="closeModal('guide-modal')" aria-label="close">&times;</button></div>
@@ -2658,6 +2698,177 @@ var FLOW7_ADD = {
   }
 })();
 
+var FLOW8_ADD = {
+  ja: {
+    hwBtn: '🗺 遊び方・全体の流れ',
+    hwTitle: '🗺 遊び方・全体の流れ',
+    hwIntro: 'ウィッシュリストを「次に買う順」に並べて、そのままSteamに反映できるツールです。ゲーム感覚で選んでいくだけで、上から順に順位が固まっていきます。',
+    hw0t: '① ウィッシュリストを読み込む',
+    hw0d: 'SteamID64を入れて「取得してスタート」。ウィッシュリストは公開設定にしておいてください。',
+    hw1t: '② 気になるゲームをタップ',
+    hw1d: '一覧から「これは欲しい」と思うものをざっくり選びます。全体の3割くらいが目安。選ばなかったものも捨てられず、あとで出番があります。',
+    hw2t: '③ 4枚バトル（予選）',
+    hw2d: '4本の中から「一番欲しい」と「一番いらない」をタップ。1画面で4本の順位がまとめて動きます。',
+    hw3t: '④ 上位だけの1対1 ＋ 乱入戦',
+    hw3d: '上位のゲームだけで1対1。途中で、選ばなかったゲームが右側から「乱入」してきます。勝てば上位入り、3連勝で1位との王座戦！',
+    hw4t: '⑤ 決勝トーナメント',
+    hw4d: '上位16本でトーナメント。優勝したゲームがあなたの「次に買う1本」です。',
+    hw5t: '⑥ 仕上げ（好きなものだけ）',
+    hw5d: '「中位を整える」は上位に入らなかったものを4本ずつ比べて並べます。「最弱決定戦」は一番いらないものを選び続けて最弱を決めます。どちらも途中でやめてOK。',
+    hw6t: '⑦ 結果を確認・微調整',
+    hw6d: '上位／中位／下位／最下位に分かれた結果が出ます。⠿をドラッグして手で直せます。セール中・買い時・Steam最安値も表示されます。',
+    hw7t: '⑧ Steamに反映',
+    hw7d: '初回だけブックマークを1つ作れば、あとは「Steamを開く」→ブックマークを押すだけで、ウィッシュリストの並びが入れ替わります（パソコンのブラウザで行います）。',
+    hwTipsTitle: '💡 知っておくと便利',
+    hwTip1: '途中で閉じても大丈夫。「前回の続きから」で再開できます。',
+    hwTip2: 'どの画面からでも「結果を見る」で、その時点のランキングを確認できます。',
+    hwTip3: 'パソコンならキーボードでも遊べます（1〜4キー・テンキー・矢印キー・Backspaceで一つ戻る）。',
+    hwTip4: '迷ったら直感でOK。最後はドラッグで自由に直せます。',
+    hwStart: 'はじめる'
+  },
+  en: {
+    hwBtn: '🗺 How it works',
+    hwTitle: '🗺 How it works',
+    hwIntro: 'This tool sorts your wishlist into "what to buy next" order and applies it straight to Steam. Just pick games like playing a game, and your ranking settles from the top down.',
+    hw0t: '1. Load your wishlist',
+    hw0d: 'Enter your SteamID64 and press start. Make sure your wishlist is set to public.',
+    hw1t: '2. Tap the games that catch your eye',
+    hw1d: 'Roughly pick the ones you really want - about 30% of the list is a good target. Games you skip are not thrown away; they get their turn later.',
+    hw2t: '3. 4-card battles (qualifiers)',
+    hw2d: 'From 4 games, tap your favorite and your least favorite. One screen moves the ranking of 4 games at once.',
+    hw3t: '4. Top 1v1 + raids',
+    hw3d: '1v1 battles among your top games only. Along the way, games you skipped "raid" in from the right. Win and they join the top; three wins in a row means a throne match against #1!',
+    hw4t: '5. Final tournament',
+    hw4d: 'The top 16 face off in a tournament. The champion is your "next game to buy".',
+    hw5t: '6. Finishing touches (optional)',
+    hw5d: '"Sort the middle" compares the games that missed the top, 4 at a time. "Find the weakest" keeps picking the one you want least until the weakest is decided. You can stop either one midway.',
+    hw6t: '7. Check and fine-tune',
+    hw6d: 'Your results are split into Top / Middle / Lower / Bottom. Drag ⠿ to fix anything by hand. Sales, good-deal badges and Steam lowest prices are shown too.',
+    hw7t: '8. Apply to Steam',
+    hw7d: 'Make one bookmark the first time. After that, just press "Open Steam" and click the bookmark to reorder your wishlist (on a computer browser).',
+    hwTipsTitle: '💡 Good to know',
+    hwTip1: 'You can close the page anytime and pick up again with "Continue from last time".',
+    hwTip2: '"See results" on any screen shows the ranking so far.',
+    hwTip3: 'On a computer you can play with the keyboard (1-4 keys, numpad, arrow keys, Backspace to undo).',
+    hwTip4: 'When in doubt, go with your gut. You can freely fix the order by dragging at the end.',
+    hwStart: 'Get started'
+  },
+  zh: {
+    hwBtn: '🗺 玩法与整体流程',
+    hwTitle: '🗺 玩法与整体流程',
+    hwIntro: '这是一个把愿望单按“下一个要买的”顺序排好，并直接应用到 Steam 的工具。像玩游戏一样选择，排名就会从上往下逐渐确定。',
+    hw0t: '① 读取愿望单',
+    hw0d: '输入 SteamID64，点击开始。请把愿望单设为公开。',
+    hw1t: '② 点选感兴趣的游戏',
+    hw1d: '从列表中大致选出“想要”的游戏，约占全部的三成即可。没选的游戏不会被丢弃，之后还会登场。',
+    hw2t: '③ 4 张卡片对决（预选）',
+    hw2d: '从 4 款中点选“最想要”和“最不想要”。一个画面就能同时调整 4 款的排名。',
+    hw3t: '④ 上位 1 对 1 ＋ 乱入战',
+    hw3d: '只在上位游戏之间 1 对 1。途中，没选的游戏会从右边“乱入”。赢了就进入上位，三连胜还会挑战第1名的王座战！',
+    hw4t: '⑤ 决赛淘汰赛',
+    hw4d: '上位 16 款进行淘汰赛。冠军就是你“下一个要买的”。',
+    hw5t: '⑥ 收尾（可选）',
+    hw5d: '“整理中位”把没进上位的游戏每 4 款比较排序。“最弱决定战”不断选出最不想要的，决出最弱。两者都可以中途停止。',
+    hw6t: '⑦ 查看结果并微调',
+    hw6d: '结果会分为上位／中位／下位／最下位。拖动 ⠿ 可以手动调整，也会显示折扣、入手时机和 Steam 史低价。',
+    hw7t: '⑧ 应用到 Steam',
+    hw7d: '首次只需创建一个书签，之后只要“打开 Steam”再点击书签，愿望单顺序就会更新（需在电脑浏览器上操作）。',
+    hwTipsTitle: '💡 实用提示',
+    hwTip1: '中途关闭也没关系，可以用“继续上次”恢复。',
+    hwTip2: '在任何画面点“查看结果”，都能看到当前的排名。',
+    hwTip3: '电脑上也可以用键盘操作（1-4 键、小键盘、方向键、Backspace 撤销）。',
+    hwTip4: '犹豫时凭直觉就好，最后可以拖动自由调整。',
+    hwStart: '开始'
+  },
+  ru: {
+    hwBtn: '🗺 Как это работает',
+    hwTitle: '🗺 Как это работает',
+    hwIntro: 'Инструмент выстраивает ваш список желаемого в порядке «что купить следующим» и сразу применяет его в Steam. Просто выбирайте, как в игре, — и рейтинг сложится сверху вниз.',
+    hw0t: '1. Загрузите список желаемого',
+    hw0d: 'Введите SteamID64 и нажмите «Старт». Список желаемого должен быть открытым.',
+    hw1t: '2. Отметьте интересные игры',
+    hw1d: 'Примерно выберите то, что действительно хотите, — около 30% списка. Невыбранные игры не пропадают: их очередь наступит позже.',
+    hw2t: '3. Бой 4 карточек (отбор)',
+    hw2d: 'Из 4 игр выберите самую и наименее желанную. Один экран сразу двигает в рейтинге 4 игры.',
+    hw3t: '4. 1 на 1 в топе + вторжения',
+    hw3d: 'Бои 1 на 1 только среди лучших игр. По ходу невыбранные игры «вторгаются» справа. Победа — и они в топе, три победы подряд — бой за трон с №1!',
+    hw4t: '5. Финальный турнир',
+    hw4d: '16 лучших игр играют турнир. Победитель — ваша «следующая покупка».',
+    hw5t: '6. Доводка (по желанию)',
+    hw5d: '«Упорядочить середину» сравнивает по 4 игры, не попавшие в топ. «Найти самую слабую» раз за разом выбирает наименее желанную, пока не останется одна. Обе можно прервать на полпути.',
+    hw6t: '7. Проверка и подстройка',
+    hw6d: 'Результат делится на Топ / Середину / Ниже / Дно. Перетаскивайте ⠿, чтобы поправить вручную. Также видны скидки, выгодные моменты и минимальные цены в Steam.',
+    hw7t: '8. Применить в Steam',
+    hw7d: 'В первый раз создайте одну закладку. Потом просто нажмите «Открыть Steam» и закладку — порядок списка обновится (в браузере на компьютере).',
+    hwTipsTitle: '💡 Полезно знать',
+    hwTip1: 'Можно закрыть страницу в любой момент и продолжить кнопкой «Продолжить с прошлого раза».',
+    hwTip2: 'Кнопка «Результаты» на любом экране покажет текущий рейтинг.',
+    hwTip3: 'На компьютере можно играть с клавиатуры (клавиши 1-4, цифровой блок, стрелки, Backspace — назад).',
+    hwTip4: 'Сомневаетесь — доверьтесь интуиции. В конце порядок можно свободно поправить перетаскиванием.',
+    hwStart: 'Начать'
+  },
+  pt: {
+    hwBtn: '🗺 Como funciona',
+    hwTitle: '🗺 Como funciona',
+    hwIntro: 'Esta ferramenta organiza sua lista de desejos na ordem "o que comprar a seguir" e aplica direto na Steam. É só ir escolhendo como num jogo, e o ranking vai se firmando de cima para baixo.',
+    hw0t: '1. Carregue sua lista de desejos',
+    hw0d: 'Digite seu SteamID64 e aperte começar. Deixe sua lista de desejos pública.',
+    hw1t: '2. Toque nos jogos que chamam atenção',
+    hw1d: 'Escolha por alto o que você realmente quer, uns 30% da lista. Os que ficarem de fora não são descartados; a vez deles chega depois.',
+    hw2t: '3. Batalha de 4 cartas (eliminatórias)',
+    hw2d: 'Entre 4 jogos, toque no que mais quer e no que menos quer. Uma tela mexe no ranking de 4 jogos de uma vez.',
+    hw3t: '4. 1x1 do topo + invasões',
+    hw3d: 'Duelos 1x1 só entre os melhores. No meio, jogos que você não escolheu "invadem" pela direita. Se vencerem, entram no topo; três vitórias seguidas dão uma luta pelo trono contra o nº 1!',
+    hw4t: '5. Torneio final',
+    hw4d: 'Os 16 melhores disputam um torneio. O campeão é o seu "próximo jogo a comprar".',
+    hw5t: '6. Acabamento (opcional)',
+    hw5d: '"Organizar o meio" compara de 4 em 4 os jogos que ficaram fora do topo. "Achar o mais fraco" escolhe sempre o que você menos quer até sobrar o mais fraco. Dá para parar qualquer um no meio.',
+    hw6t: '7. Confira e ajuste',
+    hw6d: 'O resultado é dividido em Topo / Meio / Baixo / Fundo. Arraste ⠿ para ajustar à mão. Promoções, hora de comprar e menor preço da Steam também aparecem.',
+    hw7t: '8. Aplicar na Steam',
+    hw7d: 'Crie um favorito só na primeira vez. Depois é só apertar "Abrir a Steam" e clicar no favorito para reordenar sua lista (no navegador do computador).',
+    hwTipsTitle: '💡 Bom saber',
+    hwTip1: 'Pode fechar a página quando quiser e continuar com "Continuar de onde parei".',
+    hwTip2: '"Ver resultados" em qualquer tela mostra o ranking até ali.',
+    hwTip3: 'No computador dá para jogar pelo teclado (teclas 1-4, teclado numérico, setas, Backspace para voltar).',
+    hwTip4: 'Na dúvida, vá no instinto. No fim você pode ajustar a ordem livremente arrastando.',
+    hwStart: 'Começar'
+  },
+  de: {
+    hwBtn: '🗺 So funktioniert es',
+    hwTitle: '🗺 So funktioniert es',
+    hwIntro: 'Dieses Tool ordnet deine Wunschliste nach „Was kaufe ich als Nächstes?“ und übernimmt die Reihenfolge direkt in Steam. Wähle einfach spielerisch aus – die Rangliste festigt sich von oben nach unten.',
+    hw0t: '1. Wunschliste laden',
+    hw0d: 'Gib deine SteamID64 ein und starte. Deine Wunschliste muss öffentlich sein.',
+    hw1t: '2. Interessante Spiele antippen',
+    hw1d: 'Wähle grob aus, was du wirklich willst – etwa 30 % der Liste. Nicht gewählte Spiele fliegen nicht raus, sie kommen später noch dran.',
+    hw2t: '3. 4-Karten-Kampf (Vorrunde)',
+    hw2d: 'Tippe unter 4 Spielen auf das gewünschteste und das unerwünschteste. Ein Bildschirm bewegt 4 Spiele auf einmal.',
+    hw3t: '4. 1 gegen 1 an der Spitze + Herausforderer',
+    hw3d: '1-gegen-1-Duelle nur unter deinen Top-Spielen. Zwischendurch fordern nicht gewählte Spiele von rechts heraus. Gewinnen sie, kommen sie in die Spitze; drei Siege in Folge bedeuten einen Thronkampf gegen Platz 1!',
+    hw4t: '5. Finalturnier',
+    hw4d: 'Die Top 16 spielen ein Turnier. Der Sieger ist dein „nächster Kauf“.',
+    hw5t: '6. Feinschliff (optional)',
+    hw5d: '„Mittelfeld ordnen“ vergleicht die Spiele außerhalb der Spitze zu viert. „Das Schwächste finden“ wählt immer das unerwünschteste, bis das schwächste feststeht. Beides kannst du mittendrin beenden.',
+    hw6t: '7. Prüfen und anpassen',
+    hw6d: 'Das Ergebnis ist in Spitze / Mitte / Unten / Ganz unten aufgeteilt. Zieh ⠿, um von Hand zu korrigieren. Rabatte, Kauftipps und Steam-Tiefstpreise werden ebenfalls angezeigt.',
+    hw7t: '8. In Steam übernehmen',
+    hw7d: 'Lege beim ersten Mal ein Lesezeichen an. Danach einfach „Steam öffnen“ drücken und das Lesezeichen klicken – schon ist die Wunschliste neu sortiert (im Browser am Computer).',
+    hwTipsTitle: '💡 Gut zu wissen',
+    hwTip1: 'Du kannst die Seite jederzeit schließen und mit „Beim letzten Mal weitermachen“ fortsetzen.',
+    hwTip2: '„Ergebnis ansehen“ zeigt auf jedem Bildschirm die aktuelle Rangliste.',
+    hwTip3: 'Am Computer geht es auch per Tastatur (Tasten 1-4, Ziffernblock, Pfeiltasten, Backspace zum Zurücknehmen).',
+    hwTip4: 'Im Zweifel aus dem Bauch entscheiden. Am Ende kannst du die Reihenfolge frei per Ziehen ändern.',
+    hwStart: 'Los geht\'s'
+  }
+};
+(function(){
+  for (var lg in FLOW8_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW8_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW8_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -2714,6 +2925,7 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'||e.keyCode===27){
     closeModal('guide-modal');
     closeModal('sync-modal');
+    closeModal('howto-modal');
   }
 });
 
