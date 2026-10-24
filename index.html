@@ -274,6 +274,10 @@ details.bm-card .bm-once+*{}
 .bm-sub summary{cursor:pointer;font-size:.8rem;color:var(--accent2)}
 .bm-sub-body{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .bm-made{align-self:center;padding:10px 26px}
+.bm-view{display:flex;flex-direction:column;gap:14px}
+.bm-switch{align-self:flex-end;background:none;border:none;padding:0;color:var(--accent2);font-size:.8rem;text-decoration:underline;cursor:pointer}
+.bm-m-copy{align-self:stretch;padding:12px;font-size:1rem}
+#bm-mobile .bm-open{align-self:stretch;max-width:100%;white-space:normal}
 .bm-run-step{display:flex;gap:10px;align-items:flex-start}
 .bm-run-step>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
 .bm-mini{flex-shrink:0;width:22px;height:22px;border-radius:5px;background:#2a475e;color:#fff;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
@@ -807,7 +811,36 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
     <div class="guide-head"><h3 data-g="bmTitle">🎮 Steamに反映する手順</h3><button type="button" class="guide-x" onclick="closeModal('sync-modal')" aria-label="close">&times;</button></div>
     <div class="guide-body">
       <div id="bm-ready" class="sync-status ok"></div>
-      <div id="sync-mobile" class="guide-note warn" style="display:none" data-g="bmPc"></div>
+
+      <!-- スマホ用の手順（スマホで開いたときだけ表示） -->
+      <div id="bm-mobile" class="bm-view" style="display:none">
+        <button type="button" class="bm-switch" onclick="setSyncView('pc')" data-g="bmToPc">💻 パソコンの手順はこちら</button>
+        <div class="bm-card bm-run">
+          <div class="bm-card-head"><span class="bm-badge">📱</span><span data-g="bmMTitle">スマホで反映する</span></div>
+          <div class="bm-card-body">
+            <div class="bm-run-step"><span class="bm-mini">1</span><div>
+              <p data-g="bmM1"></p>
+              <button type="button" id="bm-m-copy" class="btn btn-gold bm-m-copy" onclick="copyBookmarklet('bm-m-copy','bmMCopy')" data-g="bmMCopy">📋 反映コードをコピー</button>
+            </div></div>
+            <div class="bm-run-step"><span class="bm-mini">2</span><div>
+              <p data-g="bmM2"></p>
+            </div></div>
+            <div class="bm-run-step"><span class="bm-mini">3</span><div>
+              <p data-g="bmM3"></p>
+              <button type="button" class="btn btn-steam bm-open" onclick="openWishlistApply()" data-g="bmRunBtn">🚀 Steamのウィッシュリストを開く</button>
+            </div></div>
+            <div class="bm-run-step"><span class="bm-mini">4</span><div>
+              <p data-g="bmM4a"></p>
+              <p data-g="bmM4i"></p>
+            </div></div>
+            <div class="guide-note" data-g="bmMNote"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- パソコン用の手順 -->
+      <div id="bm-pc" class="bm-view">
+      <button type="button" class="bm-switch" onclick="setSyncView('mobile')" data-g="bmToMobile">📱 スマホの手順はこちら</button>
       <div class="bm-steps-overview" aria-hidden="true">
         <span class="bm-ov" id="bm-ov1"><b>1</b><span data-g="bmOv1">ブックマークに入れる</span><small data-g="bmOvOnce">初回だけ</small></span>
         <span class="bm-ov-arrow">&#9654;</span>
@@ -861,6 +894,7 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
           </div></div>
           <div class="guide-note" data-g="bmNeedLogin"></div>
         </div>
+      </div>
       </div>
 
       <!-- 困ったとき -->
@@ -3159,6 +3193,94 @@ var FLOW13_ADD = {
   }
 })();
 
+// スマホでの反映手順（ブックマークを手で作る）
+var FLOW14_ADD = {
+  ja: {
+    hw7d: 'ランキングが入ったブックマークを作って、Steamのウィッシュリストで押すだけで並びが入れ替わります。パソコンはブックマークバーへドラッグ、スマホはコードを貼ってブックマークを手で作ります。',
+    bmToPc: '💻 パソコンの手順はこちら',
+    bmToMobile: '📱 スマホの手順はこちら',
+    bmMTitle: 'スマホで反映する',
+    bmM1: '下のボタンで反映コードをコピーします。ランキングを変えたら、毎回コピーし直してください。',
+    bmMCopy: '📋 反映コードをコピー',
+    bmM2: 'ブックマークを作ります。このページを「ブックマークに追加」→ ブックマーク一覧から編集 → 名前を「Steam反映」に、URL欄を全部消してコピーしたコードを貼り付けて保存。2回目からは、同じブックマークのURLを貼り替えるだけでOKです。',
+    bmM3: 'ブラウザでSteamにログインして、ウィッシュリストを開きます。Steamアプリが開いてしまうときは、ブラウザのアドレスバーに store.steampowered.com/wishlist と入力して開いてください。',
+    bmM4a: 'Android（Chrome）：アドレスバーに「Steam反映」と入力し、候補に出るブックマークをタップ。',
+    bmM4i: 'iPhone（Safari）：ブックマーク一覧から「Steam反映」をタップ。',
+    bmMNote: '「完了」と表示されれば反映されています。何も起きないときは、ブックマークのURLが「javascript:」で始まっているか確かめてください。'
+  },
+  en: {
+    hw7d: 'Make a bookmark containing your ranking, then tap it on your Steam wishlist to reorder it. On a computer, drag it to the bookmarks bar; on a phone, create the bookmark by pasting the code.',
+    bmToPc: '💻 Steps for computers',
+    bmToMobile: '📱 Steps for phones',
+    bmMTitle: 'Apply from your phone',
+    bmM1: 'Copy the apply code with the button below. Copy it again whenever your ranking changes.',
+    bmMCopy: '📋 Copy apply code',
+    bmM2: 'Create a bookmark: bookmark this page → edit it from your bookmarks list → name it "Steam Apply", clear the URL field, paste the copied code and save. Next time, just replace that bookmark\'s URL.',
+    bmM3: 'Log in to Steam in your browser and open your wishlist. If the Steam app opens instead, type store.steampowered.com/wishlist into the browser\'s address bar.',
+    bmM4a: 'Android (Chrome): type "Steam Apply" into the address bar and tap the bookmark in the suggestions.',
+    bmM4i: 'iPhone (Safari): tap "Steam Apply" in your bookmarks list.',
+    bmMNote: 'When you see "Done", your order has been applied. If nothing happens, check that the bookmark URL starts with "javascript:".'
+  },
+  zh: {
+    hw7d: '创建包含排名的书签，在 Steam 愿望单页面点击即可重新排序。电脑上拖到书签栏；手机上粘贴代码手动创建书签。',
+    bmToPc: '💻 电脑操作步骤',
+    bmToMobile: '📱 手机操作步骤',
+    bmMTitle: '在手机上应用',
+    bmM1: '用下方按钮复制应用代码。每次排名变化后都要重新复制。',
+    bmMCopy: '📋 复制应用代码',
+    bmM2: '创建书签：把本页加入书签 → 在书签列表中编辑 → 名称改为“Steam应用”，清空网址栏并粘贴复制的代码后保存。以后只需替换这个书签的网址。',
+    bmM3: '在浏览器中登录 Steam 并打开愿望单。如果打开了 Steam App，请在浏览器地址栏输入 store.steampowered.com/wishlist。',
+    bmM4a: 'Android（Chrome）：在地址栏输入“Steam应用”，点击候选中的书签。',
+    bmM4i: 'iPhone（Safari）：在书签列表中点击“Steam应用”。',
+    bmMNote: '显示“完成”即表示已应用。如果没有反应，请确认书签网址以“javascript:”开头。'
+  },
+  ru: {
+    hw7d: 'Создайте закладку с рейтингом и нажмите её на странице списка желаемого в Steam — порядок обновится. На компьютере перетащите её на панель закладок, на телефоне создайте закладку вручную, вставив код.',
+    bmToPc: '💻 Инструкция для компьютера',
+    bmToMobile: '📱 Инструкция для телефона',
+    bmMTitle: 'Применить с телефона',
+    bmM1: 'Скопируйте код кнопкой ниже. После изменения рейтинга копируйте заново.',
+    bmMCopy: '📋 Скопировать код',
+    bmM2: 'Создайте закладку: добавьте эту страницу в закладки → отредактируйте её в списке закладок → имя «Steam Apply», очистите поле URL, вставьте код и сохраните. В следующий раз просто замените URL этой закладки.',
+    bmM3: 'Войдите в Steam в браузере и откройте список желаемого. Если открывается приложение Steam, введите store.steampowered.com/wishlist в адресную строку браузера.',
+    bmM4a: 'Android (Chrome): введите «Steam Apply» в адресную строку и нажмите закладку в подсказках.',
+    bmM4i: 'iPhone (Safari): нажмите «Steam Apply» в списке закладок.',
+    bmMNote: 'Если появилось «Готово», порядок применён. Если ничего не происходит, проверьте, что URL закладки начинается с «javascript:».'
+  },
+  pt: {
+    hw7d: 'Crie um favorito com o seu ranking e toque nele na sua lista de desejos da Steam para reordenar. No computador, arraste para a barra de favoritos; no celular, crie o favorito colando o código.',
+    bmToPc: '💻 Passos para computador',
+    bmToMobile: '📱 Passos para celular',
+    bmMTitle: 'Aplicar pelo celular',
+    bmM1: 'Copie o código com o botão abaixo. Copie de novo sempre que o ranking mudar.',
+    bmMCopy: '📋 Copiar código',
+    bmM2: 'Crie um favorito: adicione esta página aos favoritos → edite-o na lista de favoritos → nome "Steam Apply", apague o campo de URL, cole o código e salve. Da próxima vez, basta trocar a URL desse favorito.',
+    bmM3: 'Entre na Steam pelo navegador e abra sua lista de desejos. Se o app da Steam abrir, digite store.steampowered.com/wishlist na barra de endereço do navegador.',
+    bmM4a: 'Android (Chrome): digite "Steam Apply" na barra de endereço e toque no favorito nas sugestões.',
+    bmM4i: 'iPhone (Safari): toque em "Steam Apply" na lista de favoritos.',
+    bmMNote: 'Quando aparecer "Pronto!", a ordem foi aplicada. Se nada acontecer, verifique se a URL do favorito começa com "javascript:".'
+  },
+  de: {
+    hw7d: 'Lege ein Lesezeichen mit deinem Ranking an und tippe es auf deiner Steam-Wunschliste – schon ist sie neu sortiert. Am Computer ziehst du es in die Lesezeichenleiste, am Handy legst du es an, indem du den Code einfügst.',
+    bmToPc: '💻 Anleitung für Computer',
+    bmToMobile: '📱 Anleitung fürs Handy',
+    bmMTitle: 'Vom Handy aus übernehmen',
+    bmM1: 'Kopiere den Code mit dem Button unten. Kopiere ihn neu, wenn sich dein Ranking ändert.',
+    bmMCopy: '📋 Code kopieren',
+    bmM2: 'Lesezeichen anlegen: diese Seite als Lesezeichen speichern → in der Lesezeichenliste bearbeiten → Name „Steam Apply“, URL-Feld leeren, Code einfügen und speichern. Beim nächsten Mal nur die URL dieses Lesezeichens ersetzen.',
+    bmM3: 'Melde dich im Browser bei Steam an und öffne deine Wunschliste. Öffnet sich die Steam-App, gib store.steampowered.com/wishlist in die Adresszeile des Browsers ein.',
+    bmM4a: 'Android (Chrome): „Steam Apply“ in die Adresszeile eingeben und das Lesezeichen in den Vorschlägen antippen.',
+    bmM4i: 'iPhone (Safari): in der Lesezeichenliste auf „Steam Apply“ tippen.',
+    bmMNote: 'Erscheint „Fertig“, wurde die Reihenfolge übernommen. Passiert nichts, prüfe, ob die URL des Lesezeichens mit „javascript:“ beginnt.'
+  }
+};
+(function(){
+  for (var lg in FLOW14_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW14_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW14_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -3263,11 +3385,24 @@ function isMobileDevice(){
   return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||'');
 }
 
+// 反映手順の表示（null=端末から自動判定、'pc' / 'mobile'=手動で切り替え）
+var syncView=null;
+
+function setSyncView(v){
+  syncView=v;
+  updateSyncMobileUI();
+  var el=document.getElementById(v==='mobile'?'bm-mobile':'bm-pc');
+  if(el&&el.scrollIntoView) el.scrollIntoView({block:'start'});
+}
+
 function updateSyncMobileUI(){
   var mob=isMobileDevice();
-  var note=document.getElementById('sync-mobile');
+  var view=syncView||(mob?'mobile':'pc');
+  var m=document.getElementById('bm-mobile');
+  var p=document.getElementById('bm-pc');
+  if(m) m.style.display=view==='mobile'?'flex':'none';
+  if(p) p.style.display=view==='mobile'?'none':'flex';
   var btn=document.getElementById('sync-share-btn');
-  if(note) note.style.display=mob?'block':'none';
   if(btn) btn.style.display=(mob&&navigator.share)?'inline-block':'none';
 }
 
@@ -4615,12 +4750,13 @@ function copySyncCode(){
   copyText(lastSyncCode,setSyncStatus);
 }
 
-function copyBookmarklet(){
-  var btn=document.getElementById('bm-copy-btn');
+function copyBookmarklet(btnId,labelKey){
+  var btn=document.getElementById(btnId||'bm-copy-btn');
+  var label=labelKey||'bmCopyCode';
   copyText(buildBookmarklet(),function(ok){
     if(!btn) return;
     btn.textContent=ok?'✅':'❌';
-    setTimeout(function(){ btn.textContent=gt('bmCopyCode'); },1400);
+    setTimeout(function(){ btn.textContent=gt(label); },1400);
   });
 }
 
