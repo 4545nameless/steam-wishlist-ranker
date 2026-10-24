@@ -378,6 +378,10 @@ details.bm-card .bm-once+*{}
 .spot.on{opacity:1}
 .flow-img{max-width:260px;width:60%;border-radius:8px;border:3px solid var(--gold);box-shadow:0 0 40px rgba(246,201,14,.6);margin:0 auto 12px;display:none}
 .result-hint{font-size:.78rem;color:var(--text2);margin:6px 0}
+/* 上下に固定される自動広告（アンカー広告）が出たら、その分だけこちらの表示をずらす（watchAnchorAds） */
+body{padding-top:var(--ad-top,0px);padding-bottom:var(--ad-bottom,0px)}
+.navbar{top:var(--ad-top,0px)}
+.grid-bar{bottom:var(--ad-bottom,0px)}
 .share-total{text-align:center;line-height:1.3}
 .share-total-lead{font-size:.95rem;color:var(--text)}
 .share-total-num{font-size:2.6rem;font-weight:900;color:var(--gold);text-shadow:0 2px 16px rgba(246,201,14,.35)}
@@ -6007,13 +6011,37 @@ function buildShareText(ranked){
   return text;
 }
 
+// 上下に固定される自動広告の高さを見て、ヘッダーや「選び終わった」のバーが隠れないようにずらす
+// 広告そのものには触らない（動かしたり隠したりするのは AdSense の規約違反）
+function watchAnchorAds(){
+  var root=document.documentElement,lastTop=-1,lastBot=-1;
+  function update(){
+    var top=0,bot=0,h=window.innerHeight,w=window.innerWidth;
+    var ads=document.querySelectorAll('ins.adsbygoogle');
+    for(var i=0;i<ads.length;i++){
+      var cs=window.getComputedStyle(ads[i]);
+      if(cs.position!=='fixed'||cs.display==='none'||cs.visibility==='hidden') continue;
+      var r=ads[i].getBoundingClientRect();
+      // 横に細いもの（サイドレール）は対象外
+      if(r.height<=0||r.width<w*0.5) continue;
+      if(r.top<=1) top=Math.max(top,Math.round(r.bottom));
+      else if(r.bottom>=h-1) bot=Math.max(bot,Math.round(h-r.top));
+    }
+    if(top!==lastTop){ root.style.setProperty('--ad-top',top+'px'); lastTop=top; }
+    if(bot!==lastBot){ root.style.setProperty('--ad-bottom',bot+'px'); lastBot=bot; }
+  }
+  update();
+  setInterval(update,1000);
+}
+watchAnchorAds();
+
 // シェア画像用に、複製したページだけを整える（画面の表示は変えない）
 function prepareShareClone(doc,ranked){
   var cap=doc.getElementById('result-capture');
   if(!cap) return;
   var s=shareStats(ranked);
-  // 操作用の表示は消す
-  var rm=cap.querySelectorAll('.result-hint,#result-subtitle');
+  // 操作用の表示と、自動広告が差し込んだもの（画像にすると空白の箱になる）は消す
+  var rm=cap.querySelectorAll('.result-hint,#result-subtitle,ins.adsbygoogle,.google-auto-placed,iframe');
   for(var i=0;i<rm.length;i++) rm[i].parentNode.removeChild(rm[i]);
   // 表は 順位・画像・タイトル（価格・セール）だけ残す
   var drop=[7,6,5,4,0];
