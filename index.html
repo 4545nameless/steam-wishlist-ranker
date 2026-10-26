@@ -5007,10 +5007,21 @@ function mkGame(appid,d,price){
 
 // まとめ取得（Worker の /items）の1本分から、mkGame と同じ形のゲームを作る
 var DATE_LOCALES={ja:'ja-JP',en:'en-US',zh:'zh-CN',ru:'ru-RU',pt:'pt-BR',de:'de-DE'};
-function itemDate(ts){
+// disp は発売前の日付の見せ方（Steam が「2026年」とだけ出しているものに、仮の 12月31日 を出さない）
+function itemDate(ts,disp){
   if(!ts) return '';
-  try{ return new Date(ts*1000).toLocaleDateString(DATE_LOCALES[currentLang]||'ja-JP',{year:'numeric',month:'short',day:'numeric'}); }
-  catch(e){ return ''; }
+  var loc=DATE_LOCALES[currentLang]||'ja-JP',d=new Date(ts*1000);
+  try{
+    if(disp==='date_year') return d.toLocaleDateString(loc,{year:'numeric'});
+    if(disp==='date_month') return d.toLocaleDateString(loc,{year:'numeric',month:'long'});
+    if(disp==='date_quarter'){
+      var q=Math.floor(d.getMonth()/3)+1,y=d.getFullYear();
+      if(currentLang==='ja') return y+'年第'+q+'四半期';
+      if(currentLang==='zh') return y+'年第'+q+'季度';
+      return 'Q'+q+' '+y;
+    }
+    return d.toLocaleDateString(loc,{year:'numeric',month:'short',day:'numeric'});
+  }catch(e){ return ''; }
 }
 function mkGameFromItem(appid,it,cur){
   var p=it.p;
@@ -5020,7 +5031,7 @@ function mkGameFromItem(appid,it,cur){
     name:it.name,
     capsule:it.img||(IMG_BASE+appid+'/header.jpg'),
     price:price,
-    release:it.soon?(it.soonText||itemDate(it.date)):itemDate(it.date),
+    release:it.soon?(it.soonText||itemDate(it.date,it.disp)):itemDate(it.date),
     disc:(p&&p.pct>0)?p.pct:0,
     orig:(p&&p.pct>0)?p.of:'',
     pnum:(p&&p.final)?p.final/100:null,

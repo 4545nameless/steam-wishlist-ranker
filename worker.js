@@ -153,6 +153,8 @@ export default {
           date: rel.steam_release_date || rel.original_release_date || 0,
           soon: !!rel.is_coming_soon,
           soonText: rel.custom_release_date_message || '',
+          // 発売前の日付の見せ方（date_year=年だけ / date_quarter=四半期 / date_month=年月 / date_full=日付）
+          disp: rel.coming_soon_display || '',
           free: !!it.is_free,
           p,
         };
