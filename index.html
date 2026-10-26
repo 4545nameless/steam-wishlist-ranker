@@ -277,6 +277,20 @@ details.bm-card .bm-once+*{}
 .bm-sub-body{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .bm-made{align-self:center;padding:10px 26px}
 .bm-view{display:flex;flex-direction:column;gap:14px}
+/* カテゴリ付与のオプション。オフのときは割り当てを薄く見せる */
+.bm-cat{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.bm-cat-row{display:flex;align-items:center;gap:8px;font-weight:700;color:#fff;cursor:pointer}
+.bm-cat-row input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
+.bm-cat-map{display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;font-size:.8rem;line-height:1.6}
+.bm-cat-map .r{color:var(--text2);white-space:nowrap}
+.bm-cat-map .n{color:var(--text2);text-align:right;white-space:nowrap}
+.bm-cat:not(.on) .bm-cat-map{opacity:.45}
+.bm-cat-note{font-size:.76rem;color:var(--text2);margin:0}
+.bm-cat-fig{display:flex;flex-direction:column;gap:4px}
+.bm-cat-cap{font-size:.72rem;color:var(--text2)}
+.bm-cat-tabs{display:flex;gap:4px;flex-wrap:wrap;background:#171a21;border-radius:3px;padding:6px}
+.bm-cat-tabs span{font-size:.72rem;padding:3px 8px;border-radius:3px;background:rgba(255,255,255,.06);color:var(--text);white-space:nowrap}
+.bm-cat-tabs span.on{background:var(--accent);color:#fff}
 .bm-switch{align-self:flex-end;background:none;border:none;padding:0;color:var(--accent2);font-size:.8rem;text-decoration:underline;cursor:pointer}
 .bm-m-copy{align-self:stretch;padding:12px;font-size:1rem}
 #bm-mobile .bm-open{align-self:stretch;max-width:100%;white-space:normal;text-align:center;text-decoration:none}
@@ -840,6 +854,27 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
           <div class="bm-card-body">
             <div class="bm-run-step"><span class="bm-mini">1</span><div>
               <p data-g="bmM1"></p>
+              <div class="bm-cat">
+            <label class="bm-cat-row"><input type="checkbox" class="bm-cat-chk" onchange="setSyncCats(this.checked)"><span data-g="bmCatLabel">Steamのカテゴリも付ける</span></label>
+            <div class="bm-cat-map"></div>
+            <p class="bm-cat-note" data-g="bmCatNote"></p>
+            <details class="bm-sub">
+              <summary data-g="bmCatWhat">カテゴリとは？</summary>
+              <div class="bm-sub-body">
+                <p data-g="bmCatAbout"></p>
+                <div class="bm-cat-fig" aria-hidden="true">
+                  <div class="bm-cat-cap" data-g="bmCatFigCap">Steamのウィッシュリストの上に、カテゴリのタブができます</div>
+                  <div class="bm-cat-tabs"></div>
+                </div>
+                <ul class="bm-tlist">
+                  <li data-g="bmCatTip1"></li>
+                  <li data-g="bmCatTip2"></li>
+                  <li data-g="bmCatTip3"></li>
+                  <li data-g="bmCatTip4"></li>
+                </ul>
+              </div>
+            </details>
+          </div>
               <button type="button" id="bm-m-copy" class="btn btn-gold bm-m-copy" onclick="copyBookmarklet('bm-m-copy','bmMCopy')" data-g="bmMCopy">📋 反映コードをコピー</button>
             </div></div>
             <div class="bm-run-step"><span class="bm-mini">2</span><div>
@@ -874,6 +909,27 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
         <div class="bm-card-head" style="cursor:default"><span class="bm-badge">1</span><span data-g="bmSetupTitle">ブックマークバーに「Steam反映」を入れる</span><span class="bm-once" data-g="bmOvOnce">毎回</span></div>
         <div class="bm-card-body">
           <p data-g="bmSetupDesc"></p>
+          <div class="bm-cat">
+            <label class="bm-cat-row"><input type="checkbox" class="bm-cat-chk" onchange="setSyncCats(this.checked)"><span data-g="bmCatLabel">Steamのカテゴリも付ける</span></label>
+            <div class="bm-cat-map"></div>
+            <p class="bm-cat-note" data-g="bmCatNote"></p>
+            <details class="bm-sub">
+              <summary data-g="bmCatWhat">カテゴリとは？</summary>
+              <div class="bm-sub-body">
+                <p data-g="bmCatAbout"></p>
+                <div class="bm-cat-fig" aria-hidden="true">
+                  <div class="bm-cat-cap" data-g="bmCatFigCap">Steamのウィッシュリストの上に、カテゴリのタブができます</div>
+                  <div class="bm-cat-tabs"></div>
+                </div>
+                <ul class="bm-tlist">
+                  <li data-g="bmCatTip1"></li>
+                  <li data-g="bmCatTip2"></li>
+                  <li data-g="bmCatTip3"></li>
+                  <li data-g="bmCatTip4"></li>
+                </ul>
+              </div>
+            </details>
+          </div>
           <div class="mock bm-mock" aria-hidden="true">
             <div class="bm-mock-bar"><span>&#9733; Gmail</span><span>YouTube</span><span class="bm-mock-slot"><span class="bm-mock-ghost">&#11088; Steam反映</span></span></div>
             <div class="bm-mock-cap" data-g="bmBarLabel">↑ ブックマークバー</div>
@@ -3320,6 +3376,130 @@ var FLOW15_ADD = {
   }
 })();
 
+// Steam のカテゴリ付与（catName は Steam に作るカテゴリ名。catAlt は絵文字入りの名前が通らなかったときの代わり）
+var FLOW16_ADD = {
+  ja: {
+    catName0: '🔥 今すぐ欲しい', catName1: '🏷️ セールなら買う', catName2: '💭 いつか買うかも', catName3: '🗑️ たぶんいらない',
+    catAlt0: '今すぐ欲しい（Ranker）', catAlt1: 'セールなら買う（Ranker）', catAlt2: 'いつか買うかも（Ranker）', catAlt3: 'たぶんいらない（Ranker）',
+    bmCatLabel: 'Steamのカテゴリも付ける',
+    bmCatNote: 'オンにすると、並び替えのあとにカテゴリを付けます（数十秒かかります）。切り替えたら、ブックマークを作り直してください。自分で作ったカテゴリはそのまま残ります。',
+    bmCatWhat: 'カテゴリとは？',
+    bmCatAbout: 'Steamのウィッシュリストで、ゲームに自分で名前を付けた分類を付けられる機能です。1本に何個でも付けられます。',
+    bmCatFigCap: 'Steamのウィッシュリストの上に、カテゴリのタブができます',
+    bmCatTip1: '通知を絞る：Steamのウィッシュリストでカテゴリの通知設定を開き、「🔥 今すぐ欲しい」だけ通知をオンにすると、本当に欲しいゲームのセールだけ知らせてくれます。',
+    bmCatTip2: 'タブで切り替え：ウィッシュリストの上のタブで、カテゴリごとに表示できます。「セール中」の絞り込みと組み合わせると、買い時のゲームがすぐ見つかります。',
+    bmCatTip3: '共有リンク：カテゴリだけを共有するリンクを作れます。ウィッシュリスト全体は非公開のまま、欲しいものリストとして友達に見せられます。',
+    bmCatTip4: '2回目以降：区切りが変わったゲームだけ付け替えます。表示言語を変えて作り直すと、別の名前のカテゴリが新しくできます。',
+    bmCatAll: 'すべて（{n}）', bmCatRange: '{a}〜{b}位', bmCatCount: '{n}本',
+    bmMsgCatCheck: 'カテゴリを確認しています…',
+    bmMsgCatApply: 'カテゴリを付けています…',
+    bmMsgCatDone: '完了！並び替えとカテゴリの付与が終わりました。新しい順番を読み込みます',
+    bmMsgCatSome: '（{n}件は付けられませんでした）',
+    bmMsgCatFail: '並び替えは完了しましたが、カテゴリを付けられませんでした: '
+  },
+  en: {
+    catName0: '🔥 Want it now', catName1: '🏷️ Buy on sale', catName2: '💭 Maybe someday', catName3: '🗑️ Probably skip',
+    catAlt0: 'Want it now (Ranker)', catAlt1: 'Buy on sale (Ranker)', catAlt2: 'Maybe someday (Ranker)', catAlt3: 'Probably skip (Ranker)',
+    bmCatLabel: 'Also add Steam categories',
+    bmCatNote: 'When on, categories are added after reordering (takes a few dozen seconds). If you change this, make the bookmark again. Your own categories stay as they are.',
+    bmCatWhat: 'What are categories?',
+    bmCatAbout: 'A Steam wishlist feature that lets you tag games with your own named groups. A game can have as many as you like.',
+    bmCatFigCap: 'Category tabs appear at the top of your Steam wishlist',
+    bmCatTip1: 'Fewer notifications: open the category notification settings on your Steam wishlist and turn them on only for "🔥 Want it now" to hear about sales on the games you really want.',
+    bmCatTip2: 'Switch with tabs: the tabs above your wishlist show one category at a time. Combine with the "on sale" filter to spot good deals fast.',
+    bmCatTip3: 'Share links: you can share just one category with a link, while the rest of your wishlist stays private. Handy as a gift list.',
+    bmCatTip4: 'Next time: only games whose group changed are moved. If you switch the display language and make the bookmark again, new categories with different names are created.',
+    bmCatAll: 'All ({n})', bmCatRange: '{a}–{b}', bmCatCount: '{n} games',
+    bmMsgCatCheck: 'Checking categories…',
+    bmMsgCatApply: 'Adding categories…',
+    bmMsgCatDone: 'Done! Reordered and added categories. Loading the new order',
+    bmMsgCatSome: '({n} could not be added)',
+    bmMsgCatFail: 'Reordering finished, but categories could not be added: '
+  },
+  zh: {
+    catName0: '🔥 现在就想要', catName1: '🏷️ 打折就买', catName2: '💭 也许以后', catName3: '🗑️ 大概不要了',
+    catAlt0: '现在就想要（Ranker）', catAlt1: '打折就买（Ranker）', catAlt2: '也许以后（Ranker）', catAlt3: '大概不要了（Ranker）',
+    bmCatLabel: '同时添加 Steam 分类',
+    bmCatNote: '开启后，会在排序之后添加分类（需要几十秒）。切换后请重新创建书签。你自己建的分类会保持不变。',
+    bmCatWhat: '什么是分类？',
+    bmCatAbout: 'Steam 愿望单的功能，可以给游戏加上自己命名的分类。一款游戏可以有多个分类。',
+    bmCatFigCap: 'Steam 愿望单顶部会出现分类标签',
+    bmCatTip1: '减少通知：在 Steam 愿望单中打开分类的通知设置，只为“🔥 现在就想要”开启通知，就只会收到真正想要的游戏的促销提醒。',
+    bmCatTip2: '用标签切换：愿望单顶部的标签可以按分类显示。配合“促销中”筛选，能很快找到值得买的游戏。',
+    bmCatTip3: '分享链接：可以只分享某个分类的链接，愿望单整体仍保持私密，适合当作心愿单发给朋友。',
+    bmCatTip4: '之后再次应用：只会调整分组有变化的游戏。如果切换显示语言后重新创建书签，会新建名称不同的分类。',
+    bmCatAll: '全部（{n}）', bmCatRange: '第{a}〜{b}名', bmCatCount: '{n} 款',
+    bmMsgCatCheck: '正在检查分类…',
+    bmMsgCatApply: '正在添加分类…',
+    bmMsgCatDone: '完成！已完成排序和分类。正在载入新顺序',
+    bmMsgCatSome: '（{n} 项未能添加）',
+    bmMsgCatFail: '排序已完成，但未能添加分类：'
+  },
+  ru: {
+    catName0: '🔥 Хочу сейчас', catName1: '🏷️ Куплю по скидке', catName2: '💭 Может, когда-нибудь', catName3: '🗑️ Скорее не нужно',
+    catAlt0: 'Хочу сейчас (Ranker)', catAlt1: 'Куплю по скидке (Ranker)', catAlt2: 'Может, когда-нибудь (Ranker)', catAlt3: 'Скорее не нужно (Ranker)',
+    bmCatLabel: 'Также добавить категории Steam',
+    bmCatNote: 'Если включено, после сортировки добавляются категории (занимает несколько десятков секунд). После переключения создайте закладку заново. Ваши собственные категории не меняются.',
+    bmCatWhat: 'Что такое категории?',
+    bmCatAbout: 'Функция списка желаемого Steam: можно помечать игры своими категориями. У одной игры может быть сколько угодно категорий.',
+    bmCatFigCap: 'Вверху списка желаемого Steam появятся вкладки категорий',
+    bmCatTip1: 'Меньше уведомлений: откройте настройки уведомлений категорий в списке желаемого и включите их только для «🔥 Хочу сейчас» — будут приходить скидки только на действительно желанные игры.',
+    bmCatTip2: 'Вкладки: вкладки над списком показывают одну категорию. Вместе с фильтром «со скидкой» легко найти выгодные игры.',
+    bmCatTip3: 'Ссылка: можно поделиться только одной категорией, а весь список останется закрытым. Удобно как список подарков.',
+    bmCatTip4: 'В следующий раз: перемещаются только игры, у которых изменилась группа. Если сменить язык и создать закладку заново, появятся новые категории с другими названиями.',
+    bmCatAll: 'Все ({n})', bmCatRange: '{a}–{b}', bmCatCount: '{n} игр',
+    bmMsgCatCheck: 'Проверяем категории…',
+    bmMsgCatApply: 'Добавляем категории…',
+    bmMsgCatDone: 'Готово! Порядок и категории применены. Загружаем новый порядок',
+    bmMsgCatSome: '(не удалось добавить: {n})',
+    bmMsgCatFail: 'Сортировка выполнена, но категории добавить не удалось: '
+  },
+  pt: {
+    catName0: '🔥 Quero agora', catName1: '🏷️ Compro na promoção', catName2: '💭 Talvez um dia', catName3: '🗑️ Provavelmente não',
+    catAlt0: 'Quero agora (Ranker)', catAlt1: 'Compro na promoção (Ranker)', catAlt2: 'Talvez um dia (Ranker)', catAlt3: 'Provavelmente não (Ranker)',
+    bmCatLabel: 'Adicionar também categorias da Steam',
+    bmCatNote: 'Ativado, as categorias são adicionadas depois de reordenar (leva algumas dezenas de segundos). Se mudar isso, crie o favorito de novo. Suas próprias categorias continuam como estão.',
+    bmCatWhat: 'O que são categorias?',
+    bmCatAbout: 'Um recurso da lista de desejos da Steam para marcar jogos com grupos que você mesmo nomeia. Um jogo pode ter quantas quiser.',
+    bmCatFigCap: 'Abas de categoria aparecem no topo da sua lista de desejos',
+    bmCatTip1: 'Menos notificações: abra as configurações de notificação das categorias na lista de desejos e ative só para "🔥 Quero agora" para saber das promoções dos jogos que você realmente quer.',
+    bmCatTip2: 'Abas: as abas acima da lista mostram uma categoria por vez. Combine com o filtro "em promoção" para achar boas ofertas rápido.',
+    bmCatTip3: 'Link de compartilhamento: dá para compartilhar só uma categoria, mantendo o resto da lista privado. Ótimo como lista de presentes.',
+    bmCatTip4: 'Da próxima vez: só os jogos que mudaram de grupo são movidos. Se trocar o idioma e criar o favorito de novo, serão criadas categorias com outros nomes.',
+    bmCatAll: 'Todos ({n})', bmCatRange: '{a}–{b}', bmCatCount: '{n} jogos',
+    bmMsgCatCheck: 'Verificando categorias…',
+    bmMsgCatApply: 'Adicionando categorias…',
+    bmMsgCatDone: 'Pronto! Ordem e categorias aplicadas. Carregando a nova ordem',
+    bmMsgCatSome: '({n} não puderam ser adicionados)',
+    bmMsgCatFail: 'A ordem foi aplicada, mas não foi possível adicionar as categorias: '
+  },
+  de: {
+    catName0: '🔥 Will ich jetzt', catName1: '🏷️ Kaufe im Sale', catName2: '💭 Vielleicht irgendwann', catName3: '🗑️ Eher nicht',
+    catAlt0: 'Will ich jetzt (Ranker)', catAlt1: 'Kaufe im Sale (Ranker)', catAlt2: 'Vielleicht irgendwann (Ranker)', catAlt3: 'Eher nicht (Ranker)',
+    bmCatLabel: 'Auch Steam-Kategorien vergeben',
+    bmCatNote: 'Wenn aktiviert, werden nach dem Sortieren Kategorien vergeben (dauert einige Dutzend Sekunden). Nach dem Umschalten das Lesezeichen neu anlegen. Deine eigenen Kategorien bleiben unverändert.',
+    bmCatWhat: 'Was sind Kategorien?',
+    bmCatAbout: 'Eine Funktion der Steam-Wunschliste, mit der du Spielen eigene benannte Gruppen geben kannst. Ein Spiel kann beliebig viele haben.',
+    bmCatFigCap: 'Oben auf deiner Steam-Wunschliste erscheinen Kategorie-Tabs',
+    bmCatTip1: 'Weniger Benachrichtigungen: Öffne auf der Wunschliste die Benachrichtigungen der Kategorien und aktiviere sie nur für „🔥 Will ich jetzt“ – dann hörst du nur von Sales der Spiele, die du wirklich willst.',
+    bmCatTip2: 'Tabs: Die Tabs über der Wunschliste zeigen jeweils eine Kategorie. Zusammen mit dem Filter „im Angebot“ findest du schnell gute Deals.',
+    bmCatTip3: 'Teilen: Du kannst nur eine Kategorie per Link teilen, der Rest der Wunschliste bleibt privat. Praktisch als Geschenkliste.',
+    bmCatTip4: 'Beim nächsten Mal: Nur Spiele, deren Gruppe sich geändert hat, werden umsortiert. Wenn du die Sprache wechselst und das Lesezeichen neu anlegst, entstehen neue Kategorien mit anderen Namen.',
+    bmCatAll: 'Alle ({n})', bmCatRange: '{a}–{b}', bmCatCount: '{n} Spiele',
+    bmMsgCatCheck: 'Kategorien werden geprüft…',
+    bmMsgCatApply: 'Kategorien werden vergeben…',
+    bmMsgCatDone: 'Fertig! Reihenfolge und Kategorien übernommen. Neue Reihenfolge wird geladen',
+    bmMsgCatSome: '({n} konnten nicht vergeben werden)',
+    bmMsgCatFail: 'Die Reihenfolge wurde übernommen, aber die Kategorien konnten nicht vergeben werden: '
+  }
+};
+(function(){
+  for (var lg in FLOW16_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW16_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW16_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -4857,15 +5037,113 @@ function jsEsc(s){
   return o;
 }
 
+// ブックマークレットの中で動く、Steam のカテゴリ付与（並べ替えのあとに呼ぶ）。
+// toString() でそのまま埋め込むので、この関数の中には「コメント・% ・# ・日本語」を書かないこと（URL として壊れる）。
+// ids と tiers は同じ順番（tiers は 1 本 1 文字、0〜3 が区切り、9 は付けない）。names[k] が区切り k のカテゴリ名、alt[k] は名前が通らなかったときの代わり。
+// 1 回目は付けるだけ、2 回目以降（Ranker のカテゴリに中身がある）は今のカテゴリを確かめて、変わったものだけ付け替える。
+function swrApplyCats(ids,tiers,names,alt,msg){
+  var API='https://api.steampowered.com/IWishlistService/',q='',errs=0;
+  var box=document.createElement('div');
+  box.setAttribute('style','position:fixed;top:16px;left:0;right:0;margin:0 auto;width:fit-content;max-width:90vw;z-index:2147483647;background:rgb(27,40,56);color:white;border:1px solid rgb(102,192,244);border-radius:6px;padding:10px 16px;font:14px sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.5)');
+  document.body.appendChild(box);
+  var show=function(s){box.textContent=s;};
+  var vint=function(n){var b=[];while(n>127){b.push((n&127)|128);n=Math.floor(n/128);}b.push(n);return b;};
+  var enc=function(a){return btoa(String.fromCharCode.apply(null,a));};
+  var pAdd=function(app,cat,name){var b=[8].concat(vint(app),[16],vint(cat));if(name){var u=Array.prototype.slice.call(new TextEncoder().encode(name));b=b.concat([26],vint(u.length),u);}return enc(b);};
+  var pApp=function(app){return enc([8].concat(vint(app)));};
+  var call=function(m,p,post){
+    var u=API+m+'/v1'+q,o={};
+    if(post){var f=new FormData();f.append('input_protobuf_encoded',p);o={method:'POST',body:f};}else{u+='&input_protobuf_encoded='+encodeURIComponent(p);}
+    var go=function(k){return fetch(u,o).then(function(r){if((r.status===429||r.status>=500)&&k<4){return new Promise(function(res){setTimeout(res,1500*(k+1));}).then(function(){return go(k+1);});}if(!r.ok){throw new Error('HTTP '+r.status);}return r.json();});};
+    return go(0);
+  };
+  var pool=function(items,fn,label){
+    var i=0,n=items.length,fin=0;
+    return new Promise(function(res){
+      if(!n){res();return;}
+      var next=function(){if(i>=n){return;}var x=items[i++];fn(x).then(null,function(){errs++;}).then(function(){fin++;show(label+' '+fin+'/'+n);if(fin>=n){res();}else{next();}});};
+      for(var w=0;w<4&&w<n;w++){next();}
+    });
+  };
+  var catId=[0,0,0,0],cur={},made={},used=false;
+  show(msg.check);
+  return fetch('/pointssummary/ajaxgetasyncconfig',{credentials:'include'}).then(function(r){return r.json();}).then(function(d){
+    var tok=d&&d.data&&d.data.webapi_token;
+    if(!tok){throw new Error('token');}
+    q='?format=json&access_token='+encodeURIComponent(tok);
+    return call('GetWishlistCategories','',false);
+  }).then(function(d){
+    var list=(d.response&&d.response.categories)||[],by={};
+    list.forEach(function(c){by[c.name]=c;});
+    for(var k=0;k<names.length;k++){var c=by[names[k]]||by[alt[k]];if(c){catId[k]=Number(c.categoryid);if(c.item_count>0){used=true;}}}
+    if(!used){return null;}
+    var ours={};catId.forEach(function(id){if(id){ours[id]=1;}});
+    return pool(ids,function(app){return call('GetItemCategories',pApp(app),false).then(function(r){var s={};((r.response&&r.response.categories)||[]).forEach(function(c){var id=Number(c.categoryid);if(ours[id]){s[id]=1;}});cur[app]=s;});},msg.check);
+  }).then(function(){
+    var chain=Promise.resolve();
+    var make=function(k){chain=chain.then(function(){
+      if(catId[k]){return null;}
+      var first=-1;for(var i=0;i<ids.length;i++){if(tiers.charAt(i)===String(k)){first=ids[i];break;}}
+      if(first<0){return null;}
+      var take=function(r){var id=r&&r.response&&r.response.categoryid;if(!id){throw new Error('cat');}catId[k]=Number(id);made[first]=1;};
+      return call('AddWishlistItemCategory',pAdd(first,0,names[k]),true).then(take).then(null,function(){return call('AddWishlistItemCategory',pAdd(first,0,alt[k]),true).then(take);});
+    });};
+    for(var k=0;k<names.length;k++){make(k);}
+    return chain;
+  }).then(function(){
+    var ops=[];
+    for(var i=0;i<ids.length;i++){
+      var app=ids[i],k=Number(tiers.charAt(i)),want=(k>=0&&k<4)?catId[k]:0,s=cur[app]||{};
+      if(want&&!s[want]&&!made[app]){ops.push([1,app,want]);}
+      for(var id in s){if(Number(id)!==want){ops.push([0,app,Number(id)]);}}
+    }
+    return pool(ops,function(o){return call(o[0]?'AddWishlistItemCategory':'RemoveWishlistItemCategory',pAdd(o[1],o[2]),true);},msg.apply);
+  }).then(function(){box.remove();return errs;},function(e){box.remove();throw e;});
+}
+
+// 区切り（resultTiers）→ カテゴリ番号（0〜3）。区切りがないランキングは null
+var CAT_TIER_INDEX={top:0,mid:1,low:2,bottom:3};
+function syncCatTiers(){
+  var ranked=getRankedGames(),tiers=resultTiers(ranked.length);
+  if(!tiers) return null;
+  var s='';
+  for(var i=0;i<ranked.length;i++){ var k=CAT_TIER_INDEX[tiers(i)]; s+=(k===undefined?'9':String(k)); }
+  return s;
+}
+
+var syncCats=false;
+try{ syncCats=localStorage.getItem('swr_bm_cats')==='1'; }catch(e){}
+
+function setSyncCats(on){
+  syncCats=!!on;
+  try{ localStorage.setItem('swr_bm_cats',syncCats?'1':'0'); }catch(e){}
+  lastBmName=bmStampName();
+  refreshSyncModal();
+  lastSyncCode=buildBookmarklet();
+}
+
 function buildBookmarklet(){
   var mNo=jsEsc(gt('bmMsgNoSession')),mDone=jsEsc(gt('bmMsgDone')),mFail=jsEsc(gt('bmMsgFail')),mErr=jsEsc(gt('bmMsgError')),mSite=jsEsc(gt('bmMsgWrongSite'));
   var ids=(lastSyncIds||[]).join(',');
+  var tiers=syncCats?syncCatTiers():null;
+  // カテゴリを付けるときは、並べ替えのあとにカテゴリ付与を続けてから完了を出す
+  var after="alert('"+mDone+"');location.replace(location.href.split(String.fromCharCode(35))[0]);";
+  var cats='';
+  if(tiers){
+    var nm=[],al=[];
+    for(var k=0;k<4;k++){ nm.push("'"+jsEsc(gt('catName'+k))+"'"); al.push("'"+jsEsc(gt('catAlt'+k))+"'"); }
+    var src=swrApplyCats.toString().replace(/\s*\n\s*/g,'');
+    cats="var swrCats="+src+";";
+    after="swrCats(ids,'"+tiers+"',["+nm.join(',')+"],["+al.join(',')+"],{check:'"+jsEsc(gt('bmMsgCatCheck'))+"',apply:'"+jsEsc(gt('bmMsgCatApply'))+"'})"
+      +".then(function(n){alert('"+jsEsc(gt('bmMsgCatDone'))+"'+(n?' '+'"+jsEsc(gt('bmMsgCatSome'))+"'.replace('{n}',n):''));location.replace(location.href.split(String.fromCharCode(35))[0]);},"
+      +"function(e){alert('"+jsEsc(gt('bmMsgCatFail'))+"'+e.message);location.replace(location.href.split(String.fromCharCode(35))[0]);});";
+  }
   var code="(function(){if(location.hostname!=='store.steampowered.com'){alert('"+mSite+"');return;}"
    +"if(!/sessionid=/.test(document.cookie)){alert('"+mNo+"');return;}"
-   +"var ids=["+ids+"];"
+   +"var ids=["+ids+"];"+cats
    +"var body=JSON.stringify({m:'Reorder',mp:[ids.map(function(x,i){return {appid:x,priority:i+1};})]});"
    +"fetch('https://store.steampowered.com/wishlist/action/',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json; charset=utf-8','x-valve-request-type':'mutationAction','X-Requested-With':'XMLHttpRequest'},body:body})"
-   +".then(function(r){return r.json();}).then(function(d){if(d.data&&d.data.result===1){alert('"+mDone+"');location.replace(location.href.split(String.fromCharCode(35))[0]);}else{alert('"+mFail+"'+JSON.stringify(d));}}).catch(function(e){alert('"+mErr+"'+e.message);});})();";
+   +".then(function(r){return r.json();}).then(function(d){if(d.data&&d.data.result===1){"+after+"}else{alert('"+mFail+"'+JSON.stringify(d));}}).catch(function(e){alert('"+mErr+"'+e.message);});})();";
   return 'javascript:'+code;
 }
 
@@ -4912,6 +5190,31 @@ function refreshSyncModal(){
   for(var i=0;i<names.length;i++) names[i].textContent='⭐ '+gt('bmName');
   var hl=document.querySelector('#bm-run .mock-hl');
   if(hl&&hl.firstChild) hl.firstChild.nodeValue='⭐ '+gt('bmName')+' ';
+  renderSyncCats();
+}
+
+// カテゴリのオプション：自分のランキングで何位〜何位がどのカテゴリになるかを見せる（PC・スマホの両方）
+function renderSyncCats(){
+  var tiers=syncCatTiers();
+  var blocks=document.querySelectorAll('.bm-cat');
+  var map='',tabs='',from=[],cnt=[0,0,0,0],i,k;
+  if(tiers){
+    for(i=0;i<tiers.length;i++){ k=Number(tiers.charAt(i)); if(k<4){ if(!cnt[k]) from[k]=i+1; cnt[k]++; } }
+    tabs='<span class="on">'+esc(gf('bmCatAll',{n:tiers.length}))+'</span>';
+    for(k=0;k<4;k++){
+      if(!cnt[k]) continue;
+      map+='<span class="r">'+esc(gf('bmCatRange',{a:from[k],b:from[k]+cnt[k]-1}))+'</span><span>'+esc(gt('catName'+k))+'</span><span class="n">'+esc(gf('bmCatCount',{n:cnt[k]}))+'</span>';
+      tabs+='<span>'+esc(gt('catName'+k))+'</span>';
+    }
+  }
+  for(i=0;i<blocks.length;i++){
+    var b=blocks[i];
+    b.style.display=tiers?'':'none';
+    b.className='bm-cat'+(syncCats?' on':'');
+    var chk=b.querySelector('.bm-cat-chk'); if(chk) chk.checked=syncCats;
+    var m=b.querySelector('.bm-cat-map'); if(m) m.innerHTML=map;
+    var tb=b.querySelector('.bm-cat-tabs'); if(tb) tb.innerHTML=tabs;
+  }
 }
 
 function wishlistApplyUrl(){
