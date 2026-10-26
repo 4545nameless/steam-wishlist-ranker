@@ -3711,8 +3711,26 @@ function fetchWishlist(){
       filtered.forEach(function(i){ wmeta[String(i.appid)]={p:i.priority||0,d:i.date_added||0}; });
       setStatus(fmt('fetchGot',{n:appids.length}),'info');
       var games=[],failed=[],BATCH=10,done=0;
-      for(var i=0;i<appids.length;i+=BATCH){
-        var batch=appids.slice(i,i+BATCH);
+      // まず 50 本ずつまとめて取る。取れなかったもの（古い Worker、ストアから消えたゲームなど）は下の 1 本ずつの取得に回す
+      var rest=[],BULK=50;
+      for(var bi=0;bi<appids.length;bi+=BULK){
+        var chunk=appids.slice(bi,bi+BULK),got={};
+        try{
+          var br=await fetch(WORKER_URL+'/items?appids='+chunk.join(',')+'&l='+steamLang());
+          if(br.ok){
+            var bd=await br.json(),its=(bd&&bd.items)||{};
+            for(var ci=0;ci<chunk.length;ci++){
+              var it=its[chunk[ci]];
+              if(it&&it.name){ games.push(mkGameFromItem(chunk[ci],it,bd.cur)); got[chunk[ci]]=1; done++; }
+            }
+          }
+        }catch(e){}
+        for(var cj=0;cj<chunk.length;cj++){ if(!got[chunk[cj]]) rest.push(chunk[cj]); }
+        setProgress(done/appids.length*80);
+        setStatus(fmt('fetchProgress',{d:done,n:appids.length}),'info');
+      }
+      for(var i=0;i<rest.length;i+=BATCH){
+        var batch=rest.slice(i,i+BATCH);
         await Promise.allSettled(batch.map(async function(appid){
           try{
             var res=await fetch(WORKER_URL+'/appdetails?appid='+encodeURIComponent(appid)+'&l='+steamLang());
@@ -3728,7 +3746,7 @@ function fetchWishlist(){
         }));
         setProgress(done/appids.length*80);
         setStatus(fmt('fetchProgress',{d:done,n:appids.length}),'info');
-        if(i+BATCH<appids.length)await sleep(1500);
+        if(i+BATCH<rest.length)await sleep(1500);
       }
       if(failed.length>0){
         setStatus(fmt('fetchRetry',{n:failed.length}),'info');
@@ -4984,6 +5002,31 @@ function mkGame(appid,d,price){
     cur:(po&&po.currency)?po.currency:'',
     pre:!!(d.release_date&&d.release_date.coming_soon),
     demo:(d.type==='demo')
+  };
+}
+
+// まとめ取得（Worker の /items）の1本分から、mkGame と同じ形のゲームを作る
+var DATE_LOCALES={ja:'ja-JP',en:'en-US',zh:'zh-CN',ru:'ru-RU',pt:'pt-BR',de:'de-DE'};
+function itemDate(ts){
+  if(!ts) return '';
+  try{ return new Date(ts*1000).toLocaleDateString(DATE_LOCALES[currentLang]||'ja-JP',{year:'numeric',month:'short',day:'numeric'}); }
+  catch(e){ return ''; }
+}
+function mkGameFromItem(appid,it,cur){
+  var p=it.p;
+  var price=(p&&p.ff)?p.ff:(it.soon?gt('priceTba'):(it.free?t('free'):t('unknown')));
+  return {
+    appid:String(appid),
+    name:it.name,
+    capsule:it.img||(IMG_BASE+appid+'/header.jpg'),
+    price:price,
+    release:it.soon?(it.soonText||itemDate(it.date)):itemDate(it.date),
+    disc:(p&&p.pct>0)?p.pct:0,
+    orig:(p&&p.pct>0)?p.of:'',
+    pnum:(p&&p.final)?p.final/100:null,
+    cur:p?(cur||''):'',
+    pre:!!it.soon,
+    demo:false
   };
 }
 

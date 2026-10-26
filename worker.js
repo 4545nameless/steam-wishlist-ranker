@@ -5,6 +5,9 @@ const LOCAL_ORIGIN = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 const LOW_CACHE = new Map();
 const LOW_TTL = 6 * 60 * 60 * 1000;
 
+// 国 → 通貨（GetItems は通貨コードを返さないので、appdetails で 1 本だけ調べて 6 時間覚えておく）
+const CUR_CACHE = new Map();
+
 // アプリの表示言語 → Steam の言語名
 const STEAM_LANGS = { ja: 'japanese', en: 'english', zh: 'schinese', ru: 'russian', pt: 'brazilian', de: 'german' };
 
@@ -97,6 +100,76 @@ export default {
       );
       if (r.error) return r.error;
       return json(r.data, 200, { 'X-Swr-Cache': r.res.headers.get('cf-cache-status') || 'NONE' });
+    }
+
+    // ゲーム情報のまとめ取得（最大 100 本。IStoreBrowseService/GetItems、キー不要）
+    // 1 本ずつの /appdetails より大幅に速く、Worker の呼び出しも少ない。取れなかったものはアプリ側で /appdetails に回す
+    if (path === '/items') {
+      const ids = (url.searchParams.get('appids') || '')
+        .split(',')
+        .filter((x) => /^\d{1,10}$/.test(x))
+        .slice(0, 100);
+      if (!ids.length) return json({ error: 'appids が必要です' }, 400);
+      const cc = countryOf(request, url);
+      const lang = STEAM_LANGS[url.searchParams.get('l')] || 'japanese';
+      const input = {
+        ids: ids.map((a) => ({ appid: Number(a) })),
+        context: { language: lang, country_code: cc },
+        data_request: { include_assets: true, include_release: true },
+      };
+      const cache = { cf: { cacheEverything: true, cacheTtlByStatus: { '200-299': 21600, '300-599': 0 } } };
+      const r = await callSteam(
+        'https://api.steampowered.com/IStoreBrowseService/GetItems/v1?input_json=' + encodeURIComponent(JSON.stringify(input)),
+        cache
+      );
+      if (r.error) return r.error;
+      const list = (r.data && r.data.response && r.data.response.store_items) || [];
+      const items = {};
+      let pricedId = null;
+      for (const it of list) {
+        if (!it || it.success !== 1 || !it.appid || !it.name) continue;
+        const a = it.assets || {};
+        const img = a.asset_url_format && a.header
+          ? 'https://shared.akamai.steamstatic.com/store_item_assets/' + a.asset_url_format.replace('${FILENAME}', a.header)
+          : '';
+        const rel = it.release || {};
+        const bp = it.best_purchase_option || null;
+        let p = null;
+        if (bp && bp.final_price_in_cents != null) {
+          const ad = bp.active_discounts && bp.active_discounts[0];
+          p = {
+            final: Number(bp.final_price_in_cents),
+            orig: Number(bp.original_price_in_cents || bp.final_price_in_cents),
+            pct: bp.discount_pct || 0,
+            ff: bp.formatted_final_price || '',
+            of: bp.formatted_original_price || '',
+            end: (ad && ad.discount_end_date) || 0,
+          };
+          if (!pricedId) pricedId = it.appid;
+        }
+        items[it.appid] = {
+          name: it.name,
+          img,
+          date: rel.steam_release_date || rel.original_release_date || 0,
+          soon: !!rel.is_coming_soon,
+          soonText: rel.custom_release_date_message || '',
+          free: !!it.is_free,
+          p,
+        };
+      }
+      let cur = CUR_CACHE.get(cc);
+      if ((!cur || Date.now() - cur.t > LOW_TTL) && pricedId) {
+        const c = await callSteam(
+          `https://store.steampowered.com/api/appdetails?appids=${pricedId}&cc=${cc.toLowerCase()}&filters=price_overview`,
+          cache
+        );
+        const po = c.data && c.data[pricedId] && c.data[pricedId].data && c.data[pricedId].data.price_overview;
+        if (po && po.currency) {
+          cur = { t: Date.now(), v: po.currency };
+          CUR_CACHE.set(cc, cur);
+        }
+      }
+      return json({ items, cur: (cur && cur.v) || '', cc });
     }
 
     // Steam での過去最安値（IsThereAnyDeal API）。ITAD_KEY を設定したときだけ動く
