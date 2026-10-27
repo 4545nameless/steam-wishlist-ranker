@@ -2542,10 +2542,10 @@ var FLOW7_ADD = {
     eQuit: '⏹ ここまでで反映',
     eQuitDone: '✅ ここまでの結果を反映しました',
     kHintElim: '⌨ 1〜4（テンキー可）: カードを選ぶ　Backspace: 戻る',
-    tier_top: '上位',
-    tier_mid: '中位',
-    tier_low: '下位',
-    tier_bottom: '最下位'
+    tier_top: '今すぐ欲しい',
+    tier_mid: 'セールなら買う',
+    tier_low: 'いつか買うかも',
+    tier_bottom: 'たぶんいらない'
   },
   en: {
     raidAppear: '⚡ A raider appears! The challenger is on the right',
@@ -2593,10 +2593,10 @@ var FLOW7_ADD = {
     eQuit: '⏹ Apply up to here',
     eQuitDone: '✅ Applied the results so far',
     kHintElim: '⌨ 1-4 (numpad OK): pick a card   Backspace: undo',
-    tier_top: 'Top',
-    tier_mid: 'Middle',
-    tier_low: 'Lower',
-    tier_bottom: 'Bottom'
+    tier_top: 'Want it now',
+    tier_mid: 'Buy on sale',
+    tier_low: 'Maybe someday',
+    tier_bottom: 'Probably skip'
   },
   zh: {
     raidAppear: '⚡ 乱入者出现！右边是挑战者',
@@ -2644,10 +2644,10 @@ var FLOW7_ADD = {
     eQuit: '⏹ 应用到这里',
     eQuitDone: '✅ 已应用目前的结果',
     kHintElim: '⌨ 1-4（可用小键盘）：选择卡片　Backspace：撤销',
-    tier_top: '上位',
-    tier_mid: '中位',
-    tier_low: '下位',
-    tier_bottom: '最下位'
+    tier_top: '现在就想要',
+    tier_mid: '打折就买',
+    tier_low: '也许以后',
+    tier_bottom: '大概不要了'
   },
   ru: {
     raidAppear: '⚡ Появился претендент! Он справа',
@@ -2695,10 +2695,10 @@ var FLOW7_ADD = {
     eQuit: '⏹ Применить на этом',
     eQuitDone: '✅ Текущие результаты применены',
     kHintElim: '⌨ 1-4 (можно цифровой блок): выбрать карточку   Backspace: назад',
-    tier_top: 'Топ',
-    tier_mid: 'Середина',
-    tier_low: 'Ниже',
-    tier_bottom: 'Дно'
+    tier_top: 'Хочу сейчас',
+    tier_mid: 'Куплю по скидке',
+    tier_low: 'Может, когда-нибудь',
+    tier_bottom: 'Скорее не нужно'
   },
   pt: {
     raidAppear: '⚡ Um invasor apareceu! O desafiante está à direita',
@@ -2746,10 +2746,10 @@ var FLOW7_ADD = {
     eQuit: '⏹ Aplicar até aqui',
     eQuitDone: '✅ Resultados até aqui aplicados',
     kHintElim: '⌨ 1-4 (teclado numérico OK): escolher carta   Backspace: voltar',
-    tier_top: 'Topo',
-    tier_mid: 'Meio',
-    tier_low: 'Baixo',
-    tier_bottom: 'Fundo'
+    tier_top: 'Quero agora',
+    tier_mid: 'Compro na promoção',
+    tier_low: 'Talvez um dia',
+    tier_bottom: 'Provavelmente não'
   },
   de: {
     raidAppear: '⚡ Ein Herausforderer erscheint! Er steht rechts',
@@ -2797,10 +2797,10 @@ var FLOW7_ADD = {
     eQuit: '⏹ Bis hier übernehmen',
     eQuitDone: '✅ Bisherige Ergebnisse übernommen',
     kHintElim: '⌨ 1-4 (Ziffernblock OK): Karte wählen   Backspace: zurück',
-    tier_top: 'Spitze',
-    tier_mid: 'Mitte',
-    tier_low: 'Unten',
-    tier_bottom: 'Ganz unten'
+    tier_top: 'Will ich jetzt',
+    tier_mid: 'Kaufe im Sale',
+    tier_low: 'Vielleicht irgendwann',
+    tier_bottom: 'Eher nicht'
   }
 };
 (function(){
@@ -2828,7 +2828,7 @@ var FLOW8_ADD = {
     hw5t: '⑥ 仕上げ（好きなものだけ）',
     hw5d: '「中位を整える」は上位に入らなかったものを4本ずつ比べて並べます。「最弱決定戦」は一番いらないものを選び続けて最弱を決めます。どちらも途中でやめてOK。',
     hw6t: '⑦ 結果を確認・微調整',
-    hw6d: '上位／中位／下位／最下位に分かれた結果が出ます。⠿をドラッグして手で直せます。セール中・買い時・Steam最安値も表示されます。',
+    hw6d: '「今すぐ欲しい／セールなら買う／いつか買うかも／たぶんいらない」に分かれた結果が出ます。⠿をドラッグして手で直せます。セール中・買い時・Steam最安値も表示されます。',
     hw7t: '⑧ Steamに反映',
     hw7d: '初回だけブックマークを1つ作れば、あとは「Steamを開く」→ブックマークを押すだけで、ウィッシュリストの並びが入れ替わります（パソコンのブラウザで行います）。',
     hwTipsTitle: '💡 知っておくと便利',
@@ -2855,7 +2855,7 @@ var FLOW8_ADD = {
     hw5t: '6. Finishing touches (optional)',
     hw5d: '"Sort the middle" compares the games that missed the top, 4 at a time. "Find the weakest" keeps picking the one you want least until the weakest is decided. You can stop either one midway.',
     hw6t: '7. Check and fine-tune',
-    hw6d: 'Your results are split into Top / Middle / Lower / Bottom. Drag ⠿ to fix anything by hand. Sales, good-deal badges and Steam lowest prices are shown too.',
+    hw6d: 'Your results are split into Want it now / Buy on sale / Maybe someday / Probably skip. Drag ⠿ to fix anything by hand. Sales, good-deal badges and Steam lowest prices are shown too.',
     hw7t: '8. Apply to Steam',
     hw7d: 'Make one bookmark the first time. After that, just press "Open Steam" and click the bookmark to reorder your wishlist (on a computer browser).',
     hwTipsTitle: '💡 Good to know',
@@ -2882,7 +2882,7 @@ var FLOW8_ADD = {
     hw5t: '⑥ 收尾（可选）',
     hw5d: '“整理中位”把没进上位的游戏每 4 款比较排序。“最弱决定战”不断选出最不想要的，决出最弱。两者都可以中途停止。',
     hw6t: '⑦ 查看结果并微调',
-    hw6d: '结果会分为上位／中位／下位／最下位。拖动 ⠿ 可以手动调整，也会显示折扣、入手时机和 Steam 史低价。',
+    hw6d: '结果会分为“现在就想要／打折就买／也许以后／大概不要了”。拖动 ⠿ 可以手动调整，也会显示折扣、入手时机和 Steam 史低价。',
     hw7t: '⑧ 应用到 Steam',
     hw7d: '首次只需创建一个书签，之后只要“打开 Steam”再点击书签，愿望单顺序就会更新（需在电脑浏览器上操作）。',
     hwTipsTitle: '💡 实用提示',
@@ -2909,7 +2909,7 @@ var FLOW8_ADD = {
     hw5t: '6. Доводка (по желанию)',
     hw5d: '«Упорядочить середину» сравнивает по 4 игры, не попавшие в топ. «Найти самую слабую» раз за разом выбирает наименее желанную, пока не останется одна. Обе можно прервать на полпути.',
     hw6t: '7. Проверка и подстройка',
-    hw6d: 'Результат делится на Топ / Середину / Ниже / Дно. Перетаскивайте ⠿, чтобы поправить вручную. Также видны скидки, выгодные моменты и минимальные цены в Steam.',
+    hw6d: 'Результат делится на «Хочу сейчас» / «Куплю по скидке» / «Может, когда-нибудь» / «Скорее не нужно». Перетаскивайте ⠿, чтобы поправить вручную. Также видны скидки, выгодные моменты и минимальные цены в Steam.',
     hw7t: '8. Применить в Steam',
     hw7d: 'В первый раз создайте одну закладку. Потом просто нажмите «Открыть Steam» и закладку — порядок списка обновится (в браузере на компьютере).',
     hwTipsTitle: '💡 Полезно знать',
@@ -2936,7 +2936,7 @@ var FLOW8_ADD = {
     hw5t: '6. Acabamento (opcional)',
     hw5d: '"Organizar o meio" compara de 4 em 4 os jogos que ficaram fora do topo. "Achar o mais fraco" escolhe sempre o que você menos quer até sobrar o mais fraco. Dá para parar qualquer um no meio.',
     hw6t: '7. Confira e ajuste',
-    hw6d: 'O resultado é dividido em Topo / Meio / Baixo / Fundo. Arraste ⠿ para ajustar à mão. Promoções, hora de comprar e menor preço da Steam também aparecem.',
+    hw6d: 'O resultado é dividido em Quero agora / Compro na promoção / Talvez um dia / Provavelmente não. Arraste ⠿ para ajustar à mão. Promoções, hora de comprar e menor preço da Steam também aparecem.',
     hw7t: '8. Aplicar na Steam',
     hw7d: 'Crie um favorito só na primeira vez. Depois é só apertar "Abrir a Steam" e clicar no favorito para reordenar sua lista (no navegador do computador).',
     hwTipsTitle: '💡 Bom saber',
@@ -2963,7 +2963,7 @@ var FLOW8_ADD = {
     hw5t: '6. Feinschliff (optional)',
     hw5d: '„Mittelfeld ordnen“ vergleicht die Spiele außerhalb der Spitze zu viert. „Das Schwächste finden“ wählt immer das unerwünschteste, bis das schwächste feststeht. Beides kannst du mittendrin beenden.',
     hw6t: '7. Prüfen und anpassen',
-    hw6d: 'Das Ergebnis ist in Spitze / Mitte / Unten / Ganz unten aufgeteilt. Zieh ⠿, um von Hand zu korrigieren. Rabatte, Kauftipps und Steam-Tiefstpreise werden ebenfalls angezeigt.',
+    hw6d: 'Das Ergebnis ist in „Will ich jetzt“ / „Kaufe im Sale“ / „Vielleicht irgendwann“ / „Eher nicht“ aufgeteilt. Zieh ⠿, um von Hand zu korrigieren. Rabatte, Kauftipps und Steam-Tiefstpreise werden ebenfalls angezeigt.',
     hw7t: '8. In Steam übernehmen',
     hw7d: 'Lege beim ersten Mal ein Lesezeichen an. Danach einfach „Steam öffnen“ drücken und das Lesezeichen klicken – schon ist die Wunschliste neu sortiert (im Browser am Computer).',
     hwTipsTitle: '💡 Gut zu wissen',
