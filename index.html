@@ -83,6 +83,10 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
 .footer-links{font-size:.75rem;color:var(--text2);text-align:center}
 .footer-links a{color:var(--text2);text-decoration:none}
 .footer-links a:hover{color:var(--accent2)}
+.footer-links .ft-sep{margin:0 6px;opacity:.6}
+.follow-note{font-size:.72rem;color:var(--text2);text-align:center;width:100%;margin:2px 0 8px}
+.follow-note a{color:var(--accent2);text-decoration:none}
+.follow-note a:hover{text-decoration:underline}
 
 #screen-battle{flex-direction:column}
 .progress-bar-wrap{background:linear-gradient(to bottom,#1e2d3d,#192638);border-bottom:1px solid #000;padding:8px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -533,6 +537,10 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
   <div class="ad-slot" data-slot="start"></div>
   <div class="footer-links">
     <a href="privacy.html" target="_blank" rel="noopener" id="txt-footer-privacy">プライバシーポリシー</a>
+    <span class="ft-sep">·</span>
+    <a href="https://x.com/4545nameless" target="_blank" rel="noopener" data-g="ftFollow">X でフォロー</a>
+    <span class="ft-sep">·</span>
+    <a href="mailto:4545nameless.contact@gmail.com" data-g="ftContact">お問い合わせ</a>
   </div>
 </div>
 
@@ -728,6 +736,7 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
     <button class="btn btn-dark" onclick="backToBattle()" id="txt-btn-tobattle">⬅ 対戦に戻る</button>
   </div>
   <p style="font-size:.72rem;color:var(--text2);text-align:center;width:100%;" id="txt-popup-note">※ シェアする際はポップアップの許可が必要です</p>
+  <p class="follow-note"><span data-g="rFollow">更新情報は X でお知らせしています</span> <a href="https://x.com/4545nameless" target="_blank" rel="noopener">@4545nameless</a></p>
   <div id="result-capture">
     <div class="result-header">
       <h2 id="result-title">🏆 ランキング結果</h2>
@@ -3512,6 +3521,22 @@ var FLOW17_ADD = {
   for (var lg in FLOW16_ADD) {
     if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
     for (var k in FLOW16_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW16_ADD[lg][k];
+  }
+})();
+
+// フッターと結果画面の「X でフォロー」「お問い合わせ」
+var FLOW18_ADD = {
+  ja: { ftFollow: 'X でフォロー', ftContact: 'お問い合わせ', rFollow: '更新情報は X でお知らせしています' },
+  en: { ftFollow: 'Follow on X', ftContact: 'Contact', rFollow: 'Updates are posted on X' },
+  zh: { ftFollow: '在 X 上关注', ftContact: '联系我们', rFollow: '更新信息会在 X 上发布' },
+  ru: { ftFollow: 'Подписаться в X', ftContact: 'Связаться', rFollow: 'Новости об обновлениях — в X' },
+  pt: { ftFollow: 'Siga no X', ftContact: 'Contato', rFollow: 'As novidades são publicadas no X' },
+  de: { ftFollow: 'Auf X folgen', ftContact: 'Kontakt', rFollow: 'Neuigkeiten gibt es auf X' }
+};
+(function(){
+  for (var lg in FLOW18_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW18_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW18_ADD[lg][k];
   }
 })();
 
