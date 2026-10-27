@@ -1138,7 +1138,7 @@ var LANGS = {
     streak: 'win streak',
     battles: 'battles',
     total: 'Total battles',
-    games: 'games',
+    games: ' games',
     confHigh: 'High', confMid: 'Medium', confLow: 'Low (few battles)',
     resultTitle: '🏆 Ranking Results (Round {r} Complete)',
     resultSub: 'Total battles: {b} | Accuracy: {a} | {n} games',
@@ -1288,7 +1288,7 @@ var LANGS = {
     streak: 'побед подряд',
     battles: 'сравнений',
     total: 'Всего сравнений',
-    games: 'игр',
+    games: ' игр',
     confHigh: 'Высокая', confMid: 'Средняя', confLow: 'Низкая (мало сравнений)',
     resultTitle: '🏆 Результаты рейтинга (Раунд {r} завершён)',
     resultSub: 'Сравнений: {b} | Точность: {a} | {n} игр',
@@ -1363,7 +1363,7 @@ var LANGS = {
     streak: 'vitórias seguidas',
     battles: 'batalhas',
     total: 'Total de batalhas',
-    games: 'jogos',
+    games: ' jogos',
     confHigh: 'Alta', confMid: 'Média', confLow: 'Baixa (poucas batalhas)',
     resultTitle: '🏆 Resultado do Ranking (Rodada {r} Completa)',
     resultSub: 'Total de batalhas: {b} | Precisão: {a} | {n} jogos',
@@ -1438,7 +1438,7 @@ var LANGS = {
     streak: 'Siegesserie',
     battles: 'Kämpfe',
     total: 'Kämpfe gesamt',
-    games: 'Spiele',
+    games: ' Spiele',
     confHigh: 'Hoch', confMid: 'Mittel', confLow: 'Niedrig (wenige Kämpfe)',
     resultTitle: '🏆 Ranglistenergebnis (Runde {r} abgeschlossen)',
     resultSub: 'Kämpfe gesamt: {b} | Genauigkeit: {a} | {n} Spiele',
@@ -6287,11 +6287,38 @@ function choose(idx){
   state.streak=(state.lastWinnerId===wId)?state.streak+1:1;
   state.lastWinnerId=wId;
   wCard.classList.add('winner');
+  var floor=duelFloor(ids);
   updateElo(wId,lId,'win');
+  duelKeepTop(ids,floor);
+  // 乱入して負けたゲームは点を下げない（仕上げで決めた中位・下位の並びを崩さない）
+  if(ids[2]&&lId===ids[1]&&state.flow&&state.flow.phase==='duel'){state.scores[lId].points=state.history[state.history.length-1].lPoints;}
   if(state.flow&&state.flow.phase==='tour'&&state.flow.tour){state.flow.tour.rec.push({w:wId,l:lId});}
   if(ids[2]&&state.flow&&state.flow.phase==='duel'){raidAfter(ids,wId,state.history[state.history.length-1]);}
   state.totalBattles++;state.queueIdx++;
   setTimeout(function(){wCard.classList.remove('winner');renderPair();renderSidebar();saveState();},380);
+}
+
+// 上位の1対1は、上位の中だけの並べ替えにする。
+// 仕上げのあとは上位と中位の点差が小さく、1戦で±16点動くと、戦っていない中位の上に食い込んで並びが崩れるため。
+// 試合の前に「上位の外で一番高い点」を測っておき（duelFloor）、試合のあと上位のゲームがそれを下回ったら、すぐ上に戻す（duelKeepTop）
+function duelFloor(ids){
+  var f=state.flow;
+  if(!f||f.phase!=='duel'||!f.topN||!ids||ids[2]) return null;
+  var ranked=getRankedGames(),n=0;
+  for(var i=0;i<ranked.length;i++){
+    var id=ranked[i].appid;
+    if(id===ids[0]||id===ids[1]){ n++; continue; }
+    if(n>=f.topN) return state.scores[id].points;
+    n++;
+  }
+  return null;
+}
+function duelKeepTop(ids,floor){
+  if(floor===null||floor===undefined) return;
+  for(var i=0;i<2;i++){
+    var sc=state.scores[ids[i]];
+    if(sc&&sc.points<=floor) sc.points=floor+0.01;
+  }
 }
 
 function chooseBoth(){
@@ -6301,8 +6328,10 @@ function chooseBoth(){
   var idA=ids[0],idB=ids[1];
   state.history.push({type:'both',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
   addPair(idA,idB,1);
+  var floor=duelFloor(ids);
   state.scores[idA].points+=16;state.scores[idA].battles++;
   state.scores[idB].points+=16;state.scores[idB].battles++;
+  duelKeepTop(ids,floor);
   state.streak=0;state.lastWinnerId=null;
   state.totalBattles++;state.queueIdx++;
   renderPair();renderSidebar();saveState();
@@ -6315,8 +6344,10 @@ function chooseNeither(){
   var idA=ids[0],idB=ids[1];
   state.history.push({type:'neither',wId:idA,lId:idB,wPoints:state.scores[idA].points,lPoints:state.scores[idB].points,wWins:state.scores[idA].wins,lLosses:state.scores[idB].losses,wBattles:state.scores[idA].battles,lBattles:state.scores[idB].battles,queueIdx:state.queueIdx,streak:state.streak});
   addPair(idA,idB,1);
+  var floor=duelFloor(ids);
   state.scores[idA].points-=16;state.scores[idA].battles++;
   state.scores[idB].points-=16;state.scores[idB].battles++;
+  duelKeepTop(ids,floor);
   state.streak=0;state.lastWinnerId=null;
   state.totalBattles++;state.queueIdx++;
   renderPair();renderSidebar();saveState();
@@ -6652,6 +6683,15 @@ function prepareShareClone(doc,ranked){
   var more=s.n-SHARE_ROWS;
   foot.innerHTML=(more>0?'<span>'+esc(gf('shImgMore',{m:more}))+'</span>':'')+'<b>🎮 Steam Wishlist Ranker</b><span>'+esc(SITE_URL.replace(/^https?:\/\//,''))+'</span>';
   cap.appendChild(foot);
+  // html2canvas は box-shadow をうまく描けず、区切りの色線が四角や帯になって崩れるので、画像では線を border で描く
+  var st=doc.createElement('style');
+  st.textContent='.result-table-wrap{box-shadow:none!important}'+
+    '.result-table td:first-child{box-shadow:none!important}'+
+    'tr.tr-tier-top td:first-child{border-left:3px solid var(--gold)}'+
+    'tr.tr-tier-mid td:first-child{border-left:3px solid var(--accent2)}'+
+    'tr.tr-tier-low td:first-child{border-left:3px solid #55606d}'+
+    'tr.tr-tier-bottom td:first-child{border-left:3px solid var(--red)}';
+  doc.head.appendChild(st);
 }
 
 function shareToX(){
