@@ -87,6 +87,23 @@ export default {
       return json(r.data);
     }
 
+    // 名前入りの URL（/id/名前/）から SteamID64 を調べる（キー不要。プロフィールの XML を読む。1時間キャッシュ）
+    if (path === '/resolve') {
+      const name = url.searchParams.get('vanity') || '';
+      if (!/^[A-Za-z0-9_-]{2,64}$/.test(name)) return json({ error: 'vanity の形式が正しくありません' }, 400);
+      try {
+        const res = await fetch(`https://steamcommunity.com/id/${name}/?xml=1`, {
+          cf: { cacheEverything: true, cacheTtlByStatus: { '200-299': 3600, '300-599': 0 } },
+        });
+        const text = await res.text();
+        const m = text.match(/<steamID64>(\d{5,20})<\/steamID64>/);
+        if (!m) return json({ error: 'アカウントが見つかりません' }, 404);
+        return json({ steamid: m[1] });
+      } catch (e) {
+        return json({ error: 'Steam に接続できませんでした' }, 502);
+      }
+    }
+
     // ゲーム詳細取得（6時間キャッシュ。国と言語が URL に入るので、キャッシュも国・言語ごとに分かれる）
     if (path === '/appdetails') {
       const appid = url.searchParams.get('appid');

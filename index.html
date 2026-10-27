@@ -504,18 +504,16 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
     <h3 id="txt-card-title">Steam情報を入力</h3>
     <div class="input-group">
       <div class="input-label" id="txt-label-id">SteamID64</div>
-      <input class="steam-input" id="steam-id" type="text" placeholder="76561198XXXXXXXXX">
+      <input class="steam-input" id="steam-id" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://store.steampowered.com/wishlist/...">
       <div class="input-hint">
         <div class="hint-flex">
-          <span id="txt-hint-id">ウィッシュリストのURLの数字部分をコピー</span>
+          <span id="txt-hint-id">ウィッシュリストを開いて、アドレスバーのURLをそのまま貼り付け</span>
           <span class="hint-links">
-            <a class="chip ext" href="https://store.steampowered.com/" target="_blank" rel="noopener" data-g="btnOpenSteam">Steamを開く</a>
+            <a class="chip ext" href="https://store.steampowered.com/wishlist/" target="_blank" rel="noopener" data-g="btnOpenSteam">ウィッシュリストを開く</a>
             <button type="button" class="chip" onclick="openGuide('id')" data-g="btnGuide">📖 詳しい手順</button>
           </span>
         </div>
-        <div style="margin-top:4px;word-break:break-all;overflow-wrap:anywhere">
-          <span style="font-family:monospace;color:var(--text2)">store.steampowered.com/wishlist/profiles/</span><span class="hl">XXXXXXXXXXXXXXXX</span><span style="font-family:monospace;color:var(--text2)">/</span>
-        </div>
+        <div style="margin-top:4px" data-g="idOk">プロフィールのURLや SteamID64（数字）でもOK</div>
       </div>
     </div>
     <div class="input-group">
@@ -835,11 +833,11 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
       </div></div>
       <div class="guide-step"><span class="guide-num">2</span><div class="guide-step-body">
         <p data-g="gId2"></p>
-        <div class="mock" aria-hidden="true"><div class="mock-url"><span>&#128274;</span><span>store.steampowered.com/wishlist/profiles/<span class="mock-hl">76561198XXXXXXXXX</span>/</span></div><div class="mock-cap" data-g="gIdHere"></div></div>
+        <div class="mock" aria-hidden="true"><div class="mock-url"><span>&#128274;</span><span class="mock-hl">store.steampowered.com/wishlist/profiles/76561198XXXXXXXXX/</span></span></div><div class="mock-cap" data-g="gIdHere"></div></div>
       </div></div>
       <div class="guide-step"><span class="guide-num">3</span><div class="guide-step-body">
         <p data-g="gId3"></p>
-        <div class="guide-note"><span data-g="gIdNote"></span><br><a class="chip ext" style="margin-top:6px" href="https://steamid.io/" target="_blank" rel="noopener">steamid.io</a></div>
+        <div class="guide-note"><span data-g="gIdNote"></span></div>
       </div></div>
 
 
@@ -3540,6 +3538,118 @@ var FLOW18_ADD = {
   }
 })();
 
+// 入力欄：SteamID64 の数字ではなく、ウィッシュリスト（またはプロフィール）の URL を貼ってもらう
+var FLOW19_ADD = {
+  ja: {
+    idLabel: 'ウィッシュリストのURL',
+    idHint: 'ウィッシュリストを開いて、アドレスバーのURLをそのまま貼り付け',
+    idOk: 'プロフィールのURLや SteamID64（数字）でもOK',
+    btnOpenSteam: 'ウィッシュリストを開く',
+    errIdEmpty: 'ウィッシュリストのURLを貼り付けてください',
+    errIdBad: 'URLからSteamのアカウントを読み取れませんでした。ウィッシュリストかプロフィールのURLを貼り付けてください',
+    errVanity: '「/id/名前/」のURLからアカウントを見つけられませんでした。URLが合っているか確かめてください',
+    fetchResolve: 'アカウントを確認しています…',
+    gSecId: '① ウィッシュリストのURLの貼り方',
+    gId1: 'Steamにログインしているブラウザで、上の「ウィッシュリストを開く」を押します。自分のウィッシュリストが開きます（ログインの画面が出たら、ログインしてからもう一度押してください）。',
+    gId2: 'アドレスバーのURLを、まるごとコピーします。',
+    gIdHere: '↑ 数字のURLでも、「/id/名前/」のURLでもOK',
+    gId3: '上の「ウィッシュリストのURL」欄に貼り付けて、読み込みます。',
+    gIdNote: 'ウィッシュリストが非公開だと読み込めません。読み込めないときは、Steamのプライバシー設定で「ゲームの詳細」を公開にしてください。',
+    idPrivacy: '※ 読み取ったSteamID64はこのブラウザ内にのみ保存されます。ウィッシュリストの取得（「/id/名前/」のURLなら、アカウントの確認も）のため、中継サーバー（Cloudflare Workers）を経由してSteamに送信されます。'
+  },
+  en: {
+    idLabel: 'Wishlist URL',
+    idHint: 'Open your wishlist and paste the URL from the address bar',
+    idOk: 'A profile URL or SteamID64 (numbers) works too',
+    btnOpenSteam: 'Open my wishlist',
+    errIdEmpty: 'Please paste your wishlist URL',
+    errIdBad: 'Couldn’t find a Steam account in that URL. Please paste your wishlist or profile URL',
+    errVanity: 'Couldn’t find the account for that "/id/name/" URL. Please check the URL',
+    fetchResolve: 'Looking up your account…',
+    gSecId: '① How to paste your wishlist URL',
+    gId1: 'In a browser where you’re logged in to Steam, press "Open my wishlist" above. Your own wishlist opens (if you see a login page, log in and press it again).',
+    gId2: 'Copy the whole URL from the address bar.',
+    gIdHere: '↑ Either a number URL or a "/id/name/" URL is fine',
+    gId3: 'Paste it into the "Wishlist URL" field above and load.',
+    gIdNote: 'Private wishlists can’t be loaded. If it doesn’t load, set "Game details" to Public in your Steam privacy settings.',
+    idPrivacy: '* The SteamID64 read from your URL is stored only in this browser. To load your wishlist (and to look up your account for "/id/name/" URLs), it is sent to Steam through a relay server (Cloudflare Workers).'
+  },
+  zh: {
+    idLabel: '愿望单网址',
+    idHint: '打开你的愿望单，把地址栏的网址直接粘贴进来',
+    idOk: '个人资料网址或 SteamID64（数字）也可以',
+    btnOpenSteam: '打开我的愿望单',
+    errIdEmpty: '请粘贴你的愿望单网址',
+    errIdBad: '无法从网址中识别 Steam 账号。请粘贴愿望单或个人资料的网址',
+    errVanity: '找不到“/id/名字/”网址对应的账号。请确认网址是否正确',
+    fetchResolve: '正在确认账号…',
+    gSecId: '① 如何粘贴愿望单网址',
+    gId1: '在已登录 Steam 的浏览器中，点击上方的“打开我的愿望单”，即可打开你自己的愿望单（如果出现登录页面，请登录后再点一次）。',
+    gId2: '复制地址栏中的完整网址。',
+    gIdHere: '↑ 数字网址或“/id/名字/”网址都可以',
+    gId3: '粘贴到上方的“愿望单网址”栏中，然后读取。',
+    gIdNote: '愿望单设为私密时无法读取。读取失败时，请在 Steam 的隐私设置中把“游戏详情”设为公开。',
+    idPrivacy: '※ 从网址中读取的 SteamID64 仅保存在此浏览器中。为了获取愿望单（如果是“/id/名字/”网址，还需确认账号），它会经由中转服务器（Cloudflare Workers）发送到 Steam。'
+  },
+  ru: {
+    idLabel: 'Ссылка на список желаемого',
+    idHint: 'Откройте свой список желаемого и вставьте адрес из адресной строки',
+    idOk: 'Подойдёт и ссылка на профиль или SteamID64 (цифры)',
+    btnOpenSteam: 'Открыть мой список',
+    errIdEmpty: 'Вставьте ссылку на список желаемого',
+    errIdBad: 'Не удалось найти аккаунт Steam в этой ссылке. Вставьте ссылку на список желаемого или профиль',
+    errVanity: 'Не удалось найти аккаунт по ссылке «/id/имя/». Проверьте ссылку',
+    fetchResolve: 'Проверяем аккаунт…',
+    gSecId: '① Как вставить ссылку на список желаемого',
+    gId1: 'В браузере, где вы вошли в Steam, нажмите «Открыть мой список» выше. Откроется ваш список желаемого (если появится страница входа, войдите и нажмите ещё раз).',
+    gId2: 'Скопируйте весь адрес из адресной строки.',
+    gIdHere: '↑ Подойдёт и ссылка с цифрами, и ссылка вида «/id/имя/»',
+    gId3: 'Вставьте его в поле «Ссылка на список желаемого» выше и загрузите.',
+    gIdNote: 'Скрытый список желаемого загрузить нельзя. Если не загружается, откройте «Сведения об играх» в настройках приватности Steam.',
+    idPrivacy: '* SteamID64 из ссылки хранится только в этом браузере. Для загрузки списка желаемого (а для ссылок «/id/имя/» — и для поиска аккаунта) он отправляется в Steam через промежуточный сервер (Cloudflare Workers).'
+  },
+  pt: {
+    idLabel: 'URL da lista de desejos',
+    idHint: 'Abra sua lista de desejos e cole o endereço da barra de endereços',
+    idOk: 'URL do perfil ou SteamID64 (números) também funcionam',
+    btnOpenSteam: 'Abrir minha lista',
+    errIdEmpty: 'Cole a URL da sua lista de desejos',
+    errIdBad: 'Não foi possível encontrar uma conta Steam nessa URL. Cole a URL da lista de desejos ou do perfil',
+    errVanity: 'Não foi possível encontrar a conta dessa URL "/id/nome/". Verifique a URL',
+    fetchResolve: 'Verificando a conta…',
+    gSecId: '① Como colar a URL da lista de desejos',
+    gId1: 'Em um navegador com login na Steam, toque em "Abrir minha lista" acima. Sua lista de desejos vai abrir (se aparecer a tela de login, entre e toque de novo).',
+    gId2: 'Copie o endereço inteiro da barra de endereços.',
+    gIdHere: '↑ Vale tanto a URL com números quanto a "/id/nome/"',
+    gId3: 'Cole no campo "URL da lista de desejos" acima e carregue.',
+    gIdNote: 'Listas privadas não podem ser carregadas. Se não carregar, deixe "Detalhes de jogos" como Público nas configurações de privacidade da Steam.',
+    idPrivacy: '* O SteamID64 lido da URL fica salvo apenas neste navegador. Para carregar sua lista (e, em URLs "/id/nome/", para encontrar a conta), ele é enviado à Steam por um servidor intermediário (Cloudflare Workers).'
+  },
+  de: {
+    idLabel: 'Wunschlisten-URL',
+    idHint: 'Öffne deine Wunschliste und füge die Adresse aus der Adressleiste ein',
+    idOk: 'Eine Profil-URL oder SteamID64 (Zahlen) geht auch',
+    btnOpenSteam: 'Meine Wunschliste öffnen',
+    errIdEmpty: 'Bitte füge die URL deiner Wunschliste ein',
+    errIdBad: 'In dieser URL wurde kein Steam-Konto gefunden. Bitte füge die URL deiner Wunschliste oder deines Profils ein',
+    errVanity: 'Zum Link „/id/name/“ wurde kein Konto gefunden. Bitte prüfe die URL',
+    fetchResolve: 'Konto wird geprüft…',
+    gSecId: '① So fügst du die Wunschlisten-URL ein',
+    gId1: 'Drücke in einem Browser, in dem du bei Steam angemeldet bist, oben auf „Meine Wunschliste öffnen“. Deine Wunschliste öffnet sich (erscheint die Anmeldeseite, melde dich an und drücke erneut).',
+    gId2: 'Kopiere die ganze Adresse aus der Adressleiste.',
+    gIdHere: '↑ Eine URL mit Zahlen oder mit „/id/name/“ – beides geht',
+    gId3: 'Füge sie oben im Feld „Wunschlisten-URL“ ein und lade.',
+    gIdNote: 'Private Wunschlisten können nicht geladen werden. Klappt es nicht, stelle „Spieldetails“ in den Steam-Privatsphäre-Einstellungen auf Öffentlich.',
+    idPrivacy: '* Die aus der URL gelesene SteamID64 wird nur in diesem Browser gespeichert. Zum Laden der Wunschliste (und bei „/id/name/“-URLs zum Finden des Kontos) wird sie über einen Relay-Server (Cloudflare Workers) an Steam gesendet.'
+  }
+};
+(function(){
+  for (var lg in FLOW19_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW19_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW19_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -3711,8 +3821,8 @@ function applyLang() {
   }
   setText('txt-subtitle', l.subtitle);
   setText('txt-card-title', l.cardTitle);
-  setText('txt-label-id', l.labelId);
-  setText('txt-hint-id', l.hintId);
+  setText('txt-label-id', gt('idLabel'));
+  setText('txt-hint-id', gt('idHint'));
   setText('txt-label-key', l.labelKey);
   setText('txt-key-link', l.keyLink);
   setText('txt-domain', l.domain);
@@ -3910,14 +4020,40 @@ var SHARE_TAIL_EN=[
 var state={games:[],scores:{},queue:[],queueIdx:0,roundNo:1,totalBattles:0,history:[],unknownQueue:[],pairHist:{},streak:0,lastWinnerId:null};
 var sortQueue=[],sortIdx=0,sortResults={};
 
+// 入力欄の中身から SteamID64 を取り出す。ウィッシュリスト／プロフィールの URL、数字だけ、名前だけを受け付ける
+// 名前（/id/名前/）は Worker の /resolve で SteamID64 に変える
+function parseSteamInput(v){
+  v=(v||'').trim();
+  if(!v) return null;
+  if(/^\d{5,20}$/.test(v)) return {id:v};
+  var m=v.match(/\/profiles\/(\d{5,20})/);
+  if(m) return {id:m[1]};
+  m=v.match(/\/id\/([A-Za-z0-9_-]{2,64})/);
+  if(m) return {vanity:m[1]};
+  if(/^[A-Za-z0-9_-]{2,64}$/.test(v)) return {vanity:v};
+  return null;
+}
+
 function fetchWishlist(){
-  var steamId=document.getElementById('steam-id').value.trim();
-  if(!steamId){setStatus(t('fetchErrId'),'red');return;}
-  if(!/^\d+$/.test(steamId)){setStatus(t('fetchErrIdNum'),'red');return;}
+  var raw=document.getElementById('steam-id').value.trim();
+  if(!raw){setStatus(gt('errIdEmpty'),'red');return;}
+  var parsed=parseSteamInput(raw);
+  if(!parsed){setStatus(gt('errIdBad'),'red');return;}
+  var steamId=parsed.id||'';
   var btn=document.getElementById('btn-fetch');
   btn.disabled=true;showProgress(true);setProgress(0);
   (async function(){
     try{
+      if(!steamId){
+        setStatus(gt('fetchResolve'),'info');
+        var rv=null;
+        try{
+          var rvRes=await fetch(WORKER_URL+'/resolve?vanity='+encodeURIComponent(parsed.vanity));
+          if(rvRes.ok) rv=await rvRes.json();
+        }catch(e){}
+        if(!rv||!rv.steamid||!/^\d{5,20}$/.test(rv.steamid)) throw new Error(gt('errVanity'));
+        steamId=rv.steamid;
+      }
       setStatus(t('fetchStart'),'info');
       var wrRes=await fetch(WORKER_URL+'/wishlist?steamid='+encodeURIComponent(steamId));
       if(!wrRes.ok)throw new Error(t('fetchErrFail')+'('+wrRes.status+')');
