@@ -3493,6 +3493,21 @@ var FLOW16_ADD = {
     bmMsgCatFail: 'Die Reihenfolge wurde übernommen, aber die Kategorien konnten nicht vergeben werden: '
   }
 };
+// 取得し直したときの「前回のランキングがあります」
+var FLOW17_ADD = {
+  ja: { rsTitleDone: '前回のランキングがあります', rsCount: '{n}本', rsSubFresh: '価格とセール情報は最新になります。', rsSubNew: '新しく追加した{a}本は、Steamで置いてある位置に入ります。', rsSubGone: 'ウィッシュリストからなくなった{r}本は外します。', rsBtnKeep: '前回のランキングで結果を見る', rsBtnReset: '最初からやり直す', rsTitleMid: '途中のランキングがあります', rsSubMid: '最初からやり直すと、途中までの進み具合は消えます。', rsBtnResume: '前回の続きから', rsTitleOther: '別のSteamIDのランキングが保存されています', rsSubOther: '最初からやり直すと、保存されているランキングは消えます。', rsBtnCancel: 'やめる', rsCanceled: '読み込みをやめました。保存されているランキングはそのままです。' },
+  en: { rsTitleDone: 'You have a previous ranking', rsCount: '{n} games', rsSubFresh: 'Prices and sales will be updated. ', rsSubNew: '{a} newly added games go where you placed them on Steam. ', rsSubGone: '{r} games no longer on your wishlist will be removed.', rsBtnKeep: 'Show results with previous ranking', rsBtnReset: 'Start over', rsTitleMid: 'You have an unfinished ranking', rsSubMid: 'Starting over will erase your progress.', rsBtnResume: 'Continue where I left off', rsTitleOther: 'A ranking for a different SteamID is saved', rsSubOther: 'Starting over will erase the saved ranking.', rsBtnCancel: 'Cancel', rsCanceled: 'Loading canceled. Your saved ranking is unchanged.' },
+  zh: { rsTitleDone: '有上次的排名', rsCount: '{n} 款', rsSubFresh: '价格和促销信息会更新为最新。', rsSubNew: '新添加的 {a} 款会放在你在 Steam 上放置的位置。', rsSubGone: '已不在愿望单中的 {r} 款会被移除。', rsBtnKeep: '用上次的排名查看结果', rsBtnReset: '从头开始', rsTitleMid: '有未完成的排名', rsSubMid: '从头开始会清除目前的进度。', rsBtnResume: '从上次继续', rsTitleOther: '保存着其他 SteamID 的排名', rsSubOther: '从头开始会清除保存的排名。', rsBtnCancel: '取消', rsCanceled: '已取消读取。保存的排名保持不变。' },
+  ru: { rsTitleDone: 'Есть предыдущий рейтинг', rsCount: '{n} игр', rsSubFresh: 'Цены и скидки будут обновлены. ', rsSubNew: 'Новые игры ({a}) встанут туда, где они стоят в Steam. ', rsSubGone: 'Игры, которых больше нет в списке ({r}), будут удалены.', rsBtnKeep: 'Показать результат с прежним рейтингом', rsBtnReset: 'Начать заново', rsTitleMid: 'Есть незаконченный рейтинг', rsSubMid: 'Если начать заново, прогресс будет удалён.', rsBtnResume: 'Продолжить', rsTitleOther: 'Сохранён рейтинг другого SteamID', rsSubOther: 'Если начать заново, сохранённый рейтинг будет удалён.', rsBtnCancel: 'Отмена', rsCanceled: 'Загрузка отменена. Сохранённый рейтинг не изменён.' },
+  pt: { rsTitleDone: 'Você tem um ranking anterior', rsCount: '{n} jogos', rsSubFresh: 'Preços e promoções serão atualizados. ', rsSubNew: '{a} jogos novos entram onde você os colocou na Steam. ', rsSubGone: '{r} jogos que saíram da lista serão removidos.', rsBtnKeep: 'Ver resultado com o ranking anterior', rsBtnReset: 'Começar de novo', rsTitleMid: 'Você tem um ranking incompleto', rsSubMid: 'Começar de novo apaga o progresso.', rsBtnResume: 'Continuar de onde parei', rsTitleOther: 'Há um ranking salvo de outro SteamID', rsSubOther: 'Começar de novo apaga o ranking salvo.', rsBtnCancel: 'Cancelar', rsCanceled: 'Carregamento cancelado. O ranking salvo não foi alterado.' },
+  de: { rsTitleDone: 'Es gibt ein früheres Ranking', rsCount: '{n} Spiele', rsSubFresh: 'Preise und Angebote werden aktualisiert. ', rsSubNew: '{a} neu hinzugefügte Spiele kommen an die Stelle, an der sie bei Steam stehen. ', rsSubGone: '{r} Spiele, die nicht mehr auf der Wunschliste sind, werden entfernt.', rsBtnKeep: 'Ergebnis mit früherem Ranking zeigen', rsBtnReset: 'Neu beginnen', rsTitleMid: 'Es gibt ein unfertiges Ranking', rsSubMid: 'Beim Neubeginn geht der Fortschritt verloren.', rsBtnResume: 'Weitermachen', rsTitleOther: 'Ein Ranking einer anderen SteamID ist gespeichert', rsSubOther: 'Beim Neubeginn wird das gespeicherte Ranking gelöscht.', rsBtnCancel: 'Abbrechen', rsCanceled: 'Laden abgebrochen. Dein gespeichertes Ranking bleibt unverändert.' }
+};
+(function(){
+  for (var lg in FLOW17_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW17_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW17_ADD[lg][k];
+  }
+})();
 (function(){
   for (var lg in FLOW16_ADD) {
     if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
@@ -3952,10 +3967,8 @@ function fetchWishlist(){
       games.forEach(function(g){ var m=wmeta[g.appid]; if(m){ g.wp=m.p; g.wd=m.d; } });
       setProgress(100);
       setStatus(fmt('fetchDone',{n:games.length}),'green');
-      localStorage.setItem('swr_steamid',steamId);
       try{localStorage.removeItem('swr_apikey');}catch(e){}
-      initState(games);
-      setTimeout(beginFlow,500);
+      afterFetch(steamId,games);
     }catch(e){
       setStatus('❌ '+e.message,'red');
       showProgress(false);
@@ -3965,6 +3978,137 @@ function fetchWishlist(){
 }
 
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
+
+// 取得が終わったあと。保存してあるランキングがあれば、引き継ぐかやり直すかを聞く
+function afterFetch(steamId,games){
+  var saved=readSavedState(),prevSid=null;
+  try{ prevSid=localStorage.getItem('swr_steamid'); }catch(e){}
+  var startFresh=function(){
+    hideFlowOverlay();
+    try{ localStorage.setItem('swr_steamid',steamId); }catch(e){}
+    initState(games);
+    setTimeout(beginFlow,300);
+  };
+  var cancel=function(){
+    hideFlowOverlay();
+    showProgress(false);
+    var b=document.getElementById('btn-fetch'); if(b) b.disabled=false;
+    setStatus(gt('rsCanceled'),'info');
+  };
+  if(!saved||!savedHasProgress(saved)){ startFresh(); return; }
+  var d=savedDateText(saved),head=(d?d+'・':'')+gf('rsCount',{n:saved.games.length});
+  var resetBtn={label:gt('rsBtnReset'),cls:'btn-dark',fn:startFresh};
+  if(prevSid&&prevSid!==steamId){
+    // 消える操作を Enter（一番左）にしない
+    showFlowOverlay(gt('rsTitleOther'),head+'　'+gt('rsSubOther'),[{label:gt('rsBtnCancel'),cls:'btn-dark',fn:cancel},resetBtn],'');
+    return;
+  }
+  if(savedIsDone(saved)){
+    // 引き継いだら何が変わるかを、先に数えて見せる
+    var have={},i,nNew=0,nGone=0,fresh={};
+    for(i=0;i<games.length;i++) fresh[games[i].appid]=1;
+    for(i=0;i<saved.games.length;i++){ have[saved.games[i].appid]=1; if(!fresh[saved.games[i].appid]) nGone++; }
+    for(i=0;i<games.length;i++){ if(!have[games[i].appid]) nNew++; }
+    var sub=head+'　'+gt('rsSubFresh')+(nNew?gf('rsSubNew',{a:nNew}):'')+(nGone?gf('rsSubGone',{r:nGone}):'');
+    showFlowOverlay(gt('rsTitleDone'),sub,[
+      {label:gt('rsBtnKeep'),cls:'btn-steam',fn:function(){
+        hideFlowOverlay();
+        try{ localStorage.setItem('swr_steamid',steamId); }catch(e){}
+        mergeSavedRanking(saved,games);
+        saveAndGoResult();
+        fetchLows();
+      }},
+      resetBtn
+    ],'');
+    return;
+  }
+  showFlowOverlay(gt('rsTitleMid'),head+'　'+gt('rsSubMid'),[
+    {label:gt('rsBtnResume'),cls:'btn-steam',fn:function(){ hideFlowOverlay(); state=saved; setTimeout(resumeFlow,100); }},
+    resetBtn
+  ],'');
+}
+
+// ---------- 取り直したウィッシュリストと、保存してあるランキングをつなぐ ----------
+function readSavedState(){
+  try{ var s=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); return (s&&s.games&&s.games.length&&s.scores)?s:null; }
+  catch(e){ return null; }
+}
+// 並べ終わっているか（結果画面まで行った）
+function savedIsDone(s){ return !!(s.flow&&s.flow.phase==='done'); }
+// 進み具合があるか（振り分けの最初の画面のまま何もしていないものは数えない）
+function savedHasProgress(s){ return savedIsDone(s)||(s.totalBattles>0)||!!(s.flow&&s.flow.phase&&s.flow.phase!=='grid'); }
+function savedDateText(s){
+  if(!s.savedAt) return '';
+  try{ return new Date(s.savedAt).toLocaleDateString(DATE_LOCALES[currentLang]||'ja-JP',{month:'short',day:'numeric'}); }catch(e){ return ''; }
+}
+
+// 前回の順位と区切りを残したまま、価格などの情報を新しくする。
+// 新しく追加したゲームは、Steam のウィッシュリストで置いてある位置（すぐ下の既存ゲームの直前）に入れ、そのゲームと同じ区切りにする
+// （Steam で一番下のままのものは、最下位のかたまりの手前に「下位」として入れる）。
+// ウィッシュリストからなくなったゲームは外す。戻り値は {added, removed}
+function mergeSavedRanking(saved,games){
+  state=saved;
+  var f=state.flow||{},i,id;
+  var fresh={},freshIds={};
+  for(i=0;i<games.length;i++){ fresh[games[i].appid]=games[i]; }
+  var ranked=getRankedGames(),tiers=resultTiers(ranked.length),tierOf={},keep=[],exist={},removed=0;
+  for(i=0;i<ranked.length;i++){
+    id=ranked[i].appid; tierOf[id]=tiers?tiers(i):'low';
+    if(fresh[id]){ keep.push(id); exist[id]=1; } else { removed++; }
+  }
+  // Steam の並びで、新しいゲームの直後に来る既存ゲーム（なければ最下位のかたまりの手前か末尾）
+  var steamOrder=games.slice().sort(function(a,b){ return (a.wp||1e9)-(b.wp||1e9); });
+  var firstBottom=null;
+  for(i=0;i<keep.length;i++){ if(tierOf[keep[i]]==='bottom'){ firstBottom=keep[i]; break; } }
+  var before={},added=0,pending=[];
+  for(i=0;i<steamOrder.length;i++){
+    id=steamOrder[i].appid;
+    if(exist[id]){ if(pending.length){ before[id]=(before[id]||[]).concat(pending); pending=[]; } }
+    else { pending.push(id); added++; }
+  }
+  // Steam で一番下にあるもの（並べ替えていない新しいゲーム）は、最下位のかたまりの手前に「下位」として入れる
+  var atEnd={};
+  for(i=0;i<pending.length;i++) atEnd[pending[i]]=1;
+  if(pending.length){ var endKey=firstBottom||'_END'; before[endKey]=(before[endKey]||[]).concat(pending); }
+  var order=[];
+  for(i=0;i<keep.length;i++){ if(before[keep[i]]){ order=order.concat(before[keep[i]]); } order.push(keep[i]); }
+  if(before._END) order=order.concat(before._END);
+  // 新しいゲームの区切りは直後の既存ゲームと同じ（末尾なら下位）
+  var nextExist=null;
+  for(i=order.length-1;i>=0;i--){
+    id=order[i];
+    if(exist[id]){ nextExist=id; }
+    else { tierOf[id]=(atEnd[id]||!nextExist)?'low':tierOf[nextExist]; }
+  }
+  // 点数：既存はそのまま、新しいゲームは前後の既存ゲームの間に等間隔で入れる
+  var newScores={};
+  for(i=0;i<order.length;i++){
+    id=order[i];
+    if(exist[id]){ newScores[id]=state.scores[id]; continue; }
+    var j=i; while(j<order.length&&!exist[order[j]]) j++;
+    var hi=i>0?newScores[order[i-1]].points:null,lo=j<order.length?state.scores[order[j]].points:null,cnt=j-i;
+    for(var k=0;k<cnt;k++){
+      var p=(hi!==null&&lo!==null)?hi-(hi-lo)*(k+1)/(cnt+1):(hi!==null?hi-(k+1):lo+(cnt-k));
+      newScores[order[i+k]]={wins:0,losses:0,draws:0,points:p,battles:0,sorted:false};
+    }
+    i=j-1;
+  }
+  state.scores=newScores;
+  state.games=order.map(function(x){ return fresh[x]; });
+  // 区切りの数を合わせ直す（resultTiers は上から何本・下から何本で区切るため）
+  var nTop=0,nBot=0,pool=[],seen={};
+  for(i=0;i<order.length;i++){ var tr=tierOf[order[i]]; if(tr==='top') nTop++; else if(tr==='bottom') nBot++; }
+  if(f.topN) f.topN=nTop;
+  if(f.lowW) f.lowW=nBot;
+  if(f.pool){
+    for(i=0;i<f.pool.length;i++){ if(fresh[f.pool[i]]&&!seen[f.pool[i]]){ seen[f.pool[i]]=1; pool.push(f.pool[i]); } }
+    for(i=0;i<order.length;i++){ id=order[i]; if(!exist[id]&&tierOf[id]==='mid'&&!seen[id]){ seen[id]=1; pool.push(id); } }
+    f.pool=pool;
+  }
+  if(f.raidJoined){ for(id in f.raidJoined){ if(!fresh[id]) delete f.raidJoined[id]; } }
+  state.history=[];
+  return {added:added,removed:removed};
+}
 
 function loadDemo(){
   var demos=[
@@ -6518,7 +6662,7 @@ function shareToX(){
 
 function openKofi(){window.open(KOFI_URL,'_blank');}
 
-function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+function saveState(){state.savedAt=Date.now();localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
 
 function showScreen(name){
   fxComboReset();
