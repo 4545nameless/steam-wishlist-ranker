@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ | Steam Wishlist Ranker</title>
+<meta name="description" content="Frequently asked questions about Steam Wishlist Ranker: wishlists that won't load, whether you need to log in, how applying to Steam works and why it's safe, categories and notifications, mobile use, and where your data is stored.">
+<link rel="canonical" href="https://steam-wishlist-ranker.vercel.app/faq-en.html">
+<link rel="alternate" hreflang="ja" href="https://steam-wishlist-ranker.vercel.app/faq.html">
+<link rel="alternate" hreflang="en" href="https://steam-wishlist-ranker.vercel.app/faq-en.html">
+<link rel="icon" href="/logo/logo.svg" type="image/svg+xml">
+<link rel="icon" href="/logo/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/logo/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864" crossorigin="anonymous"></script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="/">Steam Wishlist Ranker</a>
+  <nav><a href="/guide-en.html">How to use</a><a href="/faq-en.html" aria-current="page">FAQ</a><a href="/articles/index-en.html">Articles</a><a href="/faq.html" lang="ja">日本語</a></nav>
+</div></header>
+<main>
+<h1>Frequently Asked Questions</h1>
+<p class="updated">Last updated: October 31, 2026</p>
+
+<h2>Getting started</h2>
+<dl class="faq">
+  <dt>Is it free?</dt>
+  <dd>Yes, every feature is free and there's no sign-up. Ads may appear on the pages to cover running costs, and there's an optional Ko-fi page if you'd like to support the project.</dd>
+
+  <dt>Do I need to log in to Steam or enter my password?</dt>
+  <dd>You never enter your Steam login on this site. The tool only uses the wishlist information that Steam makes public. When you apply your ranking to Steam, you do it yourself on Steam's own page, so your login is never sent to this tool.</dd>
+
+  <dt>How long does it take?</dt>
+  <dd>It depends on the size of your wishlist and how far you go. Picking your favorites, the qualifiers, the top matches and the final usually take from a few minutes to a little over ten, even with hundreds of games. The optional finishing steps take a bit longer. Your progress is saved if you stop.</dd>
+
+  <dt>Which languages are supported?</dt>
+  <dd>English, Japanese, Simplified Chinese, Russian, Portuguese and German. Switch at the top right. Game names and prices follow your language and your country's store.</dd>
+</dl>
+
+<h2>Loading your wishlist</h2>
+<dl class="faq">
+  <dt>My wishlist won't load</dt>
+  <dd>
+    <p>Check these in order:</p>
+    <ol>
+      <li><b>Is your wishlist public?</b> On Steam, go to "Edit Profile" → "Privacy Settings" and set "Game details" to "Public".</li>
+      <li><b>Is the URL yours?</b> Copy your wishlist or profile URL straight from the address bar.</li>
+      <li><b>Is your wishlist empty?</b> It needs at least one game.</li>
+    </ol>
+  </dd>
+
+  <dt>I don't know my SteamID64</dt>
+  <dd>You don't need it. Paste your wishlist or profile URL and the tool reads it for you. Custom URLs like <code>/id/yourname/</code> work too.</dd>
+
+  <dt>Prices show in the wrong currency</dt>
+  <dd>Prices come from the Steam store of the country you're connecting from, detected automatically from your connection. If you use a VPN, you may see another country's prices.</dd>
+
+  <dt>Where do the all-time lows come from?</dt>
+  <dd>From IsThereAnyDeal, a price-tracking service. The tool shows the lowest price on Steam only, not other stores. Games without data don't show one.</dd>
+</dl>
+
+<h2>Applying to Steam</h2>
+<dl class="faq">
+  <dt>Is applying to Steam safe?</dt>
+  <dd>Applying uses a bookmark that contains your ranking. It only runs when you click it on your own Steam wishlist page, and it only reorders your wishlist (and adds categories if you choose to). It never buys or removes anything, and it never sends your login to this tool or anywhere else.</dd>
+
+  <dt>Can I undo it and get my old order back?</dt>
+  <dd>The tool has no undo for your Steam order. To change it back, reorder your wishlist by hand on Steam. If you care about your current Steam order, take a look at it before applying.</dd>
+
+  <dt>Do I need a new bookmark each time?</dt>
+  <dd>Yes. Each bookmark holds the ranking from when it was made. After you re-rank, make and use a new one. You can delete old ones.</dd>
+
+  <dt>Can I apply from my phone?</dt>
+  <dd>There are instructions for phones too, but mobile browsers handle bookmarks differently depending on the device and app, so a PC is easier. You can also rank on your phone and apply on a PC (saved progress stays in the browser where you made it, so reload your wishlist on the PC in that case).</dd>
+</dl>
+
+<h2>Categories</h2>
+<dl class="faq">
+  <dt>What are Steam wishlist categories?</dt>
+  <dd>A Steam feature that lets you put your own named labels on wishlist games. Tabs at the top of your wishlist filter by category, and you can choose which categories send you sale notifications. See <a href="/articles/categories-notifications-en.html">Use Steam wishlist categories to catch the right sales</a>.</dd>
+
+  <dt>Will my own categories be removed?</dt>
+  <dd>No. A game can have any number of categories. The tool adds one more (such as "🔥 Want it now") and leaves your own categories alone.</dd>
+
+  <dt>What happens when I apply a second time?</dt>
+  <dd>Only games whose tier changed get their Ranker category swapped. The tool checks each game's current categories as it goes, so with hundreds of games it takes about as long as the first time.</dd>
+
+  <dt>How do I remove the categories?</dt>
+  <dd>You can remove a category from each game on your Steam wishlist page. The tool doesn't have a bulk remove feature right now.</dd>
+</dl>
+
+<h2>Data and privacy</h2>
+<dl class="faq">
+  <dt>Where is my ranking stored?</dt>
+  <dd>Only in your browser (localStorage). There's no database on the operator's side, and your ranking is never collected or stored there. That also means it doesn't carry over to other devices or browsers, and clearing your browser data clears it too.</dd>
+
+  <dt>What is sent where?</dt>
+  <dd>To fetch your wishlist and game details, your SteamID64 and game numbers go to Steam through a relay server (Cloudflare Workers). To look up all-time lows, game numbers go to IsThereAnyDeal. The relay keeps no logs. See the <a href="/privacy-en.html">Privacy Policy</a> for details.</dd>
+
+  <dt>What about games I added after ranking?</dt>
+  <dd>Load your wishlist again and choose to keep your previous ranking. Your existing order stays, and only the new games are slotted in near where they sit on Steam. Games you removed from your wishlist drop out of the ranking.</dd>
+</dl>
+
+<h2>Other</h2>
+<dl class="faq">
+  <dt>I found a bug / I have a request</dt>
+  <dd>Email <a href="mailto:4545nameless.contact@gmail.com">4545nameless.contact@gmail.com</a> or reach out on X (<a href="https://x.com/4545nameless" rel="noopener">@4545nameless</a>). Dev updates are posted on <a href="https://ko-fi.com/4545nameless" rel="noopener">Ko-fi</a>.</dd>
+
+  <dt>Is this an official Steam tool?</dt>
+  <dd>No. It's an unofficial tool made by an individual and is not affiliated with Valve Corporation.</dd>
+</dl>
+
+<p><a class="cta" href="/">Try the tool</a></p>
+</main>
+<footer class="foot"><div class="foot-in">
+  <p><a href="/">Use the tool</a> · <a href="/guide-en.html">How to use</a> · <a href="/faq-en.html">FAQ</a> · <a href="/articles/index-en.html">Articles</a> · <a href="/about-en.html">About</a> · <a href="/terms-en.html">Terms</a> · <a href="/privacy-en.html">Privacy</a> · <a href="mailto:4545nameless.contact@gmail.com">Contact</a></p>
+  <p>Steam Wishlist Ranker is an unofficial tool and is not affiliated with Valve Corporation. Steam is a trademark of Valve Corporation.</p>
+</div></footer>
+</body>
+</html>

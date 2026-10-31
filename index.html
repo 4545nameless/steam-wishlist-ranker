@@ -84,6 +84,14 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);mi
 .footer-links a{color:var(--text2);text-decoration:none}
 .footer-links a:hover{color:var(--accent2)}
 .footer-links .ft-sep{margin:0 6px;opacity:.6}
+.info-sec{width:100%;max-width:580px;color:var(--text2);font-size:.88rem;line-height:1.75}
+.info-sec h2{color:var(--text);font-size:1.02rem;margin:0 0 6px}
+.info-sec h3{color:var(--text);font-size:.9rem;margin:14px 0 2px}
+.info-sec p{margin:0}
+.info-sec ol,.info-sec ul{margin:0;padding-left:1.4em}
+.info-sec .info-links{margin-top:14px}
+.info-sec .info-links a{color:var(--accent2)}
+.info-sec .ft-sep{margin:0 6px;opacity:.6}
 .follow-note{font-size:.72rem;color:var(--text2);text-align:center;width:100%;margin:2px 0 8px}
 .follow-note a{color:var(--accent2);text-decoration:none}
 .follow-note a:hover{text-decoration:underline}
@@ -532,8 +540,42 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
       <button class="btn btn-dark" onclick="loadDemo()" id="txt-btn-demo">🎲 デモで試す</button>
     </div>
   </div>
+  <section class="info-sec">
+    <h2 data-g="infoTitle">Steam Wishlist Ranker でできること</h2>
+    <p data-g="infoLead">Steam のウィッシュリストを、ゲームを見比べて選んでいくだけで「次に買う順」に並べ替える無料のツールです。数百本あっても数分でランキングができ、その順番を Steam のウィッシュリストにそのまま反映できます。</p>
+    <h3 data-g="infoHowT">遊び方</h3>
+    <ol>
+      <li data-g="infoHow1">ウィッシュリストの URL を貼って読み込む</li>
+      <li data-g="infoHow2">気になるゲームをタップし、4本から「一番欲しい」「一番いらない」を選ぶ</li>
+      <li data-g="infoHow3">上位は1対1と決勝トーナメントで1位を決める（下から乱入してくるゲームも）</li>
+      <li data-g="infoHow4">結果を Steam のウィッシュリストに反映する（カテゴリも付けられる）</li>
+    </ol>
+    <h3 data-g="infoGetT">わかること</h3>
+    <ul>
+      <li data-g="infoGet1">「今すぐ欲しい」「セールなら買う」「いつか買うかも」「たぶんいらない」の4つの区切り</li>
+      <li data-g="infoGet2">セール中のゲームと、Steam での過去最安値</li>
+      <li data-g="infoGet3">ウィッシュリストを全部買ったときの合計金額</li>
+    </ul>
+    <h3 data-g="infoSafeT">安心して使えるように</h3>
+    <ul>
+      <li data-g="infoSafe1">無料・登録なし。Steam のログインやパスワードは入力しません</li>
+      <li data-g="infoSafe2">ランキングはこのブラウザの中にだけ保存されます</li>
+      <li data-g="infoSafe3">Steam への反映は、あなたが Steam のページで押すブックマークで行います</li>
+    </ul>
+    <p class="info-links"><a href="guide.html" data-page="guide" data-g="lnkGuide">遊び方ガイド</a><span class="ft-sep">·</span><a href="faq.html" data-page="faq" data-g="lnkFaq">よくある質問</a><span class="ft-sep">·</span><a href="articles/" data-page="articles" data-g="lnkArticles">記事</a></p>
+  </section>
   <div class="ad-slot" data-slot="start"></div>
   <div class="footer-links">
+    <a href="guide.html" data-page="guide" data-g="lnkGuide">遊び方ガイド</a>
+    <span class="ft-sep">·</span>
+    <a href="faq.html" data-page="faq" data-g="lnkFaq">よくある質問</a>
+    <span class="ft-sep">·</span>
+    <a href="articles/" data-page="articles" data-g="lnkArticles">記事</a>
+    <span class="ft-sep">·</span>
+    <a href="about.html" data-page="about" data-g="lnkAbout">運営者情報</a>
+    <span class="ft-sep">·</span>
+    <a href="terms.html" data-page="terms" data-g="lnkTerms">利用規約</a>
+    <span class="ft-sep">·</span>
     <a href="privacy.html" target="_blank" rel="noopener" id="txt-footer-privacy">プライバシーポリシー</a>
     <span class="ft-sep">·</span>
     <a href="https://x.com/4545nameless" target="_blank" rel="noopener" data-g="ftFollow">X でフォロー</a>
@@ -3650,6 +3692,124 @@ var FLOW19_ADD = {
   }
 })();
 
+// トップの説明文と、読み物ページ（ガイド・よくある質問・記事・運営者情報・利用規約）へのリンク
+var FLOW20_ADD = {
+  ja: {
+    infoTitle: 'Steam Wishlist Ranker でできること',
+    infoLead: 'Steam のウィッシュリストを、ゲームを見比べて選んでいくだけで「次に買う順」に並べ替える無料のツールです。数百本あっても数分でランキングができ、その順番を Steam のウィッシュリストにそのまま反映できます。',
+    infoHowT: '遊び方',
+    infoHow1: 'ウィッシュリストの URL を貼って読み込む',
+    infoHow2: '気になるゲームをタップし、4本から「一番欲しい」「一番いらない」を選ぶ',
+    infoHow3: '上位は1対1と決勝トーナメントで1位を決める（下から乱入してくるゲームも）',
+    infoHow4: '結果を Steam のウィッシュリストに反映する（カテゴリも付けられる）',
+    infoGetT: 'わかること',
+    infoGet1: '「今すぐ欲しい」「セールなら買う」「いつか買うかも」「たぶんいらない」の4つの区切り',
+    infoGet2: 'セール中のゲームと、Steam での過去最安値',
+    infoGet3: 'ウィッシュリストを全部買ったときの合計金額',
+    infoSafeT: '安心して使えるように',
+    infoSafe1: '無料・登録なし。Steam のログインやパスワードは入力しません',
+    infoSafe2: 'ランキングはこのブラウザの中にだけ保存されます',
+    infoSafe3: 'Steam への反映は、あなたが Steam のページで押すブックマークで行います',
+    lnkGuide: '遊び方ガイド', lnkFaq: 'よくある質問', lnkArticles: '記事', lnkAbout: '運営者情報', lnkTerms: '利用規約'
+  },
+  en: {
+    infoTitle: 'What Steam Wishlist Ranker does',
+    infoLead: 'A free tool that sorts your Steam wishlist into "what to buy next" order, just by comparing games and picking the one you want more. Even hundreds of games take only a few minutes, and you can apply the order straight to your Steam wishlist.',
+    infoHowT: 'How it works',
+    infoHow1: 'Paste your wishlist URL and load it',
+    infoHow2: 'Tap the games that catch your eye, then pick the most and least wanted out of 4',
+    infoHow3: 'Top games go 1-on-1 and into a final bracket to crown your #1 (with challengers crashing in from below)',
+    infoHow4: 'Apply the result to your Steam wishlist (categories included, if you like)',
+    infoGetT: 'What you get',
+    infoGet1: 'Four tiers: Want it now, Buy on sale, Maybe someday, Probably skip',
+    infoGet2: 'Games on sale and their all-time lows on Steam',
+    infoGet3: 'The total cost of your whole wishlist',
+    infoSafeT: 'Safe to use',
+    infoSafe1: 'Free, no sign-up. You never enter your Steam login or password',
+    infoSafe2: 'Your ranking is stored only in this browser',
+    infoSafe3: 'Applying to Steam is done by a bookmark you click yourself on Steam',
+    lnkGuide: 'How to use', lnkFaq: 'FAQ', lnkArticles: 'Articles', lnkAbout: 'About', lnkTerms: 'Terms'
+  },
+  zh: {
+    infoTitle: 'Steam Wishlist Ranker 能做什么',
+    infoLead: '一款免费工具，只需对比游戏、选出更想要的那个，就能把 Steam 愿望单按“下一个要买的顺序”排好。即使有几百款游戏，也只需几分钟，并且可以把顺序直接同步到 Steam 愿望单。',
+    infoHowT: '玩法',
+    infoHow1: '粘贴愿望单网址并读取',
+    infoHow2: '点选感兴趣的游戏，再从 4 款中选出“最想要”和“最不想要”',
+    infoHow3: '前几名进行一对一和决赛淘汰赛，决出第 1 名（也会有从下面闯进来的挑战者）',
+    infoHow4: '把结果同步到 Steam 愿望单（也可以加上分类）',
+    infoGetT: '你会得到',
+    infoGet1: '“现在就想要”“打折就买”“也许以后”“大概不要了”四个分组',
+    infoGet2: '正在打折的游戏，以及 Steam 史低价格',
+    infoGet3: '买下整个愿望单的总价',
+    infoSafeT: '放心使用',
+    infoSafe1: '免费、无需注册。不会输入 Steam 的登录信息或密码',
+    infoSafe2: '排名只保存在这个浏览器中',
+    infoSafe3: '同步到 Steam 时，由你在 Steam 页面上点击书签完成',
+    lnkGuide: '使用指南（英文）', lnkFaq: '常见问题（英文）', lnkArticles: '文章（英文）', lnkAbout: '关于（英文）', lnkTerms: '使用条款（英文）'
+  },
+  ru: {
+    infoTitle: 'Что умеет Steam Wishlist Ranker',
+    infoLead: 'Бесплатный инструмент, который выстраивает ваш список желаемого Steam в порядке «что купить следующим» — нужно лишь сравнивать игры и выбирать ту, что хочется больше. Даже сотни игр занимают всего несколько минут, а порядок можно сразу применить к списку в Steam.',
+    infoHowT: 'Как это работает',
+    infoHow1: 'Вставьте ссылку на список желаемого и загрузите его',
+    infoHow2: 'Отметьте интересные игры, затем выбирайте самую желанную и самую ненужную из 4',
+    infoHow3: 'Лидеры сражаются один на один и в финальной сетке за 1-е место (снизу врываются претенденты)',
+    infoHow4: 'Примените результат к списку желаемого в Steam (можно и с категориями)',
+    infoGetT: 'Что вы получите',
+    infoGet1: 'Четыре группы: «Хочу сейчас», «Куплю по скидке», «Может, когда-нибудь», «Скорее не нужно»',
+    infoGet2: 'Игры со скидкой и их исторический минимум в Steam',
+    infoGet3: 'Сколько стоит весь список желаемого',
+    infoSafeT: 'Безопасно',
+    infoSafe1: 'Бесплатно, без регистрации. Логин и пароль Steam не вводятся',
+    infoSafe2: 'Рейтинг хранится только в этом браузере',
+    infoSafe3: 'Применение в Steam — через закладку, которую вы нажимаете сами на странице Steam',
+    lnkGuide: 'Руководство (англ.)', lnkFaq: 'Вопросы и ответы (англ.)', lnkArticles: 'Статьи (англ.)', lnkAbout: 'О проекте (англ.)', lnkTerms: 'Условия (англ.)'
+  },
+  pt: {
+    infoTitle: 'O que o Steam Wishlist Ranker faz',
+    infoLead: 'Uma ferramenta gratuita que organiza sua lista de desejos da Steam na ordem "o que comprar a seguir", só comparando jogos e escolhendo o que você quer mais. Mesmo centenas de jogos levam poucos minutos, e você pode aplicar a ordem direto na sua lista da Steam.',
+    infoHowT: 'Como funciona',
+    infoHow1: 'Cole a URL da sua lista de desejos e carregue',
+    infoHow2: 'Toque nos jogos que chamam sua atenção e escolha o mais e o menos desejado entre 4',
+    infoHow3: 'Os melhores se enfrentam 1 contra 1 e numa chave final pelo 1º lugar (com desafiantes vindo de baixo)',
+    infoHow4: 'Aplique o resultado na sua lista de desejos da Steam (com categorias, se quiser)',
+    infoGetT: 'O que você recebe',
+    infoGet1: 'Quatro grupos: Quero agora, Compro na promoção, Talvez um dia, Provavelmente não',
+    infoGet2: 'Jogos em promoção e o menor preço histórico na Steam',
+    infoGet3: 'Quanto custaria a lista de desejos inteira',
+    infoSafeT: 'Seguro de usar',
+    infoSafe1: 'Grátis, sem cadastro. Você nunca digita o login ou a senha da Steam',
+    infoSafe2: 'Sua classificação fica salva só neste navegador',
+    infoSafe3: 'A aplicação na Steam é feita por um favorito que você mesmo clica na página da Steam',
+    lnkGuide: 'Guia (inglês)', lnkFaq: 'Perguntas frequentes (inglês)', lnkArticles: 'Artigos (inglês)', lnkAbout: 'Sobre (inglês)', lnkTerms: 'Termos (inglês)'
+  },
+  de: {
+    infoTitle: 'Was Steam Wishlist Ranker kann',
+    infoLead: 'Ein kostenloses Tool, das deine Steam-Wunschliste in die Reihenfolge „was kaufe ich als Nächstes“ bringt – du vergleichst nur Spiele und wählst das, das du mehr willst. Selbst Hunderte Spiele dauern nur ein paar Minuten, und die Reihenfolge lässt sich direkt auf deine Steam-Wunschliste übertragen.',
+    infoHowT: 'So funktioniert es',
+    infoHow1: 'Wunschlisten-URL einfügen und laden',
+    infoHow2: 'Spiele antippen, die dich reizen, dann aus 4 das liebste und das unwichtigste wählen',
+    infoHow3: 'Die Top-Spiele treten 1 gegen 1 und im Finale um Platz 1 an (mit Herausforderern von unten)',
+    infoHow4: 'Ergebnis auf deine Steam-Wunschliste übertragen (auf Wunsch mit Kategorien)',
+    infoGetT: 'Was du bekommst',
+    infoGet1: 'Vier Gruppen: Will ich jetzt, Kaufe im Sale, Vielleicht irgendwann, Eher nicht',
+    infoGet2: 'Spiele im Angebot und ihr Steam-Bestpreis',
+    infoGet3: 'Was die ganze Wunschliste kosten würde',
+    infoSafeT: 'Sicher in der Nutzung',
+    infoSafe1: 'Kostenlos, ohne Anmeldung. Du gibst nie dein Steam-Login oder Passwort ein',
+    infoSafe2: 'Dein Ranking wird nur in diesem Browser gespeichert',
+    infoSafe3: 'Die Übertragung zu Steam erfolgt über ein Lesezeichen, das du selbst auf der Steam-Seite klickst',
+    lnkGuide: 'Anleitung (Englisch)', lnkFaq: 'FAQ (Englisch)', lnkArticles: 'Artikel (Englisch)', lnkAbout: 'Über (Englisch)', lnkTerms: 'Nutzungsbedingungen (Englisch)'
+  }
+};
+(function(){
+  for (var lg in FLOW20_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW20_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW20_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -3664,6 +3824,13 @@ function renderGuideTexts(){
   for(var j=0;j<pids.length;j++){
     var pa=document.getElementById(pids[j]);
     if(pa) pa.setAttribute('href',currentLang==='ja'?'privacy.html':'privacy-en.html');
+  }
+  // 読み物ページ（ガイド・よくある質問・記事など）は日本語と英語だけ。日本語以外は英語のページへ
+  var pages=document.querySelectorAll('[data-page]');
+  for(var pi=0;pi<pages.length;pi++){
+    var pg=pages[pi].getAttribute('data-page');
+    if(pg==='articles') pages[pi].setAttribute('href',currentLang==='ja'?'articles/':'articles/index-en.html');
+    else pages[pi].setAttribute('href',pg+(currentLang==='ja'?'.html':'-en.html'));
   }
   var ls=document.querySelectorAll('[data-l]');
   for(var m=0;m<ls.length;m++){

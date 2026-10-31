@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>よくある質問 | Steam Wishlist Ranker</title>
+<meta name="description" content="Steam Wishlist Ranker のよくある質問。ウィッシュリストが読み込めないとき、Steam へのログインは必要か、反映のしくみと安全性、カテゴリと通知、スマホでの使い方、データの保存先など。">
+<link rel="canonical" href="https://steam-wishlist-ranker.vercel.app/faq.html">
+<link rel="alternate" hreflang="ja" href="https://steam-wishlist-ranker.vercel.app/faq.html">
+<link rel="alternate" hreflang="en" href="https://steam-wishlist-ranker.vercel.app/faq-en.html">
+<link rel="icon" href="/logo/logo.svg" type="image/svg+xml">
+<link rel="icon" href="/logo/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/logo/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864" crossorigin="anonymous"></script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="/">Steam Wishlist Ranker</a>
+  <nav><a href="/guide.html">遊び方ガイド</a><a href="/faq.html" aria-current="page">よくある質問</a><a href="/articles/">記事</a><a href="/faq-en.html" lang="en">English</a></nav>
+</div></header>
+<main>
+<h1>よくある質問</h1>
+<p class="updated">最終更新日: 2026年10月31日</p>
+
+<h2>はじめに</h2>
+<dl class="faq">
+  <dt>無料で使えますか？</dt>
+  <dd>はい、すべての機能を無料で使えます。会員登録もいりません。運営のため、ページに広告が表示されることがあります。応援したい方向けに、任意の寄付（Ko-fi）の窓口もあります。</dd>
+
+  <dt>Steam へのログインやパスワードは必要ですか？</dt>
+  <dd>このツールに Steam のログイン情報を入力することはありません。使うのは、Steam が公開しているウィッシュリストの情報だけです。ランキングを Steam に反映するときも、あなた自身が Steam のページで操作するので、ログインの情報がこのツールに送られることはありません。</dd>
+
+  <dt>どのくらい時間がかかりますか？</dt>
+  <dd>ウィッシュリストの本数と、どこまで細かくやるかによります。気になるゲームを選んで、予選と上位の勝負、決勝まで進めるだけなら、数百本でも数分から十数分ほどです。仕上げ（中位の整理と最弱決定戦）までやると、もう少しかかります。途中でやめても、進み具合は保存されます。</dd>
+
+  <dt>対応している言語は？</dt>
+  <dd>日本語、英語、中国語（簡体字）、ロシア語、ポルトガル語、ドイツ語の6つです。画面右上で切り替えられます。ゲーム名や価格も、選んだ言語とあなたの国のストアに合わせて表示します。</dd>
+</dl>
+
+<h2>読み込み</h2>
+<dl class="faq">
+  <dt>ウィッシュリストが読み込めません</dt>
+  <dd>
+    <p>次の順に確かめてください。</p>
+    <ol>
+      <li><b>ウィッシュリストが公開になっているか</b>：Steam の「プロフィールを編集」→「プライバシー設定」で、「ゲームの詳細」を「公開」にしてください。</li>
+      <li><b>貼った URL が自分のものか</b>：ウィッシュリストのページか、プロフィールのページの URL を、アドレスバーからそのままコピーしてください。</li>
+      <li><b>ウィッシュリストが空ではないか</b>：1本も入っていないと読み込めません。</li>
+    </ol>
+  </dd>
+
+  <dt>SteamID64 が分かりません</dt>
+  <dd>調べなくても大丈夫です。ウィッシュリストやプロフィールの URL を貼れば、ツールのほうで読み取ります。<code>/id/名前/</code> のような名前入りの URL でも使えます。</dd>
+
+  <dt>価格がドル（または円）で表示されます</dt>
+  <dd>価格は、アクセスしている国の Steam ストアのものを表示します。国は、インターネットの接続元から自動で判定しています。VPN などを使っていると、別の国の価格になることがあります。</dd>
+
+  <dt>過去最安値はどこの情報ですか？</dt>
+  <dd>IsThereAnyDeal という価格追跡サービスの情報を使い、Steam での過去最安値を表示しています。ほかのストアの価格は含みません。情報がないゲームには表示されません。</dd>
+</dl>
+
+<h2>Steam への反映</h2>
+<dl class="faq">
+  <dt>反映は安全ですか？</dt>
+  <dd>反映には、あなたのランキングを埋め込んだブックマークを使います。あなたが Steam のウィッシュリストのページでそのブックマークを押したときだけ動き、ウィッシュリストの並び替え（とカテゴリの付与）だけを行います。購入や削除などの操作はしません。ログインの情報をこのツールやほかの場所に送ることもありません。</dd>
+
+  <dt>反映したあと、元の並びに戻せますか？</dt>
+  <dd>このツールには、Steam の並びを元に戻す機能はありません。戻したいときは、Steam のウィッシュリストのページで並びを手で直してください。反映する前に、Steam の今の並びを気に入っているかどうか、一度確かめておくと安心です。</dd>
+
+  <dt>ブックマークは毎回作り直しますか？</dt>
+  <dd>はい。ブックマークには、作った時点のランキングが入っています。ランキングを作り直したら、新しいブックマークを作って使ってください。古いものは消してかまいません。</dd>
+
+  <dt>スマホでも反映できますか？</dt>
+  <dd>スマホ用の手順も用意しています。ただ、スマホのブラウザはブックマークの扱いが機種やアプリによって違うため、パソコンのほうが簡単です。ランキングをスマホで作って、反映だけパソコンでする、という使い方もできます（同じブラウザでないと保存データは引き継げないので、その場合は結果を見ながら作り直すか、パソコンで読み込み直してください）。</dd>
+</dl>
+
+<h2>カテゴリ</h2>
+<dl class="faq">
+  <dt>Steam のカテゴリとは何ですか？</dt>
+  <dd>Steam のウィッシュリストで、ゲームに自分で名前を付けたラベルを付けられる機能です。ウィッシュリストの上のタブで、カテゴリごとに絞り込めます。セールの通知を受け取るカテゴリを選ぶこともできます。詳しくは「<a href="/articles/categories-notifications.html">カテゴリと通知で、セールの見逃しと買いすぎを減らす</a>」をご覧ください。</dd>
+
+  <dt>自分で作ったカテゴリは消えますか？</dt>
+  <dd>消えません。1本のゲームには、カテゴリをいくつでも付けられます。このツールは「🔥 今すぐ欲しい」などのカテゴリを1つ追加で付けるだけで、あなたが付けたカテゴリには触りません。</dd>
+
+  <dt>2回目に反映すると、カテゴリはどうなりますか？</dt>
+  <dd>区切りが変わったゲームだけ、このツールが付けたカテゴリを付け替えます。毎回、付いているカテゴリを確かめながら進めるので、数百本あると1回目と同じくらいの時間がかかります。</dd>
+
+  <dt>付いたカテゴリを外したいときは？</dt>
+  <dd>Steam のウィッシュリストのページで、ゲームごとにカテゴリを外せます。このツールでカテゴリをまとめて消す機能は、今はありません。</dd>
+</dl>
+
+<h2>データとプライバシー</h2>
+<dl class="faq">
+  <dt>ランキングのデータはどこに保存されますか？</dt>
+  <dd>あなたのブラウザの中（localStorage）だけです。運営者のサーバーにはデータベースがなく、あなたのランキングを集めたり保存したりしていません。そのため、別の端末や別のブラウザには引き継がれません。ブラウザのデータを消すと、保存されたランキングも消えます。</dd>
+
+  <dt>どんな情報がどこに送られますか？</dt>
+  <dd>ウィッシュリストとゲームの情報を取るために、SteamID64 とゲームの番号が、中継サーバー（Cloudflare Workers）を通して Steam に送られます。過去最安値を調べるために、ゲームの番号が IsThereAnyDeal に送られます。中継サーバーの記録は取っていません。詳しくは<a href="/privacy.html">プライバシーポリシー</a>をご覧ください。</dd>
+
+  <dt>新しくウィッシュリストに入れたゲームはどうなりますか？</dt>
+  <dd>もう一度読み込むと、「前回のランキングで結果を見る」を選べます。前回の順位はそのままに、新しく増えたゲームだけを、Steam の並びをもとに近い位置へ差し込みます。ウィッシュリストから外したゲームは、ランキングからも外れます。</dd>
+</dl>
+
+<h2>そのほか</h2>
+<dl class="faq">
+  <dt>不具合を見つけました／要望があります</dt>
+  <dd>メール（<a href="mailto:4545nameless.contact@gmail.com">4545nameless.contact@gmail.com</a>）か、X（<a href="https://x.com/4545nameless" rel="noopener">@4545nameless</a>）にお寄せください。開発の報告は <a href="https://ko-fi.com/4545nameless" rel="noopener">Ko-fi</a> に書いています。</dd>
+
+  <dt>Steam の公式ツールですか？</dt>
+  <dd>いいえ。個人が作った非公式のツールで、Valve Corporation とは関係ありません。</dd>
+</dl>
+
+<p><a class="cta" href="/">ツールを使ってみる</a></p>
+</main>
+<footer class="foot"><div class="foot-in">
+  <p><a href="/">ツールを使う</a> · <a href="/guide.html">遊び方ガイド</a> · <a href="/faq.html">よくある質問</a> · <a href="/articles/">記事</a> · <a href="/about.html">運営者情報</a> · <a href="/terms.html">利用規約</a> · <a href="/privacy.html">プライバシーポリシー</a> · <a href="mailto:4545nameless.contact@gmail.com">お問い合わせ</a></p>
+  <p>Steam Wishlist Ranker は、Valve Corporation とは関係のない非公式のツールです。Steam は Valve Corporation の商標です。</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全部比べなくても順番が決まる、ランキングの仕組み | Steam Wishlist Ranker</title>
+<meta name="description" content="274本のゲームを総当たりで比べると3万7千回以上。Steam Wishlist Ranker が、タップ・4択・1対1・決勝という段階的な絞り込みで、数百本を数分で並べる仕組みを説明します。">
+<link rel="canonical" href="https://steam-wishlist-ranker.vercel.app/articles/how-ranking-works.html">
+<link rel="alternate" hreflang="ja" href="https://steam-wishlist-ranker.vercel.app/articles/how-ranking-works.html">
+<link rel="alternate" hreflang="en" href="https://steam-wishlist-ranker.vercel.app/articles/how-ranking-works-en.html">
+<link rel="icon" href="/logo/logo.svg" type="image/svg+xml">
+<link rel="icon" href="/logo/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="stylesheet" href="/site.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864" crossorigin="anonymous"></script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="/">Steam Wishlist Ranker</a>
+  <nav><a href="/guide.html">遊び方ガイド</a><a href="/faq.html">よくある質問</a><a href="/articles/" aria-current="page">記事</a><a href="/articles/how-ranking-works-en.html" lang="en">English</a></nav>
+</div></header>
+<main>
+<p class="meta"><a href="/articles/">記事</a> / 2026年10月31日</p>
+<h1>全部比べなくても順番が決まる、ランキングの仕組み</h1>
+<p class="lead">Steam Wishlist Ranker では、数百本のウィッシュリストでも、数分から十数分でランキングができます。なぜそんなに早く決まるのか。この記事では、ツールの中で何をしているのかを、計算の話も交えて説明します。</p>
+
+<h2>総当たりは現実的ではない</h2>
+<p>一番確実な並べ方は、すべてのゲームを1対1で比べる「総当たり」です。ただ、比べる回数は本数の2乗に近い勢いで増えていきます。</p>
+<table>
+  <tr><th>本数</th><th>総当たりの回数</th><th>1回3秒で考えると</th></tr>
+  <tr><td>50本</td><td>1,225回</td><td>約1時間</td></tr>
+  <tr><td>100本</td><td>4,950回</td><td>約4時間</td></tr>
+  <tr><td>274本</td><td>37,401回</td><td>約31時間</td></tr>
+</table>
+<p>効率のよい並べ替えの方法（コンピューターが使う「並べ替えのアルゴリズム」）を使っても、274本ならおよそ2,000回の比較が必要です。それでも1時間半以上かかり、途中で集中力が切れてしまいます。</p>
+
+<h2>大事なのは上のほうの順番だけ</h2>
+<p>ここで発想を変えます。ウィッシュリストの順番が役に立つのは、「次に何を買うか」を決めるときです。そのとき見るのは上位の数本から数十本で、150位と151位の差はほとんど関係ありません。</p>
+<p>そこで、このツールは<b>上位ほどていねいに、下位ほどざっくり</b>比べるように作っています。比べる回数を、順番が意味を持つところに集中させるのです。</p>
+
+<h2>4つの段階</h2>
+<h3>1. タップで候補を絞る</h3>
+<p>最初に、ゲームの一覧から気になるものをタップします。ここで選んだゲームには高めの点が、選ばなかったゲームには低めの点が付きます。1本ずつ比べなくても、全体を「上の候補」と「それ以外」に一気に分けられます。迷わず選べる人が多く、一番速い段階です。</p>
+
+<h3>2. 4本から2回選ぶ</h3>
+<p>次の予選では、4本のゲームから「一番欲しい」と「一番いらない」を選びます。4本の組み合わせは6通りありますが、この2タップで、そのうち5通りの勝ち負けが分かります。一番欲しいものは残り3本に勝ち、一番いらないものは残り3本に負けるからです。分からないのは、真ん中の2本どうしだけです。</p>
+<p>1対1なら6回かかる比較が、2タップで済む。これが、数百本でも短い時間で終わる一番の理由です。</p>
+<p>勝ち負けは、チェスなどで使われる「イロレーティング」に近い考え方で点数に変えます。強い相手に勝てば大きく上がり、弱い相手に負ければ大きく下がります。周回を重ねるたびに点数が落ち着き、上位の顔ぶれが変わらなくなったら、次の段階に進む合図です。</p>
+
+<h3>3. 上位だけ1対1で比べる</h3>
+<p>予選で上位に入ったゲームだけで、1対1の勝負をします。ここは順番が一番大事なところなので、1回に1組ずつ、ていねいに比べます。同じ組み合わせがなるべく重ならないようにしているので、少ない回数で多くの関係が分かります。</p>
+<p>この段階には「乱入戦」があります。最初のタップで選ばなかったゲームが、ときどき挑戦者として上位に挑んできます。最初の印象だけで下に沈んだ「実は欲しいゲーム」を拾い上げるための仕組みです。挑戦者は、Steam で元々上のほうにあったゲーム、セール中のゲーム、最近ウィッシュリストに入れたゲームなどから選ばれます。勝てば倒した相手のすぐ上に入り、次はもっと強い相手と戦います。</p>
+
+<h3>4. 決勝トーナメント</h3>
+<p>最後に、上位16本でシード付きのトーナメントをします。15試合で1位が決まり、上位の並びもはっきりします。点数だけで決めると僅差になりやすい上位を、直接対決で決着させる段階です。</p>
+
+<h2>仕上げ：真ん中と下</h2>
+<p>1位が決まったあとは、希望すれば真ん中と下の並びも整えられます。ここでも4本ずつのグループを使い、真ん中は「一番欲しい」、下は「一番いらない」を選んでいく勝ち抜き方式です。下のほうで「いらない」を選び続けて残ったゲームは、「たぶんいらない」の区切りに入ります。</p>
+<p>この仕上げは、上位の並びを崩さないように、それぞれのグループの中だけで順番を入れ替えます。上位で決めたことが、あとから下の結果で動いてしまわないようにするためです。</p>
+
+<h2>まとめ</h2>
+<ul>
+  <li>総当たりは、274本で3万7千回以上。現実的ではありません。</li>
+  <li>買い物に必要なのは上位の順番なので、比べる手間を上位に集中させます。</li>
+  <li>4本から2回選ぶと、6通りのうち5通りの勝ち負けが一度に分かります。</li>
+  <li>乱入戦で、最初に見落としたゲームにもチャンスがあります。</li>
+  <li>決勝トーナメントで、上位の僅差を直接対決で決めます。</li>
+</ul>
+<p>仕組みを知ったうえで使うと、「なぜこのゲームが乱入してきたのか」も楽しめるはずです。</p>
+<p><a class="cta" href="/">ツールを使ってみる</a></p>
+
+<div class="related">
+  <h2>関連する記事</h2>
+  <ul>
+    <li><a href="/articles/organize-wishlist.html">Steam のウィッシュリストが増えすぎたときの整理のコツ</a></li>
+    <li><a href="/guide.html">遊び方ガイド</a></li>
+  </ul>
+</div>
+</main>
+<footer class="foot"><div class="foot-in">
+  <p><a href="/">ツールを使う</a> · <a href="/guide.html">遊び方ガイド</a> · <a href="/faq.html">よくある質問</a> · <a href="/articles/">記事</a> · <a href="/about.html">運営者情報</a> · <a href="/terms.html">利用規約</a> · <a href="/privacy.html">プライバシーポリシー</a> · <a href="mailto:4545nameless.contact@gmail.com">お問い合わせ</a></p>
+  <p>Steam Wishlist Ranker は、Valve Corporation とは関係のない非公式のツールです。Steam は Valve Corporation の商標です。</p>
+</div></footer>
+</body>
+</html>

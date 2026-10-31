@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How the Ranking Works Without Comparing Everything | Steam Wishlist Ranker</title>
+<meta name="description" content="Comparing 274 games head to head takes over 37,000 matchups. Here's how Steam Wishlist Ranker ranks hundreds of games in minutes with taps, 4-way picks, 1-on-1 duels and a final bracket.">
+<link rel="canonical" href="https://steam-wishlist-ranker.vercel.app/articles/how-ranking-works-en.html">
+<link rel="alternate" hreflang="ja" href="https://steam-wishlist-ranker.vercel.app/articles/how-ranking-works.html">
+<link rel="alternate" hreflang="en" href="https://steam-wishlist-ranker.vercel.app/articles/how-ranking-works-en.html">
+<link rel="icon" href="/logo/logo.svg" type="image/svg+xml">
+<link rel="icon" href="/logo/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="stylesheet" href="/site.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864" crossorigin="anonymous"></script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="/">Steam Wishlist Ranker</a>
+  <nav><a href="/guide-en.html">How to use</a><a href="/faq-en.html">FAQ</a><a href="/articles/index-en.html" aria-current="page">Articles</a><a href="/articles/how-ranking-works.html" lang="ja">日本語</a></nav>
+</div></header>
+<main>
+<p class="meta"><a href="/articles/index-en.html">Articles</a> / October 31, 2026</p>
+<h1>How the Ranking Works Without Comparing Everything</h1>
+<p class="lead">Steam Wishlist Ranker can rank a wishlist of hundreds of games in a few minutes to a little over ten. Why is it so fast? This article explains what the tool does under the hood, with a bit of math.</p>
+
+<h2>Comparing everything isn't realistic</h2>
+<p>The most thorough way to rank is a round robin: compare every game against every other game. The number of comparisons grows roughly with the square of the list size.</p>
+<table>
+  <tr><th>Games</th><th>Round-robin matchups</th><th>At 3 seconds each</th></tr>
+  <tr><td>50</td><td>1,225</td><td>About 1 hour</td></tr>
+  <tr><td>100</td><td>4,950</td><td>About 4 hours</td></tr>
+  <tr><td>274</td><td>37,401</td><td>About 31 hours</td></tr>
+</table>
+<p>Even an efficient sorting algorithm, the kind computers use, needs around 2,000 comparisons for 274 games. That's still over an hour and a half, and your focus runs out long before.</p>
+
+<h2>Only the top of the order really matters</h2>
+<p>Here's the shift in thinking. A wishlist order is useful when you decide what to buy next. At that moment you look at the top few to few dozen games. The difference between #150 and #151 barely matters.</p>
+<p>So the tool is built to compare <b>carefully at the top and roughly further down</b>. It spends your comparisons where the order actually means something.</p>
+
+<h2>Four stages</h2>
+<h3>1. Narrow down with taps</h3>
+<p>First, you tap the games that catch your eye in a grid. Picked games get a higher starting score and the rest get a lower one. Without a single head-to-head, the whole list splits into "top candidates" and "everything else". It's the fastest stage, and most people can do it without hesitation.</p>
+
+<h3>2. Two picks out of four</h3>
+<p>In the qualifiers you see four games and pick the most wanted, then the least wanted. Four games make six possible pairs, and those two taps settle five of them: the most wanted beats the other three, and the least wanted loses to the other three. Only the pair in the middle stays unknown.</p>
+<p>Six comparisons for the price of two taps. That's the main reason hundreds of games take so little time.</p>
+<p>Wins and losses turn into scores using an approach close to the Elo rating used in chess. Beating a strong opponent raises a score a lot; losing to a weak one drops it a lot. Each lap settles the scores further, and when the top group stops changing, it's time to move on.</p>
+
+<h3>3. 1-on-1 for the top games only</h3>
+<p>Only the top games from the qualifiers go into 1-on-1 duels. This is where the order matters most, so it's done one pair at a time. The tool avoids repeating the same pairs, so each duel teaches it something new.</p>
+<p>This stage includes challengers. Now and then, a game you didn't tap at the start crashes in and challenges the top. It's how games that sank on a first impression get a second chance. Challengers are drawn from games that sat high on your original Steam list, games on sale, and games you added recently. A win puts the challenger just above the game it beat and sets up a match against someone stronger.</p>
+
+<h3>4. The final bracket</h3>
+<p>Finally, the top 16 play a seeded bracket. Fifteen matches decide your #1 and sharpen the order at the top, where scores alone tend to be close. Direct matchups settle it.</p>
+
+<h2>Finishing: the middle and the bottom</h2>
+<p>After your #1 is decided, you can optionally tidy the middle and the bottom. These also use groups of four in a knockout format: pick the most wanted in the middle, the least wanted at the bottom. Games that keep being picked as least wanted end up in the "Probably skip" tier.</p>
+<p>These finishing steps only reorder games within each group, so they never disturb the order you settled at the top.</p>
+
+<h2>Summary</h2>
+<ul>
+  <li>A round robin of 274 games takes over 37,000 matchups. Not realistic.</li>
+  <li>Shopping only needs the top of the order, so the effort goes there.</li>
+  <li>Picking 2 out of 4 settles 5 of 6 pairs at once.</li>
+  <li>Challengers give overlooked games a second chance.</li>
+  <li>A final bracket decides the close calls at the top head to head.</li>
+</ul>
+<p>Knowing how it works makes it more fun to wonder why a particular challenger showed up.</p>
+<p><a class="cta" href="/">Try the tool</a></p>
+
+<div class="related">
+  <h2>Related articles</h2>
+  <ul>
+    <li><a href="/articles/organize-wishlist-en.html">How to organize a Steam wishlist that got too big</a></li>
+    <li><a href="/guide-en.html">How to use</a></li>
+  </ul>
+</div>
+</main>
+<footer class="foot"><div class="foot-in">
+  <p><a href="/">Use the tool</a> · <a href="/guide-en.html">How to use</a> · <a href="/faq-en.html">FAQ</a> · <a href="/articles/index-en.html">Articles</a> · <a href="/about-en.html">About</a> · <a href="/terms-en.html">Terms</a> · <a href="/privacy-en.html">Privacy</a> · <a href="mailto:4545nameless.contact@gmail.com">Contact</a></p>
+  <p>Steam Wishlist Ranker is an unofficial tool and is not affiliated with Valve Corporation. Steam is a trademark of Valve Corporation.</p>
+</div></footer>
+</body>
+</html>

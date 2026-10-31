@@ -1,0 +1,79 @@
+/* ガイド・よくある質問・記事など、読み物ページ共通の見た目（JavaScript なし） */
+:root {
+  --bg: #1b2838;
+  --panel: #16202d;
+  --text: #c6d4df;
+  --head: #ffffff;
+  --sub: #8ba2b5;
+  --line: #2a4766;
+  --link: #66c0f4;
+  --gold: #f5c518;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', 'Hiragino Sans', 'Yu Gothic UI', Meiryo, sans-serif;
+  font-size: 16px;
+  line-height: 1.85;
+}
+a { color: var(--link); }
+.top {
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+.top-in {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+}
+.brand { color: var(--head); font-weight: 700; text-decoration: none; margin-right: auto; }
+.top nav { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .9rem; }
+.top nav a { color: var(--sub); text-decoration: none; }
+.top nav a:hover, .top nav a[aria-current="page"] { color: var(--head); }
+main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { color: var(--head); font-size: 1.6rem; line-height: 1.4; margin: 8px 0 4px; }
+h2 { color: var(--link); font-size: 1.2rem; border-bottom: 1px solid var(--line); padding-bottom: 6px; margin-top: 40px; }
+h3 { color: var(--head); font-size: 1.02rem; margin: 28px 0 4px; }
+.updated, .meta { color: var(--sub); font-size: .85rem; }
+.lead { font-size: 1.05rem; }
+li { margin: 4px 0; }
+code { word-break: break-all; color: var(--head); }
+figure { margin: 16px 0 24px; }
+figure img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; display: block; }
+figcaption { color: var(--sub); font-size: .85rem; margin-top: 6px; }
+.note {
+  border-left: 3px solid var(--gold);
+  background: var(--panel);
+  padding: 10px 14px;
+  margin: 16px 0;
+}
+.cta {
+  display: inline-block;
+  background: var(--gold);
+  color: #171a21;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  margin: 8px 0;
+}
+table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: .95rem; }
+th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: var(--panel); color: var(--head); }
+dl.faq dt { color: var(--head); font-weight: 700; margin-top: 24px; }
+dl.faq dd { margin: 4px 0 0; }
+.article-list { list-style: none; padding: 0; }
+.article-list li { border-bottom: 1px solid var(--line); padding: 14px 0; }
+.article-list a { font-weight: 700; font-size: 1.05rem; }
+.article-list p { margin: 4px 0 0; color: var(--sub); font-size: .92rem; }
+.related { margin-top: 40px; }
+.foot { border-top: 1px solid var(--line); color: var(--sub); font-size: .82rem; }
+.foot-in { max-width: 760px; margin: 0 auto; padding: 16px; }
+.foot a { color: var(--sub); }
+.foot p { margin: 4px 0; }
