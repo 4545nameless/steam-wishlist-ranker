@@ -3,7 +3,7 @@
 Steamのウィッシュリストを、ゲーム感覚で選んでいくだけで「次に買う順」に並べ替え、そのままSteamに反映できる無料Webアプリです。
 
 ## 🌐 公開URL
-https://steam-wishlist-ranker.vercel.app
+https://steam-wishlist-ranker.pages.dev
 
 ## 📖 遊び方の流れ
 1. SteamID64を入れてウィッシュリストを読み込む（APIキー不要・ウィッシュリストは公開設定）
@@ -32,7 +32,7 @@ https://steam-wishlist-ranker.vercel.app
 | 項目 | 内容 |
 |------|------|
 | フロントエンド | HTML / CSS / JavaScript（単一ファイル・ES5） |
-| ホスティング | Vercel（Vercel Analytics） |
+| ホスティング | Cloudflare Pages（Cloudflare Web Analytics） |
 | API中継 | Cloudflare Workers |
 | データ取得 | Steam IWishlistService / Steam Store API / IsThereAnyDeal API |
 | ライブラリ | html2canvas、Sortable.js |
@@ -45,8 +45,8 @@ https://steam-wishlist-ranker.vercel.app
 2. 過去最安値を表示する場合は、Settings → Variables and Secrets に `ITAD_KEY`（IsThereAnyDeal のAPIキー）を追加
 3. `index.html` の `WORKER_URL` を発行されたURLに変更
 
-### Vercel
-1. このリポジトリを Vercel と連携して Deploy
+### Cloudflare Pages
+1. Workers & Pages → Pages でこのリポジトリと連携して Deploy（ビルドなし・出力はルート）
 2. main ブランチへの push で自動デプロイ
 
 ## 📁 ファイル構成
@@ -79,4 +79,4 @@ MIT License
 - [Sortable.js](https://sortablejs.github.io/Sortable/)
 - [IsThereAnyDeal](https://isthereanydeal.com/)
 - [Cloudflare Workers](https://workers.cloudflare.com/)
-- [Vercel](https://vercel.com/)
+- [Cloudflare Pages](https://pages.cloudflare.com/)

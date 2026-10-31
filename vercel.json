@@ -1,0 +1,6 @@
+{
+  "outputDirectory": "moved",
+  "rewrites": [
+    { "source": "/((?!google93eb8b39280edeaa\.html$).*)", "destination": "/index.html" }
+  ]
+}

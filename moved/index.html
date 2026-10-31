@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steam Wishlist Ranker は移転しました / We've moved</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://steam-wishlist-ranker.pages.dev/">
+<style>
+:root{--bg:#1b2838;--panel:#16202d;--text:#c6d4df;--head:#fff;--sub:#8ba2b5;--line:#2a4766;--link:#66c0f4;--gold:#f5c518}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Segoe UI','Hiragino Sans','Yu Gothic UI',Meiryo,sans-serif;font-size:16px;line-height:1.8}
+main{max-width:560px;margin:0 auto;padding:48px 16px}
+.name{color:var(--sub);font-size:14px;margin:0 0 8px}
+h1{color:var(--head);font-size:24px;line-height:1.4;margin:0 0 16px}
+p{margin:0 0 12px}
+.url{display:block;margin:24px 0 8px;padding:14px 16px;background:var(--gold);color:#1b2838;font-weight:700;font-size:17px;text-align:center;text-decoration:none;border-radius:4px;word-break:break-all}
+.url:hover{filter:brightness(1.08)}
+.note{color:var(--sub);font-size:14px}
+hr{border:0;border-top:1px solid var(--line);margin:40px 0}
+</style>
+</head>
+<body>
+<main>
+  <section lang="ja">
+    <p class="name">Steam Wishlist Ranker</p>
+    <h1>新しいアドレスに移転しました</h1>
+    <p>今後はこちらのアドレスで公開します。ブックマークしている方は、新しいアドレスに登録し直してください。</p>
+    <a class="url js-new" href="https://steam-wishlist-ranker.pages.dev/">steam-wishlist-ranker.pages.dev</a>
+    <p class="note">前回までのランキングはブラウザごとに保存されていたため、新しいアドレスには引き継がれません。お手数ですが、新しいサイトでもう一度取得してください。</p>
+  </section>
+  <hr>
+  <section lang="en">
+    <h1>We've moved</h1>
+    <p>Steam Wishlist Ranker now lives at a new address. If you bookmarked this page, please update your bookmark.</p>
+    <a class="url js-new" href="https://steam-wishlist-ranker.pages.dev/">steam-wishlist-ranker.pages.dev</a>
+    <p class="note">Rankings were saved in your browser for this old address, so they won't carry over. Please fetch your wishlist again on the new site.</p>
+  </section>
+</main>
+<script>
+// 開いていたページ（/guide.html など）と同じページへ飛べるようにする
+(function(){
+  var path=location.pathname+location.search+location.hash;
+  if(path==='/'||path==='/index.html') return;
+  var links=document.querySelectorAll('.js-new');
+  for(var i=0;i<links.length;i++) links[i].href='https://steam-wishlist-ranker.pages.dev'+path;
+})();
+</script>
+</body>
+</html>

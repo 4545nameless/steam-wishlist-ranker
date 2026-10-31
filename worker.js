@@ -1,4 +1,6 @@
-const SITE_ORIGIN = 'https://steam-wishlist-ranker.vercel.app';
+const SITE_ORIGIN = 'https://steam-wishlist-ranker.pages.dev';
+// 旧URL（Vercel）。切り替えの途中でも動くように残している。お知らせページだけになったら消してよい
+const OLD_ORIGIN = 'https://steam-wishlist-ranker.vercel.app';
 const LOCAL_ORIGIN = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 
 // ITAD の過去最安値は、同じゲームを何度も問い合わせないよう、6時間だけ覚えておく（国ごと）
@@ -22,7 +24,7 @@ function countryOf(request, url) {
 
 function corsHeaders(request) {
   const origin = request.headers.get('Origin') || '';
-  const allowed = origin === SITE_ORIGIN || LOCAL_ORIGIN.test(origin);
+  const allowed = origin === SITE_ORIGIN || origin === OLD_ORIGIN || LOCAL_ORIGIN.test(origin);
   return {
     'Access-Control-Allow-Origin': allowed ? origin : SITE_ORIGIN,
     'Access-Control-Allow-Methods': 'GET, OPTIONS',

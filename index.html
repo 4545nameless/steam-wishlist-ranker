@@ -8,15 +8,15 @@
 <link rel="icon" href="/logo/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png">
 <meta name="description" content="Steamのウィッシュリストを、ゲーム感覚で選んでいくだけで「次に買う順」にランキング化し、そのままSteamに反映できる無料ツール。積みゲー整理や購入順の迷いに。">
-<link rel="canonical" href="https://steam-wishlist-ranker.vercel.app">
+<link rel="canonical" href="https://steam-wishlist-ranker.pages.dev">
 <meta name="google-site-verification" content="93eb8b39280edeaa">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steam Wishlist Ranker">
 <meta property="og:title" content="Steam Wishlist Ranker - ウィッシュリストをゲーム感覚でランク付け">
 <meta property="og:description" content="ゲーム感覚で選んでいくだけで、Steamのウィッシュリストを「次に買う順」にランキング化。そのままSteamに反映できる無料ツール。">
-<meta property="og:url" content="https://steam-wishlist-ranker.vercel.app">
-<meta property="og:image" content="https://steam-wishlist-ranker.vercel.app/ogp.png">
-<meta name="twitter:image" content="https://steam-wishlist-ranker.vercel.app/ogp.png">
+<meta property="og:url" content="https://steam-wishlist-ranker.pages.dev">
+<meta property="og:image" content="https://steam-wishlist-ranker.pages.dev/ogp.png">
+<meta name="twitter:image" content="https://steam-wishlist-ranker.pages.dev/ogp.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Steam Wishlist Ranker">
 <meta name="twitter:description" content="ゲーム感覚で選んでいくだけで、Steamのウィッシュリストを「次に買う順」にランキング化。そのままSteamに反映できる無料ツール。">
@@ -488,7 +488,6 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 
@@ -1054,7 +1053,7 @@ var WORKER_URL  = 'https://steam-wishlist-api.swranker.workers.dev';
 function steamLang(){ return currentLang||'ja'; }
 var STORAGE_KEY = 'swr_v14';
 var IMG_BASE    = 'https://cdn.akamai.steamstatic.com/steam/apps/';
-var SITE_URL    = 'https://steam-wishlist-ranker.vercel.app';
+var SITE_URL    = 'https://steam-wishlist-ranker.pages.dev';
 var KOFI_URL    = 'https://ko-fi.com/4545nameless';
 var SHARE_ROWS  = 30;
 var TAG         = '#SteamWishlistRanker';
