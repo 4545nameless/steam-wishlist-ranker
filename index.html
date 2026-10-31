@@ -526,7 +526,7 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
     <div class="input-group">
       <div class="input-hint">
         <span data-g="idPrivacy">※ SteamID64はこのブラウザ内にのみ保存されます。ウィッシュリスト取得のため、Steam APIへの中継サーバー（Cloudflare Workers）を経由して送信されます。</span>
-        <a href="privacy.html" target="_blank" rel="noopener" style="color:var(--accent2)" id="txt-privacy">プライバシーポリシー</a>
+        <a href="privacy" target="_blank" rel="noopener" style="color:var(--accent2)" id="txt-privacy">プライバシーポリシー</a>
       </div>
     </div>
     <div id="load-progress" class="progress-mini">
@@ -561,21 +561,21 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
       <li data-g="infoSafe2">ランキングはこのブラウザの中にだけ保存されます</li>
       <li data-g="infoSafe3">Steam への反映は、あなたが Steam のページで押すブックマークで行います</li>
     </ul>
-    <p class="info-links"><a href="guide.html" data-page="guide" data-g="lnkGuide">遊び方ガイド</a><span class="ft-sep">·</span><a href="faq.html" data-page="faq" data-g="lnkFaq">よくある質問</a><span class="ft-sep">·</span><a href="articles/" data-page="articles" data-g="lnkArticles">記事</a></p>
+    <p class="info-links"><a href="guide" data-page="guide" data-g="lnkGuide">遊び方ガイド</a><span class="ft-sep">·</span><a href="faq" data-page="faq" data-g="lnkFaq">よくある質問</a><span class="ft-sep">·</span><a href="articles/" data-page="articles" data-g="lnkArticles">記事</a></p>
   </section>
   <div class="ad-slot" data-slot="start"></div>
   <div class="footer-links">
-    <a href="guide.html" data-page="guide" data-g="lnkGuide">遊び方ガイド</a>
+    <a href="guide" data-page="guide" data-g="lnkGuide">遊び方ガイド</a>
     <span class="ft-sep">·</span>
-    <a href="faq.html" data-page="faq" data-g="lnkFaq">よくある質問</a>
+    <a href="faq" data-page="faq" data-g="lnkFaq">よくある質問</a>
     <span class="ft-sep">·</span>
     <a href="articles/" data-page="articles" data-g="lnkArticles">記事</a>
     <span class="ft-sep">·</span>
-    <a href="about.html" data-page="about" data-g="lnkAbout">運営者情報</a>
+    <a href="about" data-page="about" data-g="lnkAbout">運営者情報</a>
     <span class="ft-sep">·</span>
-    <a href="terms.html" data-page="terms" data-g="lnkTerms">利用規約</a>
+    <a href="terms" data-page="terms" data-g="lnkTerms">利用規約</a>
     <span class="ft-sep">·</span>
-    <a href="privacy.html" target="_blank" rel="noopener" id="txt-footer-privacy">プライバシーポリシー</a>
+    <a href="privacy" target="_blank" rel="noopener" id="txt-footer-privacy">プライバシーポリシー</a>
     <span class="ft-sep">·</span>
     <a href="https://x.com/4545nameless" target="_blank" rel="noopener" data-g="ftFollow">X でフォロー</a>
     <span class="ft-sep">·</span>
@@ -3822,14 +3822,14 @@ function renderGuideTexts(){
   var pids=['txt-privacy','txt-footer-privacy'];
   for(var j=0;j<pids.length;j++){
     var pa=document.getElementById(pids[j]);
-    if(pa) pa.setAttribute('href',currentLang==='ja'?'privacy.html':'privacy-en.html');
+    if(pa) pa.setAttribute('href',currentLang==='ja'?'privacy':'privacy-en');
   }
   // 読み物ページ（ガイド・よくある質問・記事など）は日本語と英語だけ。日本語以外は英語のページへ
   var pages=document.querySelectorAll('[data-page]');
   for(var pi=0;pi<pages.length;pi++){
     var pg=pages[pi].getAttribute('data-page');
-    if(pg==='articles') pages[pi].setAttribute('href',currentLang==='ja'?'articles/':'articles/index-en.html');
-    else pages[pi].setAttribute('href',pg+(currentLang==='ja'?'.html':'-en.html'));
+    if(pg==='articles') pages[pi].setAttribute('href',currentLang==='ja'?'articles/':'articles/index-en');
+    else pages[pi].setAttribute('href',pg+(currentLang==='ja'?'':'-en'));
   }
   var ls=document.querySelectorAll('[data-l]');
   for(var m=0;m<ls.length;m++){

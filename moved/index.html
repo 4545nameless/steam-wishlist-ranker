@@ -40,8 +40,8 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0}
 <script>
 // 開いていたページ（/guide.html など）と同じページへ飛べるようにする
 (function(){
-  var path=location.pathname+location.search+location.hash;
-  if(path==='/'||path==='/index.html') return;
+  var path=location.pathname.replace(/\.html$/,'')+location.search+location.hash;
+  if(path==='/'||path==='/index') return;
   var links=document.querySelectorAll('.js-new');
   for(var i=0;i<links.length;i++) links[i].href='https://steam-wishlist-ranker.pages.dev'+path;
 })();
