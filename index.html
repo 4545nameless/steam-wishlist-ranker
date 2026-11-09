@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Steam Wishlist Ranker</title>
+<title>Steam のウィッシュリストを「次に買う順」に並べ替える無料ツール | Steam Wishlist Ranker</title>
 <link rel="icon" href="/logo/logo.svg" type="image/svg+xml">
 <link rel="icon" href="/logo/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png">
@@ -570,6 +570,8 @@ tr.sale td.rt-title{border-left:3px solid #7bb51d}
     <a href="faq" data-page="faq" data-g="lnkFaq">よくある質問</a>
     <span class="ft-sep">·</span>
     <a href="articles/" data-page="articles" data-g="lnkArticles">記事</a>
+    <span class="ft-sep">·</span>
+    <a href="changelog" data-page="changelog" data-g="lnkChangelog">更新履歴</a>
     <span class="ft-sep">·</span>
     <a href="about" data-page="about" data-g="lnkAbout">運営者情報</a>
     <span class="ft-sep">·</span>
@@ -3809,6 +3811,22 @@ var FLOW20_ADD = {
   }
 })();
 
+// ページのタイトル（タブと検索結果に出る）と、フッターの「更新履歴」へのリンク（日本語以外は英語のページへ）
+var FLOW21_ADD = {
+  ja: { pageTitle: 'Steam のウィッシュリストを「次に買う順」に並べ替える無料ツール | Steam Wishlist Ranker', lnkChangelog: '更新履歴' },
+  en: { pageTitle: 'Free tool to sort your Steam wishlist by what to buy next | Steam Wishlist Ranker', lnkChangelog: 'Changelog' },
+  zh: { pageTitle: '把 Steam 愿望单按“下一个要买的顺序”排好的免费工具 | Steam Wishlist Ranker', lnkChangelog: '更新日志（英文）' },
+  ru: { pageTitle: 'Бесплатный инструмент: список желаемого Steam в порядке «что купить следующим» | Steam Wishlist Ranker', lnkChangelog: 'Список изменений (англ.)' },
+  pt: { pageTitle: 'Ferramenta grátis para ordenar sua lista de desejos da Steam pelo que comprar a seguir | Steam Wishlist Ranker', lnkChangelog: 'Histórico de atualizações (inglês)' },
+  de: { pageTitle: 'Kostenloses Tool: Steam-Wunschliste nach „was kaufe ich als Nächstes“ sortieren | Steam Wishlist Ranker', lnkChangelog: 'Änderungsprotokoll (Englisch)' }
+};
+(function(){
+  for (var lg in FLOW21_ADD) {
+    if (!GUIDE_TEXT[lg]) GUIDE_TEXT[lg] = {};
+    for (var k in FLOW21_ADD[lg]) GUIDE_TEXT[lg][k] = FLOW21_ADD[lg][k];
+  }
+})();
+
 function gt(key){
   var l=GUIDE_TEXT[currentLang]||GUIDE_TEXT.ja;
   return l[key]||GUIDE_TEXT.ja[key]||key;
@@ -4041,6 +4059,7 @@ storeLinks.forEach(function(id){
   setText('txt-choose-r', l.chooseR);
   // html lang属性
   document.documentElement.lang = currentLang;
+  document.title = gt('pageTitle');
   renderGuideTexts();
 }
 

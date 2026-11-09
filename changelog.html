@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>更新履歴 | Steam Wishlist Ranker</title>
+<meta name="description" content="Steam Wishlist Ranker のこれまでの主な更新。2026年10月20日の公開から、追加した機能と直した不具合を日付ごとにまとめています。">
+<link rel="canonical" href="https://steam-wishlist-ranker.pages.dev/changelog">
+<link rel="alternate" hreflang="ja" href="https://steam-wishlist-ranker.pages.dev/changelog">
+<link rel="alternate" hreflang="en" href="https://steam-wishlist-ranker.pages.dev/changelog-en">
+<link rel="icon" href="/logo/logo.svg" type="image/svg+xml">
+<link rel="icon" href="/logo/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/logo/apple-touch-icon.png">
+<link rel="stylesheet" href="/site.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5922701022521864" crossorigin="anonymous"></script>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="/">Steam Wishlist Ranker</a>
+  <nav><a href="/guide">遊び方ガイド</a><a href="/faq">よくある質問</a><a href="/articles/">記事</a><a href="/changelog-en" lang="en">English</a></nav>
+</div></header>
+<main>
+<h1>更新履歴</h1>
+<p class="lead">Steam Wishlist Ranker のこれまでの主な更新です。新しい順に並べています。小さな修正は省いています。</p>
+
+<h2>2026年10月</h2>
+
+<h3><time datetime="2026-10-31">10月31日</time></h3>
+<ul>
+  <li>新しいアドレス（steam-wishlist-ranker.pages.dev）に移転しました。ランキングはアドレスごとにブラウザへ保存されるため、前のアドレスで作ったランキングは引き継げません。お手数ですが、もう一度読み込んでください。</li>
+  <li><a href="/guide">遊び方ガイド</a>、<a href="/faq">よくある質問</a>、<a href="/articles/">記事</a>5本、<a href="/about">運営者情報</a>、<a href="/terms">利用規約</a>のページを追加しました（日本語と英語）。</li>
+</ul>
+
+<h3><time datetime="2026-10-28">10月28日</time></h3>
+<ul>
+  <li>ウィッシュリストやプロフィールのアドレスを貼るだけで始められるようにしました。SteamID64 を自分で調べる必要がなくなりました。</li>
+</ul>
+
+<h3><time datetime="2026-10-27">10月27日</time></h3>
+<ul>
+  <li>並べた結果を、Steam のウィッシュリストの「カテゴリ」として付けられるようにしました（🔥今すぐ欲しい／🏷️セールなら買う／💭いつか買うかも／🗑️たぶんいらない）。使い方は記事「<a href="/articles/categories-notifications">カテゴリと通知で、セールの見逃しと買いすぎを減らす</a>」にまとめています。</li>
+  <li>読み込み直したときに、前回のランキングを残したまま、新しく追加したゲームだけを差し込めるようにしました。</li>
+  <li>結果画面の区切りの名前を、カテゴリと同じ名前にそろえました。</li>
+  <li>X のフォローと、お問い合わせ先へのリンクを追加しました。</li>
+  <li>不具合を直しました：シェア画像の表示の崩れ、英語の文の空白抜け、上位をもう1ラウンド比べたときに中位と下位の並びが崩れる問題。</li>
+</ul>
+
+<h3><time datetime="2026-10-26">10月26日</time></h3>
+<ul>
+  <li>ゲームの情報をまとめて取得するようにして、読み込みを速くしました。274本のウィッシュリストで、数十秒かかっていたのが数秒になりました。</li>
+  <li>発売前のゲームの発売日を、Steam のストアと同じ表示（年だけ・年月・四半期など）にそろえました。</li>
+</ul>
+
+<h3><time datetime="2026-10-25">10月25日</time></h3>
+<ul>
+  <li>結果画面でゲームをドラッグしているあいだも、ページがスクロールするようにしました。</li>
+</ul>
+
+<h3><time datetime="2026-10-24">10月24日</time></h3>
+<ul>
+  <li>遊び方を作り直しました。気になるゲームをタップ → 4本から選ぶ → 上位は1対1 → 決勝トーナメント、の順に絞り込みます。下位のゲームが上位に挑戦する「乱入戦」も入りました。詳しくは<a href="/guide">遊び方ガイド</a>と、記事「<a href="/articles/how-ranking-works">ランキングの仕組み</a>」にあります。</li>
+  <li>決勝のあとの仕上げとして、「中位整理」と、一番いらないゲームを決める「最弱決定戦」を追加しました。</li>
+  <li>Steam の Web API キーを入力しなくても使えるようにしました。</li>
+  <li>ブックマークを1回押すだけで、Steam のウィッシュリストに順番を反映できるようにしました。スマホ用の手順も用意しました。</li>
+  <li>Steam での過去最安値（IsThereAnyDeal のデータ）を表示するようにしました。</li>
+  <li>ストアの価格を、住んでいる国の通貨で表示するようにしました。</li>
+  <li>結果を4つの区切りに分けて表示し、ドラッグで順番を直せるようにしました。キーボードでも操作できます。</li>
+  <li>シェアの投稿文と画像を作り直しました。</li>
+  <li>ロゴを作りました。</li>
+  <li>スマホで結果の表が切れる問題を直しました。</li>
+</ul>
+
+<h3><time datetime="2026-10-22">10月22日</time></h3>
+<ul>
+  <li>4本の中から「一番欲しい」と「一番いらない」を選ぶ方式を追加しました。1対1だけで比べるより、ずっと速く並べられます。</li>
+  <li>選んだときの紙吹雪などの演出を追加しました。</li>
+</ul>
+
+<h3><time datetime="2026-10-21">10月21日</time></h3>
+<ul>
+  <li>6つの言語（日本語・英語・中国語・ロシア語・ポルトガル語・ドイツ語）に対応しました。</li>
+  <li><a href="/privacy">プライバシーポリシー</a>を公開しました。</li>
+  <li>SteamID64 の調べ方と、Steam に反映する手順の説明を追加しました。</li>
+  <li>X にシェアするときに、画像のコピーがうまくいかない問題を直しました。</li>
+</ul>
+
+<h3><time datetime="2026-10-20">10月20日</time></h3>
+<ul>
+  <li>Steam Wishlist Ranker を公開しました。ウィッシュリストのゲームを1対1で比べて、ランキングを作れる最初の版です。</li>
+</ul>
+
+<p class="related">不具合の報告や要望は、<a href="mailto:4545nameless.contact@gmail.com">お問い合わせ</a>からお寄せください。</p>
+
+<p><a class="cta" href="/">ツールを使ってみる</a></p>
+</main>
+<footer class="foot"><div class="foot-in">
+  <p><a href="/">ツールを使う</a> · <a href="/guide">遊び方ガイド</a> · <a href="/faq">よくある質問</a> · <a href="/articles/">記事</a> · <a href="/changelog">更新履歴</a> · <a href="/about">運営者情報</a> · <a href="/terms">利用規約</a> · <a href="/privacy">プライバシーポリシー</a> · <a href="mailto:4545nameless.contact@gmail.com">お問い合わせ</a></p>
+  <p>Steam Wishlist Ranker は、Valve Corporation とは関係のない非公式のツールです。Steam は Valve Corporation の商標です。</p>
+</div></footer>
+</body>
+</html>
